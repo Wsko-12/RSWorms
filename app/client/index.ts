@@ -1,3 +1,4 @@
-import Test from './test/test';
-const test = new Test();
-test.test();
+import App from './app/App';
+import './style.scss';
+const app = new App();
+app.start();
