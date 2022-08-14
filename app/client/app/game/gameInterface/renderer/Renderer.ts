@@ -13,7 +13,7 @@ export default class Renderer {
         });
         this.setSize();
 
-        document.addEventListener('resize', () => {
+        window.addEventListener('resize', () => {
             this.setSize();
         });
     }
