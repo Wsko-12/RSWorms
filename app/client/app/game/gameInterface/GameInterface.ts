@@ -10,10 +10,16 @@ export default class GameInterface {
     private camera = new GameCamera();
 
     constructor() {
+        const eventsHandler = this.view.getMainHandler();
+        this.camera.setEventsHandler(eventsHandler);
         this.renderer.setCamera(this.camera.getCamera());
     }
     public buildToDocument() {
         this.view.build();
+    }
+
+    public getMainHandler() {
+        return this.view.getMainHandler();
     }
 
     public setMainSceneToRenderer(scene: Scene) {
@@ -22,5 +28,9 @@ export default class GameInterface {
 
     public renderLoop: TLoopCallback = () => {
         this.renderer.render();
+    };
+
+    public updateLoop: TLoopCallback = (time) => {
+        this.camera.update(time);
     };
 }
