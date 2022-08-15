@@ -1,3 +1,4 @@
+import { EMapPacksNames } from '../../../ts/enums';
 import { TStartGameCallback } from '../../../ts/types';
 
 export default class Lobby {
@@ -9,7 +10,9 @@ export default class Lobby {
         const button = document.createElement('button');
         button.onclick = () => {
             document.body.innerHTML = '';
-            this.startGameCallback({});
+            this.startGameCallback({
+                mapTexturePackName: EMapPacksNames.moon,
+            });
         };
         button.innerHTML = 'Start game';
         document.body.append(button);
