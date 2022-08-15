@@ -12,6 +12,7 @@ export default class Renderer {
             canvas,
         });
         this.setSize();
+        this.renderer.setClearColor(0x505050);
 
         window.addEventListener('resize', () => {
             this.setSize();

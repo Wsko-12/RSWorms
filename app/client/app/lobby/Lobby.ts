@@ -1,4 +1,4 @@
-import { EMapPacksNames } from '../../../ts/enums';
+import { EMapPacksNames, EWorldSizes } from '../../../ts/enums';
 import { TStartGameCallback } from '../../../ts/types';
 
 export default class Lobby {
@@ -12,6 +12,7 @@ export default class Lobby {
             document.body.innerHTML = '';
             this.startGameCallback({
                 mapTexturePackName: EMapPacksNames.moon,
+                worldSize: EWorldSizes.big,
             });
         };
         button.innerHTML = 'Start game';

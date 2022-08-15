@@ -6,11 +6,12 @@ import World from './world/World';
 
 export default class GameManager {
     private options: IStartGameOptions;
-    private world = new World();
+    private world: World;
     private loops: IGMLoops;
     private interface = new GameInterface();
     constructor(options: IStartGameOptions) {
         this.options = options;
+        this.world = new World(options);
         this.loops = {
             paused: false,
             timestamp: Date.now(),
@@ -33,9 +34,10 @@ export default class GameManager {
 
     private async start() {
         await AssetsManager.init(this.options);
+        this.world.init();
         Object.values(this.loops.all).forEach((loop) => loop.switcher(true));
         this.interface.buildToDocument();
-        this.world.createTestScene();
+        this.world.create();
         this.loop();
     }
 
