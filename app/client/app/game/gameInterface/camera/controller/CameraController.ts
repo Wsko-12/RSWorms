@@ -6,12 +6,15 @@ export default class CameraController {
     private cameraPosition: Point3;
     private cameraTarget: Point3;
     private handler = new CameraControllerHandler(this);
+    public speed = 50;
+    private smooth = 0.8;
 
     public zoom = {
-        value: 1,
-        max: 5,
-        min: 0.5,
+        value: 2000,
+        max: 2000,
+        min: 500,
         delta: 0,
+        speed: 1,
     };
 
     public targetDirection = {
@@ -19,12 +22,11 @@ export default class CameraController {
         deltaY: 0,
     };
 
-    public speed = 1;
-    private smooth = 0.8;
-
     constructor(camPosition: Point3, camTarget: Point3) {
         this.cameraPosition = camPosition;
         this.cameraTarget = camTarget;
+
+        this.cameraPosition.z = this.zoom.value;
     }
 
     private smoothDeltaValue(value: number): number {
@@ -58,8 +60,8 @@ export default class CameraController {
     };
 
     private moveTarget() {
-        this.cameraTarget.x += this.targetDirection.deltaX;
-        this.cameraTarget.y += this.targetDirection.deltaY;
+        this.cameraTarget.x += this.targetDirection.deltaX * this.speed * (this.zoom.value / 100);
+        this.cameraTarget.y += this.targetDirection.deltaY * this.speed * (this.zoom.value / 100);
     }
 
     private moveCamera() {
@@ -68,12 +70,13 @@ export default class CameraController {
     }
 
     private zoomCamera() {
-        this.cameraPosition.z += this.speed * this.zoom.delta;
-        if (this.cameraPosition.z > this.zoom.max) {
-            this.cameraPosition.z = this.zoom.max;
+        this.zoom.value += this.zoom.delta * this.zoom.speed;
+        this.cameraPosition.z = this.zoom.value;
+        if (this.zoom.value > this.zoom.max) {
+            this.zoom.value = this.zoom.max;
         }
-        if (this.cameraPosition.z < this.zoom.min) {
-            this.cameraPosition.z = this.zoom.min;
+        if (this.zoom.value < this.zoom.min) {
+            this.zoom.value = this.zoom.min;
         }
     }
 }
