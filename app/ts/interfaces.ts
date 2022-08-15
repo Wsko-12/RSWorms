@@ -1,6 +1,6 @@
 import Loop from '../client/app/game/loop/Loop';
 
-export interface IGameStartProps {
+export interface IStartGameOptions {
     test?: boolean;
 }
 
