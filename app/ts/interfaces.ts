@@ -1,7 +1,8 @@
 import Loop from '../client/app/game/loop/Loop';
+import { EMapPacksNames } from './enums';
 
 export interface IStartGameOptions {
-    test?: boolean;
+    mapTexturePackName: EMapPacksNames;
 }
 
 export interface IGMLoops {
