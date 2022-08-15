@@ -1,15 +1,15 @@
-import { IGameStartProps, IGMLoops } from '../../../ts/interfaces';
+import { IGMLoops, IStartGameOptions } from '../../../ts/interfaces';
 import GameInterface from './gameInterface/GameInterface';
 import Loop from './loop/Loop';
 import World from './world/World';
 
 export default class GameManager {
-    private props: IGameStartProps;
+    private options: IStartGameOptions;
     private world = new World();
     private loops: IGMLoops;
     private interface = new GameInterface();
-    constructor(gameProps: IGameStartProps) {
-        this.props = gameProps;
+    constructor(options: IStartGameOptions) {
+        this.options = options;
         this.loops = {
             paused: false,
             timestamp: Date.now(),

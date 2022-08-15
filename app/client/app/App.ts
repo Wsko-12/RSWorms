@@ -1,4 +1,4 @@
-import { IGameStartProps } from '../../ts/interfaces';
+import { IStartGameOptions } from '../../ts/interfaces';
 import GameManager from './game/GameManager';
 import Lobby from './lobby/Lobby';
 
@@ -9,7 +9,7 @@ export default class App {
         this.lobby.start();
     }
 
-    private startGame(gameProps: IGameStartProps) {
-        this.game = new GameManager(gameProps);
+    private startGame(options: IStartGameOptions) {
+        this.game = new GameManager(options);
     }
 }
