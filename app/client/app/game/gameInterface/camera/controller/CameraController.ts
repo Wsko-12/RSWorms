@@ -12,7 +12,7 @@ export default class CameraController {
     public zoom = {
         value: 2000,
         max: 2000,
-        min: 500,
+        min: 10,
         delta: 0,
         speed: 1,
     };
@@ -25,7 +25,8 @@ export default class CameraController {
     constructor(camPosition: Point3, camTarget: Point3) {
         this.cameraPosition = camPosition;
         this.cameraTarget = camTarget;
-
+        this.cameraTarget.x = 512;
+        this.cameraTarget.y = 256;
         this.cameraPosition.z = this.zoom.value;
     }
 
