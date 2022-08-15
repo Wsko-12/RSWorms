@@ -17,6 +17,10 @@ export default class GameCamera {
         this.controller.setEventsHandler(element);
     }
 
+    public setBorders(x: number, y: number, width: number, height: number) {
+        this.controller.setBorders(x, y, width, height);
+    }
+
     public update: TLoopCallback = (time) => {
         this.controller.update(time);
         this.camera.position.set(this.position.x, this.position.y, this.position.z);

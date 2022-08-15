@@ -1,3 +1,4 @@
+import { EProportions } from '../../../ts/enums';
 import { IGMLoops, IStartGameOptions } from '../../../ts/interfaces';
 import AssetsManager from './assetsManager/AssetsManager';
 import GameInterface from './gameInterface/GameInterface';
@@ -28,6 +29,9 @@ export default class GameManager {
 
         const mainScene = this.world.getMainScene();
         this.interface.setMainSceneToRenderer(mainScene);
+        const width = options.worldSize * EProportions.mapWidthToHeight;
+        const height = options.worldSize;
+        this.interface.setCameraBorders(0, 0, width, height);
 
         this.start();
     }

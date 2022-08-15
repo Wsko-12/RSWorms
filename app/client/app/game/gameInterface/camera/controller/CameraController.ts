@@ -9,6 +9,14 @@ export default class CameraController {
     public speed = 50;
     private smooth = 0.8;
 
+    public borders = {
+        setted: false,
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+    };
+
     public zoom = {
         value: 2000,
         max: 2000,
@@ -28,6 +36,14 @@ export default class CameraController {
         this.cameraTarget.x = 512;
         this.cameraTarget.y = 256;
         this.cameraPosition.z = this.zoom.value;
+    }
+
+    public setBorders(x: number, y: number, width: number, height: number) {
+        this.borders.setted = true;
+        this.borders.x = x;
+        this.borders.y = y;
+        this.borders.width = width;
+        this.borders.height = height;
     }
 
     private smoothDeltaValue(value: number): number {
@@ -63,6 +79,22 @@ export default class CameraController {
     private moveTarget() {
         this.cameraTarget.x += this.targetDirection.deltaX * this.speed * (this.zoom.value / 100);
         this.cameraTarget.y += this.targetDirection.deltaY * this.speed * (this.zoom.value / 100);
+
+        if (this.borders.setted) {
+            if (this.cameraTarget.x > this.borders.x + this.borders.width) {
+                this.cameraTarget.x = this.borders.x + this.borders.width;
+            }
+            if (this.cameraTarget.x < this.borders.x) {
+                this.cameraTarget.x = this.borders.x;
+            }
+
+            if (this.cameraTarget.y > this.borders.y + this.borders.height) {
+                this.cameraTarget.y = this.borders.y + this.borders.height;
+            }
+            if (this.cameraTarget.y < this.borders.y) {
+                this.cameraTarget.y = this.borders.y;
+            }
+        }
     }
 
     private moveCamera() {
