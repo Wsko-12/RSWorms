@@ -1,28 +1,21 @@
-import {
-    BoxBufferGeometry,
-    DirectionalLight,
-    Mesh,
-    MeshBasicMaterial,
-    MeshPhongMaterial,
-    PlaneBufferGeometry,
-    Scene,
-    Texture,
-} from 'three';
-import { EProportions } from '../../../../ts/enums';
+import { Scene } from 'three';
 import { IStartGameOptions } from '../../../../ts/interfaces';
-import AssetsManager from '../assetsManager/AssetsManager';
 import Background from './background/Background';
+import WorldMap from './worldMap/WorldMap';
 
 export default class World {
     private mainScene = new Scene();
     private background = new Background();
+    private worldMap = new WorldMap();
     private options: IStartGameOptions;
     constructor(options: IStartGameOptions) {
         this.options = options;
     }
 
-    public init() {
+    public async init() {
         this.background.init(this.options.worldSize);
+        await this.worldMap.init(this.options);
+        return true;
     }
 
     public create() {
@@ -31,16 +24,10 @@ export default class World {
             this.mainScene.add(backgroundPlane);
         }
 
-        // const mapPlane = new Mesh(
-        //     new PlaneBufferGeometry(this.options.worldSize * EProportions.mapWidthToHeight, this.options.worldSize),
-        //     new MeshBasicMaterial()
-        // );
-        // mapPlane.position.set(
-        //     (this.options.worldSize * EProportions.mapWidthToHeight) / 2,
-        //     this.options.worldSize / 2,
-        //     0
-        // );
-        // this.mainScene.add(mapPlane);
+        const mapPlane = this.worldMap.getObject3D();
+        if (mapPlane) {
+            this.mainScene.add(mapPlane);
+        }
     }
     public getMainScene() {
         return this.mainScene;

@@ -1,4 +1,4 @@
-import { EMapPacksNames, EWorldSizes } from '../../../ts/enums';
+import { EMapPacksDecorItems, EMapPacksNames, EWorldSizes } from '../../../ts/enums';
 import { TStartGameCallback } from '../../../ts/types';
 
 export default class Lobby {
@@ -8,14 +8,20 @@ export default class Lobby {
     }
     public start() {
         const button = document.createElement('button');
-        button.onclick = () => {
-            document.body.innerHTML = '';
-            this.startGameCallback({
-                mapTexturePackName: EMapPacksNames.moon,
-                worldSize: EWorldSizes.big,
-            });
-        };
-        button.innerHTML = 'Start game';
         document.body.append(button);
+        // button.onclick = () => {
+        document.body.innerHTML = '';
+        this.startGameCallback({
+            mapTexturePackName: EMapPacksNames.moon,
+            worldSize: EWorldSizes.medium,
+            seed: Math.random(),
+            decor: {
+                count: EMapPacksDecorItems[EMapPacksNames.moon],
+                max: 6,
+                min: 2,
+            },
+        });
+        // };
+        button.innerHTML = 'Start game';
     }
 }

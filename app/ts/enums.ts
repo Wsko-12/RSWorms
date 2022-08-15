@@ -14,4 +14,4 @@ export enum EWorldSizes {
 
 export const enum EProportions {
     mapWidthToHeight = 2,
-} 
+}

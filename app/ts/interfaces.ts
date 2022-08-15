@@ -4,6 +4,12 @@ import { EMapPacksNames, EWorldSizes } from './enums';
 export interface IStartGameOptions {
     mapTexturePackName: EMapPacksNames;
     worldSize: EWorldSizes;
+    seed: number;
+    decor: {
+        count: number;
+        max: number;
+        min: number;
+    };
 }
 
 export interface IGMLoops {
