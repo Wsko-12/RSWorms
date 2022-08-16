@@ -55,7 +55,7 @@ export default class CameraControllerHandler {
 
         this.wheel = (e: WheelEvent): void => {
             e.preventDefault();
-            const { deltaX, deltaY } = e;
+            const { deltaY } = e;
             if (deltaY !== 0) {
                 if (deltaY >= 100 || deltaY <= -100) {
                     if (deltaY > 0) {
@@ -75,7 +75,7 @@ export default class CameraControllerHandler {
                 }
             }
 
-            this.controller.targetDirection.deltaX += (e.deltaX / window.innerWidth) * 0.25
+            this.controller.targetDirection.deltaX += (e.deltaX / window.innerWidth) * 0.25;
         };
 
         this.mouseDown = (e: MouseEvent): void => {
