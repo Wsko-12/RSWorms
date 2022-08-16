@@ -293,7 +293,7 @@ export default class WorldMap {
 
         objects.forEach((objIndex) => {
             const place = this.getObjectPlace(matrix, width, height);
-            if (place) drawObject(objIndex, place.x, place.y);
+            drawObject(objIndex, place.x, place.y);
         });
     }
 
