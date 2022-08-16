@@ -114,13 +114,17 @@ export default class WorldMap {
 
             groundImage.onload = () => {
                 this.clearCanvas();
+
                 this.drawDecorObjects(ctx, maskMatrix, options, width, height);
+
                 ctx.drawImage(groundImage, 0, 0, width, height);
 
                 this.drawGrass(ctx, maskMatrix);
                 // const mapData = ctx.getImageData(0,0, this.size * this.widthInc, this.size).data;
                 // const mapMatrix = this.imageDataToMatrix(mapData);
                 // this.matrix = mapMatrix;
+
+                this.drawBridge(ctx, width, height, maskMatrix);
 
                 const mapRenderURl = element.toDataURL();
                 this.renderedMap = new Image();
@@ -184,11 +188,26 @@ export default class WorldMap {
                 if (x > width - width / 4) {
                     const right = Perlin.noise((y * shift) / (d * 3));
 
-                    const xRight = (x - width - width / 3) / (width / 3);
+                    const xRight = (x - (width - width / 3)) / (width / 3);
                     if (xRight > right) {
                         ctx.clearRect(x, y, 1, 1);
                     }
                 }
+            }
+        }
+    }
+
+    private drawBridge(ctx: CanvasRenderingContext2D, width: number, height: number, matrix: number[][]) {
+        const image = AssetsManager.getMapTexture('ground');
+        if (!image) {
+            throw new Error("[WorldMap drawGroundPattern] can't receive ground texture");
+        }
+        const iWidth = image.width;
+        const iHeight = image.width;
+
+        for (let y = 0; y < height; y += iHeight) {
+            for (let x = 0; x < width; x += iWidth) {
+                if (matrix[y][x] === 2) ctx.drawImage(image, x, y, 1, 1);
             }
         }
     }
@@ -219,7 +238,7 @@ export default class WorldMap {
         for (let y = 0; y < matrix.length; y++) {
             for (let x = 0; x < matrix[y].length; x++) {
                 const current = matrix[y][x];
-                if (current) {
+                if (current === 1) {
                     const top = matrix[y - 1][x];
 
                     if (top === 0) {
@@ -274,7 +293,7 @@ export default class WorldMap {
 
         objects.forEach((objIndex) => {
             const place = this.getObjectPlace(matrix, width, height);
-            drawObject(objIndex, place.x, place.y);
+            if (place) drawObject(objIndex, place.x, place.y);
         });
     }
 
@@ -300,12 +319,20 @@ export default class WorldMap {
 
         for (let y = 0; y < height; y++) {
             const cell = matrix[y][x];
-            if (cell === 0) {
+            if (cell === 0 || cell === 2) {
                 prevSkipped = false;
             }
 
             if (cell === 1) {
                 if (skipped === skips && !prevSkipped) {
+                    // check for bridge
+                    // let canDrop = true;
+                    // for (let i = 0; i <= 100 /*  here will be obj height */; i++) {
+                    //     const pointToCheck = matrix[y - 10 - i][x];
+                    //     if (pointToCheck === 2 || pointToCheck === 1) canDrop = false;
+                    // }
+                    // if (canDrop) return { x, y };
+                    // else return null;
                     return { x, y };
                 } else {
                     if (!prevSkipped) {
@@ -336,15 +363,14 @@ export default class WorldMap {
         const bHeight = 10; /* bridge height*/
         for (let i = 0; i <= bWidth; i++) {
             for (let a = 0; a <= bHeight; a++) {
-                matrix[yStart - i - a][xStart + i] = 1;
-                matrix[yStart - i - a][xStart + xWidth - i] = 1;
+                matrix[yStart - i - a][xStart + i] = 2;
+                matrix[yStart - i - a][xStart + xWidth - i] = 2;
             }
         }
         const width = xWidth - bWidth * 2;
         for (let i = 0; i <= bHeight; i++) {
-            matrix[yStart - bWidth - i].splice(xStart + bWidth, width, ...new Array(width).fill(1));
+            matrix[yStart - bWidth - i].splice(xStart + bWidth, width, ...new Array(width).fill(2));
         }
-
         return matrix;
     }
 
