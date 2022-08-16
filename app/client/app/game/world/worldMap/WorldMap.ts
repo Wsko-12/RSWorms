@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Mesh, MeshBasicMaterial, NearestFilter, Object3D, PlaneBufferGeometry, Texture } from 'three';
 import { EProportions } from '../../../../../ts/enums';
 import { IStartGameOptions } from '../../../../../ts/interfaces';
 import Perlin from '../../../../utils/p5/Perlin';
 import Random from '../../../../utils/Random';
 import AssetsManager from '../../assetsManager/AssetsManager';
-import { ChosenPlace, Place, x, xy } from './interfaces';
+import { Place, x, xy } from './interfaces';
 
 export default class WorldMap {
     private object3D: Object3D | null = null;
@@ -327,7 +326,7 @@ export default class WorldMap {
     ): number[][] {
         if (potentialPlaces.length === 0 || !potentialPlaces[0] || !place) return matrix;
         const yStart = place?.y?.start || 0 + 50; /* bridge step */
-        const i = potentialPlaces.findIndex((el: any) => el.y === yStart);
+        const i = potentialPlaces.findIndex((el: Place | undefined) => el?.y === yStart);
         if (i === -1) return matrix;
         const placeForBridge = potentialPlaces[i];
         const xStart = placeForBridge?.x.start || 0;
@@ -375,9 +374,7 @@ export default class WorldMap {
                 return el;
             })
             .map((el: xy) => {
-                const index: number = el.x.findIndex(
-                    (j: any) => j.width > 500 /* min width for bridge*/ && j.type === 0
-                );
+                const index: number = el.x.findIndex((j: x) => j.width > 500 /* min width for bridge*/ && j.type === 0);
                 if (index === -1) return null;
                 el.x = el.x.slice(index, index + 1);
                 return el;
@@ -413,7 +410,7 @@ export default class WorldMap {
         }
         // ищем долину с высотой хотя бы 300 и возвращаем самую верхнюю, потом можно дописать и создавать несколько балок
         places = places.filter((el) => el.y.height > 50);
-        if (places[0].y.start) return places[0];
+        if (places[0]?.y?.start) return places[0];
         else return null;
     }
 }
