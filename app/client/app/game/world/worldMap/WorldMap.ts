@@ -174,7 +174,7 @@ export default class WorldMap {
                 if (x > width - width / 4) {
                     const right = Perlin.noise((y * shift) / (d * 3));
 
-                    const xRight = (x - width - width / 3) / (width / 3);
+                    const xRight = (x - (width - width / 3)) / (width / 3);
                     if (xRight > right) {
                         ctx.clearRect(x, y, 1, 1);
                     }
