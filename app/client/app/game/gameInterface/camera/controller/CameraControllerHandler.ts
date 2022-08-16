@@ -56,24 +56,27 @@ export default class CameraControllerHandler {
         this.wheel = (e: WheelEvent): void => {
             e.preventDefault();
             const { deltaX, deltaY } = e;
-            console.log(deltaX, deltaY);
+            // console.log(deltaX, deltaY);
             if (deltaY !== 0) {
-                if (deltaY % 1 === 0) {
-                    if (deltaY === 100 || deltaY === -100) {
-                        if (deltaY > 0) {
-                            //mouse wheel
-                            this.controller.zoom.delta += 0.1 * this.controller.speed;
-                        } else {
-                            //mouse wheel
-                            this.controller.zoom.delta -= 0.1 * this.controller.speed;
-                        }
+                // if (deltaY % 1 === 0) {
+                if (deltaY >= 100 || deltaY <= -100) {
+                    console.log(deltaY.toString());
+                    if (deltaY > 0) {
+                        //mouse wheel
+                        this.controller.zoom.delta += 0.2 * this.controller.speed;
                     } else {
-                        //trackpad two fingers move
-                        this.controller.targetDirection.deltaY += (-e.deltaY / window.innerHeight) * 0.25;
+                        //mouse wheel
+                        this.controller.zoom.delta -= 0.2 * this.controller.speed;
                     }
                 } else {
-                    //pitch
-                    this.controller.zoom.delta += deltaY * this.controller.speed * 0.01;
+                    //trackpad two fingers move
+                    if ((deltaY % 1).toString().length < 6) {
+                        console.log(deltaY % 1);
+                        this.controller.targetDirection.deltaY += (-e.deltaY / window.innerHeight) * 0.25;
+                    } else {
+                        console.log('lala', deltaY.toString());
+                        this.controller.zoom.delta += deltaY * this.controller.speed * 0.05;
+                    }
                 }
             }
 
