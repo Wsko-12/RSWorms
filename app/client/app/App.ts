@@ -3,8 +3,8 @@ import GameManager from './game/GameManager';
 import Lobby from './lobby/Lobby';
 
 export default class App {
-    game: GameManager | null = null;
-    lobby = new Lobby(this.startGame);
+    private game: GameManager | null = null;
+    private lobby = new Lobby(this.startGame);
     public start() {
         this.lobby.start();
     }

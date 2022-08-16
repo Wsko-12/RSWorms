@@ -56,7 +56,6 @@ export default class CameraControllerHandler {
         this.wheel = (e: WheelEvent): void => {
             e.preventDefault();
             const { deltaX, deltaY } = e;
-            console.log(deltaX, deltaY);
             if (deltaY !== 0) {
                 if (deltaY % 1 === 0) {
                     if (deltaY === 100 || deltaY === -100) {

@@ -11,7 +11,7 @@ export default class WorldMap {
     private random = new Random();
     private renderedMap: HTMLImageElement | null = null;
 
-    createCanvas() {
+    private createCanvas() {
         const element = document.createElement('canvas');
 
         const ctx = element.getContext('2d');
