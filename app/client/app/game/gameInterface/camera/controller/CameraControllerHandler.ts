@@ -57,28 +57,25 @@ export default class CameraControllerHandler {
             e.preventDefault();
             const { deltaX, deltaY } = e;
             if (deltaY !== 0) {
-                if (deltaY % 1 === 0) {
-                    if (deltaY === 100 || deltaY === -100) {
-                        if (deltaY > 0) {
-                            //mouse wheel
-                            this.controller.zoom.delta += 0.1 * this.controller.speed;
-                        } else {
-                            //mouse wheel
-                            this.controller.zoom.delta -= 0.1 * this.controller.speed;
-                        }
+                if (deltaY >= 100 || deltaY <= -100) {
+                    if (deltaY > 0) {
+                        //mouse wheel
+                        this.controller.zoom.delta += 0.2 * this.controller.speed;
                     } else {
-                        //trackpad two fingers move
-                        this.controller.targetDirection.deltaY += (-e.deltaY / window.innerHeight) * 0.25;
+                        //mouse wheel
+                        this.controller.zoom.delta -= 0.2 * this.controller.speed;
                     }
                 } else {
-                    //pitch
-                    this.controller.zoom.delta += deltaY * this.controller.speed * 0.01;
+                    //trackpad two fingers move
+                    if ((deltaY % 1).toString().length < 6) {
+                        this.controller.targetDirection.deltaY += (-e.deltaY / window.innerHeight) * 0.25;
+                    } else {
+                        this.controller.zoom.delta += deltaY * this.controller.speed * 0.05;
+                    }
                 }
             }
 
-            if (deltaX !== 0) {
-                this.controller.targetDirection.deltaX += (e.deltaX / window.innerWidth) * 0.25;
-            }
+            this.controller.targetDirection.deltaX += (e.deltaX / window.innerWidth) * 0.25
         };
 
         this.mouseDown = (e: MouseEvent): void => {
