@@ -60,17 +60,17 @@ export default class CameraControllerHandler {
                 if (deltaY >= 100 || deltaY <= -100) {
                     if (deltaY > 0) {
                         //mouse wheel
-                        this.controller.zoom.delta += 0.2 * this.controller.speed;
+                        this.controller.zoom.delta += 0.2 * this.controller.targetSpeed;
                     } else {
                         //mouse wheel
-                        this.controller.zoom.delta -= 0.2 * this.controller.speed;
+                        this.controller.zoom.delta -= 0.2 * this.controller.targetSpeed;
                     }
                 } else {
                     //trackpad two fingers move
                     if ((deltaY % 1).toString().length < 6) {
                         this.controller.targetDirection.deltaY += (-e.deltaY / window.innerHeight) * 0.25;
                     } else {
-                        this.controller.zoom.delta += deltaY * this.controller.speed * 0.05;
+                        this.controller.zoom.delta += deltaY * this.controller.targetSpeed * 0.05;
                     }
                 }
             }

@@ -1,13 +1,14 @@
 import { EConstants, EWorldSizes } from '../../../../../../ts/enums';
 import { TLoopCallback } from '../../../../../../ts/types';
-import { Point3 } from '../../../../../utils/geometry';
+import { Point3, Vector2 } from '../../../../../utils/geometry';
 import CameraControllerHandler from './CameraControllerHandler';
 
 export default class CameraController {
     private cameraPosition: Point3;
     private cameraTarget: Point3;
     private handler = new CameraControllerHandler(this);
-    public speed = 50;
+    public targetSpeed = 50;
+    public cameraSpeed = 45;
     private smooth = 0.8;
 
     public borders = {
@@ -85,8 +86,8 @@ export default class CameraController {
     };
 
     private moveTarget() {
-        this.cameraTarget.x += this.targetDirection.deltaX * this.speed * (this.zoom.value / 100);
-        this.cameraTarget.y += this.targetDirection.deltaY * this.speed * (this.zoom.value / 100);
+        this.cameraTarget.x += this.targetDirection.deltaX * this.targetSpeed * (this.zoom.value / 100);
+        this.cameraTarget.y += this.targetDirection.deltaY * this.targetSpeed * (this.zoom.value / 100);
 
         if (this.borders.setted) {
             if (this.cameraTarget.x > this.borders.x + this.borders.width) {
@@ -112,8 +113,23 @@ export default class CameraController {
     }
 
     private moveCamera() {
-        this.cameraPosition.x = this.cameraTarget.x;
-        this.cameraPosition.y = this.cameraTarget.y;
+        const x = this.cameraTarget.x - this.cameraPosition.x;
+        const y = this.cameraTarget.y - this.cameraPosition.y;
+
+        const vec = new Vector2(x, y);
+        const length = vec.getLength();
+
+        if (length > this.cameraSpeed) {
+            vec.normalize().scale(this.cameraSpeed);
+            this.cameraPosition.x += vec.x;
+            this.cameraPosition.y += vec.y;
+        } else {
+            this.cameraPosition.x = this.cameraTarget.x;
+            this.cameraPosition.y = this.cameraTarget.y;
+        }
+
+        // this.cameraPosition.x = this.cameraTarget.x;
+        // this.cameraPosition.y = this.cameraTarget.y;
     }
 
     private zoomCamera() {
