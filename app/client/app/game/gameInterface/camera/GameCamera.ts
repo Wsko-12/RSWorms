@@ -1,5 +1,5 @@
 import { PerspectiveCamera } from 'three';
-import { EConstants, ELayersZ, EWorldSizes } from '../../../../../ts/enums';
+import { EConstants, EWorldSizes } from '../../../../../ts/enums';
 import { TLoopCallback } from '../../../../../ts/types';
 import { Point2, Point3 } from '../../../../utils/geometry';
 import CameraController from './controller/CameraController';
