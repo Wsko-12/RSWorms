@@ -23,7 +23,7 @@ export default class GameCamera {
     }
 
     public setMaxCameraZoom(worldSize: EWorldSizes) {
-        this.camera.far = worldSize + ELayersZ.bg + 20;
+        this.camera.far = worldSize + ELayersZ.bg * 2;
         this.controller.setMaxCameraZoom(worldSize);
     }
 
