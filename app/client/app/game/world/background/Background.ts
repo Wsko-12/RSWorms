@@ -8,7 +8,7 @@ import {
     Texture,
     Vector2,
 } from 'three';
-import { EProportions, EWorldSizes } from '../../../../../ts/enums';
+import { EConstants, ELayersZ, EProportions, EWorldSizes } from '../../../../../ts/enums';
 import AssetsManager from '../../assetsManager/AssetsManager';
 
 export default class Background {
@@ -18,9 +18,14 @@ export default class Background {
         const image = AssetsManager.getMapTexture('bg');
         if (image) {
             const textureWidth = image.width;
+            const textureHeight = image.height;
+            const textureAspect = textureHeight / textureWidth;
 
-            const width = worldSize * EProportions.mapWidthToHeight * 2;
-            const height = worldSize * 2;
+            const worldWidth = worldSize * EProportions.mapWidthToHeight;
+            const worldHeight = worldSize;
+
+            const width = worldSize * EProportions.mapWidthToHeight * EConstants.bgScale;
+            const height = worldSize * EConstants.bgScale;
             const texture = new Texture(image);
 
             // to disable pixels and create more smooth disable next line
@@ -29,7 +34,7 @@ export default class Background {
             texture.flipY = false;
 
             texture.wrapS = RepeatWrapping;
-            texture.repeat = new Vector2(width / (worldSize / EWorldSizes.small) / textureWidth, 1);
+            texture.repeat = new Vector2(textureAspect * EProportions.mapWidthToHeight, 1);
             texture.needsUpdate = true;
             const material = new MeshBasicMaterial({
                 map: texture,
@@ -37,7 +42,7 @@ export default class Background {
             const geometry = new PlaneGeometry(width, height);
 
             const object = new Mesh(geometry, material);
-            object.position.set(width / 4, height / 4, -100);
+            object.position.set(worldWidth / 2, worldHeight / 2, -ELayersZ.bg);
 
             this.object3D = object;
         } else {

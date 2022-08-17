@@ -15,3 +15,12 @@ export enum EWorldSizes {
 export const enum EProportions {
     mapWidthToHeight = 2,
 }
+
+export const enum EConstants {
+    bgScale = 4,
+}
+
+export const enum ELayersZ {
+    bg = 100,
+    map = 0,
+}
