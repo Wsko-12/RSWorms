@@ -32,7 +32,7 @@ export default class CameraController {
         deltaY: 0,
     };
 
-    private selectedPoint: Point2 | null = null;
+    private targetPoint: Point2 | null = null;
 
     constructor(camPosition: Point3, camTarget: Point3) {
         this.cameraPosition = camPosition;
@@ -93,13 +93,13 @@ export default class CameraController {
     };
 
     private moveTarget() {
-        if (!this.selectedPoint || this.targetDirection.deltaX || this.targetDirection.deltaY) {
-            this.selectedPoint = null;
+        if (!this.targetPoint || this.targetDirection.deltaX || this.targetDirection.deltaY) {
+            this.targetPoint = null;
             this.cameraTarget.x += this.targetDirection.deltaX * this.targetSpeed * (this.zoom.value / 100);
             this.cameraTarget.y += this.targetDirection.deltaY * this.targetSpeed * (this.zoom.value / 100);
         } else {
-            const x = this.selectedPoint.x - this.cameraTarget.x;
-            const y = this.selectedPoint.y - this.cameraTarget.y;
+            const x = this.targetPoint.x - this.cameraTarget.x;
+            const y = this.targetPoint.y - this.cameraTarget.y;
             const vec = new Vector2(x, y);
             const length = vec.getLength();
 
@@ -108,9 +108,9 @@ export default class CameraController {
                 this.cameraTarget.x += vec.x;
                 this.cameraTarget.y += vec.y;
             } else {
-                this.cameraTarget.x = this.selectedPoint.x;
-                this.cameraTarget.y = this.selectedPoint.y;
-                this.selectedPoint = null;
+                this.cameraTarget.x = this.targetPoint.x;
+                this.cameraTarget.y = this.targetPoint.y;
+                this.targetPoint = null;
             }
         }
 
@@ -169,6 +169,6 @@ export default class CameraController {
     public moveTo(point: Point2) {
         this.targetDirection.deltaX = 0;
         this.targetDirection.deltaY = 0;
-        this.selectedPoint = point;
+        this.targetPoint = point;
     }
 }
