@@ -1,6 +1,6 @@
 import { EConstants, EWorldSizes } from '../../../../../../ts/enums';
 import { TLoopCallback } from '../../../../../../ts/types';
-import { Point3, Vector2 } from '../../../../../utils/geometry';
+import { Point2, Point3, Vector2 } from '../../../../../utils/geometry';
 import CameraControllerHandler from './CameraControllerHandler';
 
 export default class CameraController {
@@ -8,7 +8,6 @@ export default class CameraController {
     private cameraTarget: Point3;
     private handler = new CameraControllerHandler(this);
     public targetSpeed = 50;
-    public cameraSpeed = 45;
     private smooth = 0.8;
 
     public borders = {
@@ -33,12 +32,20 @@ export default class CameraController {
         deltaY: 0,
     };
 
+    private selectedPoint: Point2 | null = null;
+
     constructor(camPosition: Point3, camTarget: Point3) {
         this.cameraPosition = camPosition;
         this.cameraTarget = camTarget;
         this.cameraTarget.x = 512;
         this.cameraTarget.y = 256;
         this.cameraPosition.z = this.zoom.value;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyC') {
+                this.moveTo(new Point2(0, 0));
+            }
+        });
     }
 
     public setMaxCameraZoom(worldSize: EWorldSizes) {
@@ -86,8 +93,26 @@ export default class CameraController {
     };
 
     private moveTarget() {
-        this.cameraTarget.x += this.targetDirection.deltaX * this.targetSpeed * (this.zoom.value / 100);
-        this.cameraTarget.y += this.targetDirection.deltaY * this.targetSpeed * (this.zoom.value / 100);
+        if (!this.selectedPoint || this.targetDirection.deltaX || this.targetDirection.deltaY) {
+            this.selectedPoint = null;
+            this.cameraTarget.x += this.targetDirection.deltaX * this.targetSpeed * (this.zoom.value / 100);
+            this.cameraTarget.y += this.targetDirection.deltaY * this.targetSpeed * (this.zoom.value / 100);
+        } else {
+            const x = this.selectedPoint.x - this.cameraTarget.x;
+            const y = this.selectedPoint.y - this.cameraTarget.y;
+            const vec = new Vector2(x, y);
+            const length = vec.getLength();
+
+            if (length > this.targetSpeed) {
+                vec.normalize().scale(this.targetSpeed);
+                this.cameraTarget.x += vec.x;
+                this.cameraTarget.y += vec.y;
+            } else {
+                this.cameraTarget.x = this.selectedPoint.x;
+                this.cameraTarget.y = this.selectedPoint.y;
+                this.selectedPoint = null;
+            }
+        }
 
         if (this.borders.setted) {
             if (this.cameraTarget.x > this.borders.x + this.borders.width) {
@@ -113,23 +138,20 @@ export default class CameraController {
     }
 
     private moveCamera() {
-        const x = this.cameraTarget.x - this.cameraPosition.x;
-        const y = this.cameraTarget.y - this.cameraPosition.y;
+        const vec = new Vector2(
+            this.cameraTarget.x - this.cameraPosition.x,
+            this.cameraTarget.y - this.cameraPosition.y
+        );
 
-        const vec = new Vector2(x, y);
         const length = vec.getLength();
-
-        if (length > this.cameraSpeed) {
-            vec.normalize().scale(this.cameraSpeed);
+        if (length > 1) {
+            vec.normalize().scale(length * 0.2);
             this.cameraPosition.x += vec.x;
             this.cameraPosition.y += vec.y;
         } else {
             this.cameraPosition.x = this.cameraTarget.x;
             this.cameraPosition.y = this.cameraTarget.y;
         }
-
-        // this.cameraPosition.x = this.cameraTarget.x;
-        // this.cameraPosition.y = this.cameraTarget.y;
     }
 
     private zoomCamera() {
@@ -142,5 +164,11 @@ export default class CameraController {
         }
 
         this.cameraPosition.z = this.zoom.value;
+    }
+
+    public moveTo(point: Point2) {
+        this.targetDirection.deltaX = 0;
+        this.targetDirection.deltaY = 0;
+        this.selectedPoint = point;
     }
 }

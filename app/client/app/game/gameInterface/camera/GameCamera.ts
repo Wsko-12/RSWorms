@@ -1,7 +1,7 @@
 import { PerspectiveCamera } from 'three';
 import { EConstants, ELayersZ, EWorldSizes } from '../../../../../ts/enums';
 import { TLoopCallback } from '../../../../../ts/types';
-import { Point3 } from '../../../../utils/geometry';
+import { Point2, Point3 } from '../../../../utils/geometry';
 import CameraController from './controller/CameraController';
 
 export default class GameCamera {
@@ -32,4 +32,8 @@ export default class GameCamera {
         this.camera.position.set(this.position.x, this.position.y, this.position.z);
         this.camera.lookAt(this.target.x, this.target.y, this.target.z);
     };
+
+    public moveTo(point: Point2) {
+        this.controller.moveTo(point);
+    }
 }
