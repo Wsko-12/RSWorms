@@ -1,3 +1,4 @@
+import { Point2, Vector2 } from '../../../../../utils/geometry';
 import CameraController from './CameraController';
 
 export default class CameraControllerHandler {
@@ -41,9 +42,9 @@ export default class CameraControllerHandler {
     private mouseMove: (e: MouseEvent) => void;
     private mouseUp: (e: MouseEvent) => void;
 
-    // private touchStart: (e: TouchEvent) => void;
-    // private touchMove: (e: TouchEvent) => void;
-    // private touchEnd: (e: TouchEvent) => void;
+    private touchStart: (e: TouchEvent) => void;
+    private touchMove: (e: TouchEvent) => void;
+    private touchEnd: (e: TouchEvent) => void;
 
     constructor(controller: CameraController) {
         this.controller = controller;
@@ -164,22 +165,115 @@ export default class CameraControllerHandler {
             }
         };
 
-        // this.touchStart = (e: TouchEvent): void => {
-        //     e.preventDefault();
-        //     this.touch.timestamp = e.timeStamp;
-        //     this.touch.x = e.touches[0].clientX;
-        //     this.touch.y = e.touches[0].clientY;
-        //     if (e.touches.length === 1) {
-        //         this.touch.clicked = true;
-        //         this.touch.double = false;
-        //     }
-        //     if (e.touches.length > 1) {
-        //         this.touch.clicked = false;
-        //         this.touch.double = true;
-        //         this.touch.x2 = e.touches[1].clientX;
-        //         this.touch.y2 = e.touches[1].clientY;
-        //     }
-        // };
+        this.touchStart = (e: TouchEvent): void => {
+            e.preventDefault();
+            this.touch.timestamp = e.timeStamp;
+            this.touch.x = e.touches[0].clientX;
+            this.touch.y = e.touches[0].clientY;
+            if (e.touches.length === 1) {
+                this.touch.clicked = true;
+                this.touch.double = false;
+            }
+            if (e.touches.length > 1) {
+                this.touch.clicked = false;
+                this.touch.double = true;
+                this.touch.x2 = e.touches[1].clientX;
+                this.touch.y2 = e.touches[1].clientY;
+            }
+        };
+
+        this.touchMove = (e: TouchEvent): void => {
+            e.preventDefault();
+
+            if (this.touch.clicked) {
+                let deltaX = e.touches[0].clientX - this.touch.x;
+                let deltaY = e.touches[0].clientY - this.touch.y;
+
+                this.touch.x = e.touches[0].clientX;
+                this.touch.y = e.touches[0].clientY;
+
+                if (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10) {
+                    this.touch.moved = true;
+                }
+                deltaX /= window.innerWidth;
+                deltaY /= window.innerHeight;
+
+                this.controller.targetDirection.deltaX = -deltaX * 10;
+                this.controller.targetDirection.deltaY = deltaY * 10;
+            }
+            if (this.touch.double) {
+                const vectorA = new Vector2(e.touches[0].clientX - this.touch.x, e.touches[0].clientY - this.touch.y);
+                const vectorB = new Vector2(e.touches[1].clientX - this.touch.x2, e.touches[1].clientY - this.touch.y2);
+
+                if (vectorA.getLength() > 10 || vectorB.getLength() > 10) {
+                    this.touch.moved = true;
+                }
+
+                vectorA.normalize();
+                vectorB.normalize();
+
+                const dot = vectorA.dotProduct(vectorB);
+
+                if (dot < 0.75) {
+                    //pitch
+                    const pointABefore = new Point2(this.touch.x, this.touch.y);
+                    const pointAAfter = new Point2(e.touches[0].clientX, e.touches[0].clientY);
+
+                    const pointBBefore = new Point2(this.touch.x2, this.touch.y2);
+                    const pointBAfter = new Point2(e.touches[1].clientX, e.touches[1].clientY);
+
+                    const distanceBefore = pointABefore.getDistanceToPoint(pointBBefore);
+                    const distanceAfter = pointAAfter.getDistanceToPoint(pointBAfter);
+
+                    const delta = distanceAfter - distanceBefore;
+                    this.controller.zoom.delta += -(delta / Math.max(window.innerWidth, window.innerHeight)) * 100;
+                } else {
+                    // let deltaX = (e.touches[1].clientX - this.touch.x2) | (e.touches[0].clientX - this.touch.x);
+                    // let deltaY = (e.touches[1].clientY - this.touch.y2) | (e.touches[0].clientY - this.touch.y);
+                    // deltaX /= window.innerWidth;
+                    // deltaY /= window.innerHeight;
+                    // this._controller.cameraAngles.deltaAlpha += deltaX * this._controller.speed;
+                    // this._controller.cameraAngles.deltaTetha += deltaY * this._controller.speed;
+                }
+
+                this.touch.x = e.touches[0].clientX;
+                this.touch.y = e.touches[0].clientY;
+                this.touch.x2 = e.touches[1].clientX;
+                this.touch.y2 = e.touches[1].clientY;
+            }
+        };
+
+        this.touchEnd = (e: TouchEvent): void => {
+            e.preventDefault();
+            if (e.touches.length === 0) {
+                if (e.timeStamp - this.touch.timestamp < 200 && !this.touch.moved) {
+                    if (this.touch.clicked) {
+                        // const event = CameraEventsHandler.createPointerEvent(ECustomEvents.click, [this.touch.x, this.touch.y]);
+                        // this._eventHandler?.dispatchEvent(event);
+                    }
+                    if (this.touch.double) {
+                        //don't use it better
+                        // console.log('context click');
+                    }
+                }
+
+                this.touch.clicked = false;
+                this.touch.double = false;
+                this.touch.moved = false;
+            } else if (e.touches.length === 1) {
+                this.touch.x = e.touches[0].clientX;
+                this.touch.y = e.touches[0].clientY;
+                this.touch.clicked = true;
+                this.touch.double = false;
+            } else {
+                this.touch.clicked = false;
+                this.touch.double = true;
+                this.touch.x = e.touches[0].clientX;
+                this.touch.y = e.touches[0].clientY;
+                this.touch.x2 = e.touches[1].clientX;
+                this.touch.y2 = e.touches[1].clientY;
+            }
+        };
     }
 
     public setEventsHandler(element: HTMLElement) {
@@ -197,9 +291,9 @@ export default class CameraControllerHandler {
             this.handleElement.addEventListener('mouseup', this.mouseUp);
             this.handleElement.addEventListener('mouseleave', this.mouseUp);
 
-            // this.handleElement.addEventListener('touchmove', this.touchMove);
-            // this.handleElement.addEventListener('touchstart', this.touchStart);
-            // this.handleElement.addEventListener('touchend', this.touchEnd);
+            this.handleElement.addEventListener('touchmove', this.touchMove);
+            this.handleElement.addEventListener('touchstart', this.touchStart);
+            this.handleElement.addEventListener('touchend', this.touchEnd);
         }
     }
 }
