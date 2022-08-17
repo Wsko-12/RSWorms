@@ -1,7 +1,7 @@
 import { Scene } from 'three';
 import { TLoopCallback } from '../../../../../ts/types';
 import WorldMap from '../worldMap/WorldMap';
-import Entity from './EntityAbstract';
+import Entity from './Entity';
 import Worm from './Worm';
 
 export default class EntityManager {
