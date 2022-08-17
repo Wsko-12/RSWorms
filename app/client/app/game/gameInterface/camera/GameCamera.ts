@@ -1,10 +1,11 @@
 import { PerspectiveCamera } from 'three';
+import { EConstants, ELayersZ, EWorldSizes } from '../../../../../ts/enums';
 import { TLoopCallback } from '../../../../../ts/types';
 import { Point3 } from '../../../../utils/geometry';
 import CameraController from './controller/CameraController';
 
 export default class GameCamera {
-    private camera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 100, 5000);
+    private camera = new PerspectiveCamera(EConstants.cameraFov, window.innerWidth / window.innerHeight, 1, 5000);
     private position = new Point3(0, 0, 5);
     private target = new Point3(0, 0, 0);
     private controller = new CameraController(this.position, this.target);
@@ -19,6 +20,11 @@ export default class GameCamera {
 
     public setBorders(x: number, y: number, width: number, height: number) {
         this.controller.setBorders(x, y, width, height);
+    }
+
+    public setMaxCameraZoom(worldSize: EWorldSizes) {
+        this.camera.far = worldSize + ELayersZ.bg + 20;
+        this.controller.setMaxCameraZoom(worldSize);
     }
 
     public update: TLoopCallback = (time) => {

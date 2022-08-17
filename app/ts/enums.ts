@@ -18,6 +18,7 @@ export const enum EProportions {
 
 export const enum EConstants {
     bgScale = 4,
+    cameraFov = 45,
 }
 
 export const enum ELayersZ {

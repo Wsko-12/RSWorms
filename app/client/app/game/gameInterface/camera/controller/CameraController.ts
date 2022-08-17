@@ -1,3 +1,4 @@
+import { EConstants, EWorldSizes } from '../../../../../../ts/enums';
 import { TLoopCallback } from '../../../../../../ts/types';
 import { Point3 } from '../../../../../utils/geometry';
 import CameraControllerHandler from './CameraControllerHandler';
@@ -15,12 +16,13 @@ export default class CameraController {
         y: 0,
         width: 0,
         height: 0,
+        worldSize: EWorldSizes.small,
     };
 
     public zoom = {
-        value: 2000,
-        max: 2000,
-        min: 10,
+        value: EWorldSizes.small,
+        max: EWorldSizes.small,
+        min: 150,
         delta: 0,
         speed: 1,
     };
@@ -36,6 +38,12 @@ export default class CameraController {
         this.cameraTarget.x = 512;
         this.cameraTarget.y = 256;
         this.cameraPosition.z = this.zoom.value;
+    }
+
+    public setMaxCameraZoom(worldSize: EWorldSizes) {
+        this.zoom.value = worldSize;
+        this.zoom.max = worldSize;
+        this.borders.worldSize = worldSize;
     }
 
     public setBorders(x: number, y: number, width: number, height: number) {
@@ -69,7 +77,7 @@ export default class CameraController {
         this.handler.setEventsHandler(element);
     }
 
-    public update: TLoopCallback = (time) => {
+    public update: TLoopCallback = () => {
         this.zoomCamera();
         this.moveTarget();
         this.moveCamera();
@@ -95,6 +103,12 @@ export default class CameraController {
                 this.cameraTarget.y = this.borders.y;
             }
         }
+
+        const minY = this.zoom.value * Math.tan((EConstants.cameraFov / 2) * (Math.PI / 180));
+
+        if (this.cameraTarget.y < minY) {
+            this.cameraTarget.y = minY;
+        }
     }
 
     private moveCamera() {
@@ -104,12 +118,13 @@ export default class CameraController {
 
     private zoomCamera() {
         this.zoom.value += this.zoom.delta * this.zoom.speed;
-        this.cameraPosition.z = this.zoom.value;
         if (this.zoom.value > this.zoom.max) {
             this.zoom.value = this.zoom.max;
         }
         if (this.zoom.value < this.zoom.min) {
             this.zoom.value = this.zoom.min;
         }
+
+        this.cameraPosition.z = this.zoom.value;
     }
 }
