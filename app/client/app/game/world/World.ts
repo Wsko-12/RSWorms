@@ -1,6 +1,8 @@
 import { Scene } from 'three';
 import { IStartGameOptions } from '../../../../ts/interfaces';
+import { TLoopCallback } from '../../../../ts/types';
 import Background from './background/Background';
+import EntityManager from './entity/EntityManager';
 import WorldMap from './worldMap/WorldMap';
 
 export default class World {
@@ -8,6 +10,7 @@ export default class World {
     private background = new Background();
     private worldMap = new WorldMap();
     private options: IStartGameOptions;
+    entityManager = new EntityManager(this.mainScene);
     constructor(options: IStartGameOptions) {
         this.options = options;
     }
@@ -15,6 +18,7 @@ export default class World {
     public async init() {
         this.background.init(this.options.worldSize);
         await this.worldMap.init(this.options);
+        this.entityManager.setWorldMap(this.worldMap);
         return true;
     }
 
@@ -32,4 +36,8 @@ export default class World {
     public getMainScene() {
         return this.mainScene;
     }
+
+    public update: TLoopCallback = (time) => {
+        this.entityManager.update(time);
+    };
 }

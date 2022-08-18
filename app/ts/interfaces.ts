@@ -1,4 +1,5 @@
 import Loop from '../client/app/game/loop/Loop';
+import { Vector2 } from '../client/utils/geometry';
 import { EMapPacksNames, EWorldSizes } from './enums';
 
 export interface IStartGameOptions {
@@ -16,4 +17,10 @@ export interface IGMLoops {
     paused: boolean;
     timestamp: number;
     all: Record<string, Loop>;
+}
+
+export interface IPhysics {
+    velocity: Vector2;
+    g: number;
+    friction: number;
 }

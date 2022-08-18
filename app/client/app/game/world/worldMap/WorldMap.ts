@@ -10,6 +10,12 @@ export default class WorldMap {
     private canvas = this.createCanvas();
     private random = new Random();
     private renderedMap: HTMLImageElement | null = null;
+    private mapMatrix: number[][] = [[]];
+    private sizes = {
+        world: 0,
+        width: 0,
+        height: 0,
+    };
 
     private createCanvas() {
         const element = document.createElement('canvas');
@@ -27,9 +33,16 @@ export default class WorldMap {
     public async init(options: IStartGameOptions) {
         Perlin.noiseSeed(options.seed * 1000000);
         this.random = new Random(options.seed);
+
         const canvas = this.canvas.element;
         const width = options.worldSize * EProportions.mapWidthToHeight;
         const height = options.worldSize;
+
+        this.sizes = {
+            world: options.worldSize,
+            width,
+            height,
+        };
         canvas.width = width;
         canvas.height = height;
 
@@ -57,6 +70,14 @@ export default class WorldMap {
 
     public getObject3D() {
         return this.object3D;
+    }
+
+    public getSizes() {
+        return { ...this.sizes };
+    }
+
+    public getMapMatrix() {
+        return this.mapMatrix;
     }
 
     private clearCanvas() {
@@ -108,9 +129,10 @@ export default class WorldMap {
                 ctx.drawImage(groundImage, 0, 0, width, height);
 
                 this.drawGrass(ctx, maskMatrix);
-                // const mapData = ctx.getImageData(0,0, this.size * this.widthInc, this.size).data;
-                // const mapMatrix = this.imageDataToMatrix(mapData);
-                // this.matrix = mapMatrix;
+
+                const mapData = ctx.getImageData(0, 0, width, height).data;
+                const mapMatrix = this.imageDataToMatrix(mapData, width, height).reverse();
+                this.mapMatrix = mapMatrix;
 
                 const mapRenderURl = element.toDataURL();
                 this.renderedMap = new Image();
@@ -268,12 +290,12 @@ export default class WorldMap {
         });
     }
 
-    private getObjectPlace = (
-        matrix: number[][],
-        width: number,
-        height: number,
-        attempt = 5
-    ): { x: number; y: number } => {
+    public getObjectPlace = (matrix = this.mapMatrix, width = 0, height = 0, attempt = 5): { x: number; y: number } => {
+        if (!width && this.sizes) {
+            width = this.sizes.width;
+            height = this.sizes.height;
+        }
+
         const rand = this.random.get();
         //divide map by parts;
         const parts = 32;
