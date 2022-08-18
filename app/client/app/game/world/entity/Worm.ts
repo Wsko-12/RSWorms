@@ -21,7 +21,7 @@ function drawVector(start: Point2, end: Point2) {
     const positions = line.geometry.attributes.position.array as Array<number>;
     positions[0] = start.x;
     positions[1] = start.y;
-    positions[3] = end.y;
+    positions[3] = end.x;
     positions[4] = end.y;
     line.geometry.attributes.position.needsUpdate = true;
 }
@@ -70,6 +70,9 @@ export default class Worm extends Entity {
         // this.stable = false;
         const v = this.physics.velocity;
 
+        const clone = v.clone().normalize().scale(50).setStart(this.position);
+        drawVector(clone.start, clone.end);
+
         v.setStart(this.position);
         const collision = this.checkCollision(matrix, this.physics.velocity, this.radiusUnitAngle * 2);
 
@@ -88,7 +91,6 @@ export default class Worm extends Entity {
         newVec.add(v.normalize());
 
         newVec.setStart(this.position);
-
 
         // const oldX = newVec.x;
         // const newX = 1 / oldX;
