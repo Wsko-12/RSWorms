@@ -1,5 +1,5 @@
 import { Mesh, MeshBasicMaterial, NearestFilter, Object3D, PlaneBufferGeometry, Texture } from 'three';
-import { EProportions } from '../../../../../ts/enums';
+import { ELayersZ, EProportions } from '../../../../../ts/enums';
 import { IStartGameOptions } from '../../../../../ts/interfaces';
 import Perlin from '../../../../utils/p5/Perlin';
 import Random from '../../../../utils/Random';
@@ -63,7 +63,7 @@ export default class WorldMap {
             alphaTest: 0.5,
         });
         const object = new Mesh(geometry, material);
-        object.position.set(width / 2, height / 2, 0);
+        object.position.set(width / 2, height / 2, ELayersZ.map);
         this.object3D = object;
         return true;
     }

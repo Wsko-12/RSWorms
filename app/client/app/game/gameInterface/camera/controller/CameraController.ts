@@ -1,12 +1,13 @@
+import { EConstants, EWorldSizes } from '../../../../../../ts/enums';
 import { TLoopCallback } from '../../../../../../ts/types';
-import { Point3 } from '../../../../../utils/geometry';
+import { Point2, Point3, Vector2 } from '../../../../../utils/geometry';
 import CameraControllerHandler from './CameraControllerHandler';
 
 export default class CameraController {
     private cameraPosition: Point3;
     private cameraTarget: Point3;
     private handler = new CameraControllerHandler(this);
-    public speed = 50;
+    public targetSpeed = 50;
     private smooth = 0.8;
 
     public borders = {
@@ -15,12 +16,13 @@ export default class CameraController {
         y: 0,
         width: 0,
         height: 0,
+        worldSize: EWorldSizes.small,
     };
 
     public zoom = {
-        value: 2000,
-        max: 2000,
-        min: 10,
+        value: EWorldSizes.small,
+        max: EWorldSizes.small,
+        min: 150,
         delta: 0,
         speed: 1,
     };
@@ -30,12 +32,26 @@ export default class CameraController {
         deltaY: 0,
     };
 
+    private targetPoint: Point2 | null = null;
+
     constructor(camPosition: Point3, camTarget: Point3) {
         this.cameraPosition = camPosition;
         this.cameraTarget = camTarget;
         this.cameraTarget.x = 512;
         this.cameraTarget.y = 256;
         this.cameraPosition.z = this.zoom.value;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyC') {
+                this.moveTo(new Point2(0, 0));
+            }
+        });
+    }
+
+    public setMaxCameraZoom(worldSize: EWorldSizes) {
+        this.zoom.value = worldSize;
+        this.zoom.max = worldSize;
+        this.borders.worldSize = worldSize;
     }
 
     public setBorders(x: number, y: number, width: number, height: number) {
@@ -69,7 +85,7 @@ export default class CameraController {
         this.handler.setEventsHandler(element);
     }
 
-    public update: TLoopCallback = (time) => {
+    public update: TLoopCallback = () => {
         this.zoomCamera();
         this.moveTarget();
         this.moveCamera();
@@ -77,8 +93,26 @@ export default class CameraController {
     };
 
     private moveTarget() {
-        this.cameraTarget.x += this.targetDirection.deltaX * this.speed * (this.zoom.value / 100);
-        this.cameraTarget.y += this.targetDirection.deltaY * this.speed * (this.zoom.value / 100);
+        if (!this.targetPoint || this.targetDirection.deltaX || this.targetDirection.deltaY) {
+            this.targetPoint = null;
+            this.cameraTarget.x += this.targetDirection.deltaX * this.targetSpeed * (this.zoom.value / 100);
+            this.cameraTarget.y += this.targetDirection.deltaY * this.targetSpeed * (this.zoom.value / 100);
+        } else {
+            const x = this.targetPoint.x - this.cameraTarget.x;
+            const y = this.targetPoint.y - this.cameraTarget.y;
+            const vec = new Vector2(x, y);
+            const length = vec.getLength();
+
+            if (length > this.targetSpeed) {
+                vec.normalize().scale(this.targetSpeed);
+                this.cameraTarget.x += vec.x;
+                this.cameraTarget.y += vec.y;
+            } else {
+                this.cameraTarget.x = this.targetPoint.x;
+                this.cameraTarget.y = this.targetPoint.y;
+                this.targetPoint = null;
+            }
+        }
 
         if (this.borders.setted) {
             if (this.cameraTarget.x > this.borders.x + this.borders.width) {
@@ -95,21 +129,46 @@ export default class CameraController {
                 this.cameraTarget.y = this.borders.y;
             }
         }
+
+        const minY = this.zoom.value * Math.tan((EConstants.cameraFov / 2) * (Math.PI / 180));
+
+        if (this.cameraTarget.y < minY) {
+            this.cameraTarget.y = minY;
+        }
     }
 
     private moveCamera() {
-        this.cameraPosition.x = this.cameraTarget.x;
-        this.cameraPosition.y = this.cameraTarget.y;
+        const vec = new Vector2(
+            this.cameraTarget.x - this.cameraPosition.x,
+            this.cameraTarget.y - this.cameraPosition.y
+        );
+
+        const length = vec.getLength();
+        if (length > 1) {
+            vec.normalize().scale(length * 0.2);
+            this.cameraPosition.x += vec.x;
+            this.cameraPosition.y += vec.y;
+        } else {
+            this.cameraPosition.x = this.cameraTarget.x;
+            this.cameraPosition.y = this.cameraTarget.y;
+        }
     }
 
     private zoomCamera() {
         this.zoom.value += this.zoom.delta * this.zoom.speed;
-        this.cameraPosition.z = this.zoom.value;
         if (this.zoom.value > this.zoom.max) {
             this.zoom.value = this.zoom.max;
         }
         if (this.zoom.value < this.zoom.min) {
             this.zoom.value = this.zoom.min;
         }
+
+        this.cameraPosition.z = this.zoom.value;
+    }
+
+    public moveTo(point: Point2) {
+        this.targetDirection.deltaX = 0;
+        this.targetDirection.deltaY = 0;
+        this.targetPoint = point;
     }
 }

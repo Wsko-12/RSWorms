@@ -1,4 +1,5 @@
 import { Scene } from 'three';
+import { EWorldSizes } from '../../../../ts/enums';
 import { TLoopCallback } from '../../../../ts/types';
 import GameCamera from './camera/GameCamera';
 import Renderer from './renderer/Renderer';
@@ -20,6 +21,10 @@ export default class GameInterface {
 
     public setCameraBorders(x: number, y: number, width: number, height: number) {
         this.camera.setBorders(x, y, width, height);
+    }
+
+    public setCameraMaxZoom(worldSize: EWorldSizes) {
+        this.camera.setMaxCameraZoom(worldSize);
     }
 
     public getMainHandler() {

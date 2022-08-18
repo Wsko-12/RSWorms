@@ -36,6 +36,7 @@ export default class GameManager {
         const width = options.worldSize * EProportions.mapWidthToHeight;
         const height = options.worldSize;
         this.interface.setCameraBorders(0, 0, width, height);
+        this.interface.setCameraMaxZoom(options.worldSize);
 
         this.start();
     }
