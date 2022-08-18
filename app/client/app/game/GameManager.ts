@@ -27,6 +27,7 @@ export default class GameManager {
                 update: new Loop(60, (time) => {
                     this.interface.updateLoop(time);
                     this.world.update(time);
+                    this.IOManager.update(time);
                 }),
             },
         };
