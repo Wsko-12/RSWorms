@@ -1,4 +1,3 @@
-import { Vector2 } from '../../../utils/geometry';
 import GameInterface from '../gameInterface/GameInterface';
 import World from '../world/World';
 
@@ -34,7 +33,6 @@ export default class IOManager {
                 if (delta > spaceDelay) {
                     timer = jump();
                 } else {
-                    console.log('double');
                     clearTimeout(timer);
                     entityManager.selectedWorm?.jump(true);
                 }

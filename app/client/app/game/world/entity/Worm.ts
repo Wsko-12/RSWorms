@@ -9,8 +9,8 @@ export default class Worm extends Entity {
         backflip: new Vector2(0.2, 1).normalize().scale(8),
     };
 
-    constructor(scene: Scene, x = 0, y = 0) {
-        super(scene, 20, x, y);
+    constructor(x = 0, y = 0) {
+        super(20, x, y);
         // this.physics.friction = 0.1;
         const geometry = new CircleBufferGeometry(this.radius, 120);
         const material = new MeshBasicMaterial({ color: 0xc48647, transparent: true, opacity: 0.5 });

@@ -30,7 +30,7 @@ export default class EntityManager {
     public createWorm() {
         if (this.worldMap) {
             const place = this.findPlace();
-            const worm = new Worm(this.mainScene, place.x, place.y);
+            const worm = new Worm(place.x, place.y);
             this.entities.push(worm);
             this.mainScene.add(worm.getObject3D());
             return worm;

@@ -1,20 +1,6 @@
-import { BufferGeometry, Line, LineBasicMaterial, Object3D, Scene, Vector3 } from 'three';
+import { Object3D } from 'three';
 import { IPhysics } from '../../../../../ts/interfaces';
 import { Point2, Vector2 } from '../../../../utils/geometry';
-
-const linePoints = [new Vector3(0, 0, 0), new Vector3(100, 100, 0)];
-const material = new LineBasicMaterial({ color: 0x0000ff });
-const geometry = new BufferGeometry().setFromPoints(linePoints);
-const line = new Line(geometry, material);
-
-function drawVector(start: Point2, end: Point2) {
-    const positions = line.geometry.attributes.position.array as Array<number>;
-    positions[0] = start.x;
-    positions[1] = start.y;
-    positions[3] = end.x;
-    positions[4] = end.y;
-    line.geometry.attributes.position.needsUpdate = true;
-}
 
 export default abstract class Entity {
     protected abstract object3D: Object3D;
@@ -38,14 +24,13 @@ export default abstract class Entity {
     protected physics: IPhysics = {
         velocity: new Vector2(0, 0),
         g: 0.25,
-        friction: 0.2,
+        friction: 0.1,
     };
 
-    constructor(scene: Scene, radius = 1, x = 0, y = 0) {
+    constructor(radius = 1, x = 0, y = 0) {
         this.position = new Point2(x, y);
         this.radius = radius;
         this.radiusUnitAngle = Math.asin(0.5 / this.radius) * 2;
-        scene.add(line);
     }
 
     public getObject3D() {
@@ -177,8 +162,6 @@ export default abstract class Entity {
         a.x += direction;
 
         v.add(a).normalize().scale(speed);
-        const clone = a.clone().normalize().scale(20).setStart(this.position);
-        drawVector(clone.start, clone.end);
 
         a.scale(0);
 
