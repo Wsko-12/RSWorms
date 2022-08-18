@@ -8,6 +8,7 @@ export default class EntityManager {
     private readonly mainScene: Scene;
     private worldMap: WorldMap | null = null;
     private entities: Entity[] = [];
+    currentWorm = new Worm(0, 0);
     constructor(mainScene: Scene) {
         this.mainScene = mainScene;
     }
@@ -28,9 +29,9 @@ export default class EntityManager {
     public createWorm() {
         if (this.worldMap) {
             const place = this.findPlace();
-            const worm = new Worm(place.x, place.y);
-            this.entities.push(worm);
-            this.mainScene.add(worm.getObject3D());
+            this.currentWorm = new Worm(place.x, place.y);
+            this.entities.push(this.currentWorm);
+            this.mainScene.add(this.currentWorm.getObject3D());
         }
     }
 

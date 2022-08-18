@@ -7,12 +7,14 @@ export default abstract class Entity {
     protected position: Point2;
     protected radius: number;
     protected radiusUnitAngle: number;
-    protected stable = false;
+    public stable: 'falling' | 'stable' | 'movingF' = 'falling';
+    protected fallingTime = 0;
     protected physics: IPhysics = {
         acceleration: new Vector2(0, 0),
         velocity: new Vector2(0, 0),
         g: 0.1,
         friction: 0.2,
+        maxAngle: 90,
     };
 
     constructor(radius = 1, x = 0, y = 0) {
@@ -27,10 +29,42 @@ export default abstract class Entity {
 
     public update(matrix: number[][]) {
         if (matrix) {
+            this.stateManager(matrix);
             this.gravity(matrix);
         }
 
         this.object3D.position.set(this.position.x, this.position.y, 0);
+    }
+
+    protected stateManager(matrix: number[][], radAngleShift = this.radiusUnitAngle) {
+        if (this.stable !== 'stable') return;
+
+        const vecAngle = -Math.PI / 2;
+        const PIhalf = Math.PI / 2;
+
+        const startAngle = vecAngle - PIhalf + radAngleShift;
+        const endAngle = vecAngle + PIhalf - radAngleShift;
+
+        const a = [];
+
+        for (let ang = startAngle; ang < endAngle; ang += this.radiusUnitAngle) {
+            const x = this.position.x + this.radius * 1.1 * Math.cos(ang);
+            const y = this.position.y + this.radius * 1.1 * Math.sin(ang);
+            const iX = Math.floor(x);
+            const iY = Math.floor(y);
+
+            a.push(matrix[iY][iX] === 0);
+        }
+
+        if (a.every((el) => el)) {
+            if (this.fallingTime === 0) {
+                this.stable = 'movingF';
+                this.fallingTime = performance.now();
+            } else if (this.fallingTime > 100) {
+                // console.log('too long')
+                this.stable = 'falling';
+            }
+        } else this.fallingTime = 0;
     }
 
     protected checkCollision(matrix: number[][], vec: Vector2, radAngleShift = this.radiusUnitAngle) {
@@ -79,10 +113,10 @@ export default abstract class Entity {
     }
 
     protected gravity(matrix: number[][]) {
-        if (this.stable) {
+        if (this.stable === 'stable') {
             return;
         }
-
+        // console.log('falling');
         const acc = this.physics.acceleration.clone();
         acc.y -= this.physics.g;
         const vel = this.physics.velocity.clone();
@@ -90,7 +124,7 @@ export default abstract class Entity {
 
         vel.setStart(this.position);
 
-        this.stable = false;
+        // this.stable = 'falling';
 
         this.physics.acceleration.y = 0;
         this.physics.acceleration.x = 0;
@@ -115,9 +149,9 @@ export default abstract class Entity {
         reflectedVector.setStart(this.position);
 
         this.physics.velocity = reflectedVector;
-        if (this.physics.velocity.getLength() < 0.01) {
+        if (this.physics.velocity.y < 0.1) {
             this.physics.acceleration.y = 0;
-            this.stable = true;
+            this.stable = 'stable';
         }
     }
 }

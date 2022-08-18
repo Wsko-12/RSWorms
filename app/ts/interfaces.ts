@@ -24,4 +24,6 @@ export interface IPhysics {
     velocity: Vector2;
     g: number;
     friction: number;
-};
+    maxAngle: number;
+    speed?: number;
+}

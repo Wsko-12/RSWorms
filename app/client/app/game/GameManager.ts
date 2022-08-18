@@ -2,6 +2,7 @@ import { EProportions } from '../../../ts/enums';
 import { IGMLoops, IStartGameOptions } from '../../../ts/interfaces';
 import AssetsManager from './assetsManager/AssetsManager';
 import GameInterface from './gameInterface/GameInterface';
+import IOManager from './IOManager/IOManager';
 import Loop from './loop/Loop';
 import World from './world/World';
 
@@ -10,9 +11,11 @@ export default class GameManager {
     private world: World;
     private loops: IGMLoops;
     private interface = new GameInterface();
+    private IOManager: IOManager;
     constructor(options: IStartGameOptions) {
         this.options = options;
         this.world = new World(options);
+        this.IOManager = new IOManager(this.interface, this.world);
         this.loops = {
             paused: false,
             timestamp: Date.now(),

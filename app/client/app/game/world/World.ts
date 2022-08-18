@@ -10,7 +10,7 @@ export default class World {
     private background = new Background();
     private worldMap = new WorldMap();
     private options: IStartGameOptions;
-    private entityManager = new EntityManager(this.mainScene);
+    entityManager = new EntityManager(this.mainScene);
     constructor(options: IStartGameOptions) {
         this.options = options;
     }
