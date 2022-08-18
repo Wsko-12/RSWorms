@@ -7,16 +7,16 @@ import Worm from './Worm';
 export default class EntityManager {
     private readonly mainScene: Scene;
     private worldMap: WorldMap | null = null;
+    public selectedWorm: Worm | null = null;
     private entities: Entity[] = [];
-    currentWorm: Worm;
     constructor(mainScene: Scene) {
         this.mainScene = mainScene;
-        this.currentWorm = new Worm(this.mainScene, 0, 0);
     }
 
     public setWorldMap(worldMap: WorldMap) {
         this.worldMap = worldMap;
-        this.createWorm();
+        const worm = this.createWorm();
+        this.selectedWorm = worm;
     }
 
     private findPlace() {
@@ -30,10 +30,12 @@ export default class EntityManager {
     public createWorm() {
         if (this.worldMap) {
             const place = this.findPlace();
-            this.currentWorm = new Worm(this.mainScene, place.x, place.y);
-            this.entities.push(this.currentWorm);
-            this.mainScene.add(this.currentWorm.getObject3D());
+            const worm = new Worm(this.mainScene, place.x, place.y);
+            this.entities.push(worm);
+            this.mainScene.add(worm.getObject3D());
+            return worm;
         }
+        return null;
     }
 
     public update: TLoopCallback = () => {

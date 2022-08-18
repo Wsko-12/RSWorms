@@ -56,6 +56,7 @@ export class Vector2 {
     add(vec: Vector2) {
         this.x += vec.x;
         this.y += vec.y;
+        return this;
     }
 
     setStart(point: Point2) {

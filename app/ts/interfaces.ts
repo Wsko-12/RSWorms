@@ -20,10 +20,7 @@ export interface IGMLoops {
 }
 
 export interface IPhysics {
-    acceleration: Vector2;
     velocity: Vector2;
     g: number;
     friction: number;
-    maxAngle: number;
-    speed?: number;
 }
