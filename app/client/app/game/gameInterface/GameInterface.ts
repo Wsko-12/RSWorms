@@ -19,6 +19,10 @@ export default class GameInterface {
         this.view.build();
     }
 
+    public getGameCamera() {
+        return this.camera;
+    }
+
     public setCameraBorders(x: number, y: number, width: number, height: number) {
         this.camera.setBorders(x, y, width, height);
     }

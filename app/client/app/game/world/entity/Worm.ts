@@ -1,4 +1,4 @@
-import { CircleBufferGeometry, Mesh, MeshBasicMaterial, Object3D, Scene } from 'three';
+import { CircleBufferGeometry, Mesh, MeshBasicMaterial, Object3D } from 'three';
 import { Vector2 } from '../../../../utils/geometry';
 import Entity from './Entity';
 

@@ -37,6 +37,15 @@ export default abstract class Entity {
         return this.object3D;
     }
 
+    public getPositionPoint() {
+        return this.position.clone();
+    }
+
+    public isMoves() {
+        const { left, right } = this.movesOptions.flags;
+        return left || right;
+    }
+
     public update(matrix: number[][]) {
         if (matrix) {
             this.gravity(matrix);

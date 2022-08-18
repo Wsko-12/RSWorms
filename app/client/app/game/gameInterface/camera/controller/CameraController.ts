@@ -102,9 +102,10 @@ export default class CameraController {
             const y = this.targetPoint.y - this.cameraTarget.y;
             const vec = new Vector2(x, y);
             const length = vec.getLength();
+            const smooth = 0.25;
+            vec.scale(smooth);
 
-            if (length > this.targetSpeed) {
-                vec.normalize().scale(this.targetSpeed);
+            if (length > smooth) {
                 this.cameraTarget.x += vec.x;
                 this.cameraTarget.y += vec.y;
             } else {
