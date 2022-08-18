@@ -1,17 +1,41 @@
-import { CircleBufferGeometry, Mesh, MeshBasicMaterial, Object3D } from 'three';
-import { Vector2 } from '../../../../utils/geometry';
+import {
+    BufferGeometry,
+    CircleBufferGeometry,
+    Line,
+    LineBasicMaterial,
+    Mesh,
+    MeshBasicMaterial,
+    Object3D,
+    Scene,
+    Vector3,
+} from 'three';
+import { Point2, Vector2 } from '../../../../utils/geometry';
 import Entity from './Entity';
+
+const linePoints = [new Vector3(0, 0, 0), new Vector3(100, 100, 0)];
+const material = new LineBasicMaterial({ color: 0x0000ff });
+const geometry = new BufferGeometry().setFromPoints(linePoints);
+const line = new Line(geometry, material);
+
+function drawVector(start: Point2, end: Point2) {
+    const positions = line.geometry.attributes.position.array as Array<number>;
+    positions[0] = start.x;
+    positions[1] = start.y;
+    positions[3] = end.y;
+    positions[4] = end.y;
+    line.geometry.attributes.position.needsUpdate = true;
+}
 
 export default class Worm extends Entity {
     protected object3D: Object3D;
-    constructor(x = 0, y = 0) {
-        super(20, x, y);
+    constructor(scene: Scene, x = 0, y = 0) {
+        super(scene, 20, x, y);
+        scene.add(line);
         this.physics.friction = 0.1;
         const geometry = new CircleBufferGeometry(this.radius, 120);
         const material = new MeshBasicMaterial({ color: 0xc48647, transparent: true, opacity: 0.5 });
         this.object3D = new Mesh(geometry, material);
         this.object3D.position.set(x, y, 0);
-
         this.physics = {
             acceleration: new Vector2(0, 0),
             velocity: new Vector2(0, 0),
@@ -44,7 +68,6 @@ export default class Worm extends Entity {
         )
             return;
         // this.stable = false;
-
         const v = this.physics.velocity;
 
         v.setStart(this.position);
@@ -65,6 +88,7 @@ export default class Worm extends Entity {
         newVec.add(v.normalize());
 
         newVec.setStart(this.position);
+
 
         // const oldX = newVec.x;
         // const newX = 1 / oldX;

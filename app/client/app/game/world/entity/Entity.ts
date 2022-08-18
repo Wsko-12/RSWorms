@@ -1,4 +1,4 @@
-import { Object3D } from 'three';
+import { Object3D, Scene } from 'three';
 import { IPhysics } from '../../../../../ts/interfaces';
 import { Point2, Vector2 } from '../../../../utils/geometry';
 
@@ -17,7 +17,7 @@ export default abstract class Entity {
         maxAngle: 90,
     };
 
-    constructor(radius = 1, x = 0, y = 0) {
+    constructor(scene: Scene, radius = 1, x = 0, y = 0) {
         this.position = new Point2(x, y);
         this.radius = radius;
         this.radiusUnitAngle = Math.asin(0.5 / this.radius) * 2;
