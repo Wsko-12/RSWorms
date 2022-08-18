@@ -1,16 +1,23 @@
-import { Mesh, MeshBasicMaterial, NearestFilter, Object3D, PlaneBufferGeometry, Texture } from 'three';
+import { CanvasTexture, Mesh, MeshBasicMaterial, NearestFilter, Object3D, PlaneBufferGeometry, Texture } from 'three';
 import { ELayersZ, EProportions } from '../../../../../ts/enums';
 import { IStartGameOptions } from '../../../../../ts/interfaces';
 import Perlin from '../../../../utils/p5/Perlin';
 import Random from '../../../../utils/Random';
 import AssetsManager from '../../assetsManager/AssetsManager';
+import MapMatrix from './mapMatrix/MapMatrix';
 
 export default class WorldMap {
     private object3D: Object3D | null = null;
     private canvas = this.createCanvas();
     private random = new Random();
     private renderedMap: HTMLImageElement | null = null;
-    private mapMatrix: number[][] = [[]];
+    private updateMapMaskTexture = () => {
+        this.maskTexture.needsUpdate = true;
+    };
+
+    private mapMatrix = new MapMatrix([[]], this.updateMapMaskTexture);
+    private maskTexture = new CanvasTexture(this.mapMatrix.getCanvasElement());
+
     private sizes = {
         world: 0,
         width: 0,
@@ -53,15 +60,17 @@ export default class WorldMap {
 
         const geometry = new PlaneBufferGeometry(width, height);
         const texture = new Texture(this.renderedMap);
-
         // to disable pixels and create more smooth disable next line
         texture.magFilter = NearestFilter;
+        this.maskTexture.magFilter = NearestFilter;
 
         texture.needsUpdate = true;
         const material = new MeshBasicMaterial({
             map: texture,
             alphaTest: 0.5,
+            alphaMap: this.maskTexture,
         });
+
         const object = new Mesh(geometry, material);
         object.position.set(width / 2, height / 2, ELayersZ.map);
         this.object3D = object;
@@ -132,7 +141,7 @@ export default class WorldMap {
 
                 const mapData = ctx.getImageData(0, 0, width, height).data;
                 const mapMatrix = this.imageDataToMatrix(mapData, width, height).reverse();
-                this.mapMatrix = mapMatrix;
+                this.mapMatrix.setMatrix(mapMatrix);
 
                 const mapRenderURl = element.toDataURL();
                 this.renderedMap = new Image();
@@ -290,7 +299,12 @@ export default class WorldMap {
         });
     }
 
-    public getObjectPlace = (matrix = this.mapMatrix, width = 0, height = 0, attempt = 5): { x: number; y: number } => {
+    public getObjectPlace = (
+        matrix = this.mapMatrix.matrix,
+        width = 0,
+        height = 0,
+        attempt = 5
+    ): { x: number; y: number } => {
         if (!width && this.sizes) {
             width = this.sizes.width;
             height = this.sizes.height;
