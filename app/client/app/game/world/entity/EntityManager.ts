@@ -4,6 +4,8 @@ import WorldMap from '../worldMap/WorldMap';
 import Entity from './Entity';
 import Worm from './worm/Worm';
 
+let test = -80;
+
 export default class EntityManager {
     private readonly mainScene: Scene;
     private worldMap: WorldMap | null = null;
@@ -18,9 +20,10 @@ export default class EntityManager {
     }
 
     private findPlace() {
+        test += 80;
         if (this.worldMap) {
             const { width, height } = this.worldMap.getSizes();
-            return { x: width / 2, y: height };
+            return { x: width / 2 + test, y: height };
         }
         return { x: 0, y: 0 };
     }
@@ -40,7 +43,7 @@ export default class EntityManager {
         const matrix = this.worldMap?.getMapMatrix();
         if (matrix) {
             this.entities.forEach((entity) => {
-                entity.update(matrix, wind);
+                entity.update(matrix, this.entities, wind);
             });
         }
     };
