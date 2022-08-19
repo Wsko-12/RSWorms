@@ -21,6 +21,7 @@ export default class Worm extends Entity {
         super(removeEntityCallback, id, 20, x, y);
         this.currentWeapon = new Weapon();
         this.id = id;
+        this.physics.friction = 0.2;
         const geometry = new CircleBufferGeometry(this.radius, 120);
         const material = new MeshBasicMaterial({ color: 0xc48647, transparent: true, opacity: 0.5 });
         this.object3D = new Mesh(geometry, material);

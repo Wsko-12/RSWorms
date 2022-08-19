@@ -31,3 +31,10 @@ export interface IShootOptions {
     position: Point2;
     parentRadius: number;
 }
+
+export interface IExplosionOptions {
+    damage: number;
+    point: Point2;
+    radius: number;
+    kickForce: number;
+}

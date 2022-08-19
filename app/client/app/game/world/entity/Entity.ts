@@ -1,5 +1,5 @@
 import { Object3D } from 'three';
-import { IPhysics } from '../../../../../ts/interfaces';
+import { IExplosionOptions, IPhysics } from '../../../../../ts/interfaces';
 import { TRemoveEntityCallback } from '../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../utils/geometry';
 import MapMatrix from '../worldMap/mapMatrix/MapMatrix';
@@ -7,8 +7,8 @@ import Bullet from './worm/weapon/bullet/Bullet';
 
 export default abstract class Entity {
     protected abstract object3D: Object3D;
-    protected position: Point2;
-    protected radius: number;
+    public position: Point2;
+    public radius: number;
     protected radiusUnitAngle: number;
     protected stable = false;
     public id: string;
@@ -137,19 +137,13 @@ export default abstract class Entity {
             return;
         }
 
-        if (this instanceof Bullet) {
-            this.physics.velocity.x += wind;
-        }
-
         const vel = this.physics.velocity.clone();
         vel.y -= this.physics.g;
-
-        this.stable = false;
 
         const collision = this.checkCollision(mapMatrix, entities, vel);
 
         if (!collision) {
-            this.position.x += this instanceof Bullet ? vel.x : 0;
+            this.position.x += vel.x;
             this.position.y += vel.y;
             this.physics.velocity = vel;
             return;
@@ -171,12 +165,16 @@ export default abstract class Entity {
 
         if (this.physics.velocity.getLength() < 0.01) {
             this.physics.velocity.scale(0);
-            this.stable = true;
+            this.stable = false;
         }
     }
 
     protected handleCollision(mapMatrix: MapMatrix, entities: Entity[]) {
         return;
+    }
+
+    public setStable(flag: boolean) {
+        this.stable = flag;
     }
 
     public remove() {
@@ -236,5 +234,33 @@ export default abstract class Entity {
             this.movesOptions.a = newVec;
         }
         v.scale(0);
+    }
+
+    public acceptExplosion(mapMatrix: MapMatrix, entities: Entity[], options: IExplosionOptions) {
+        //mapMatrix and entities needs for example for barrels we create method explode
+        const vecConst = new Vector2(5, 5);
+        const vec = new Vector2(this.position.x - options.point.x, this.position.y - options.point.y);
+
+        const dist = vec.getLength() - this.radius;
+
+        const force = (options.radius - dist) / options.radius;
+        if (force <= 0) {
+            return;
+        }
+        vec.normalize().scale(force * options.kickForce);
+
+        if (options.point.x - this.position.x > 0) {
+            vecConst.x *= -1;
+        }
+        vecConst.scale(force);
+
+        // const normale = this.checkCollision(mapMatrix, entities, vec);
+        // if (normale) {
+        //     const speed = vec.getLength();
+        //     const newVec = new Vector2(normale.x, normale.y).normalize().scale(-1).scale(speed);
+        //     vec.add(newVec).normalize().scale(speed);
+        // }
+
+        this.push(vecConst);
     }
 }
