@@ -39,11 +39,11 @@ export default class EntityManager {
         return null;
     }
 
-    public update: TLoopCallback = () => {
+    public update = (time: number, wind: number) => {
         const matrix = this.worldMap?.getMapMatrix();
         if (matrix) {
             this.entities.forEach((entity) => {
-                entity.update(matrix, this.entities);
+                entity.update(matrix, this.entities, wind);
             });
         }
     };
