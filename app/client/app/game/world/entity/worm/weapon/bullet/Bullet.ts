@@ -16,8 +16,8 @@ export default class Bullet extends Entity {
         this.object3D.position.set(position.x, position.y, 0);
     }
 
-    protected handleCollision(mapMatrix: MapMatrix): void {
-        super.handleCollision(mapMatrix);
+    protected handleCollision(mapMatrix: MapMatrix, entities: Entity[]): void {
+        super.handleCollision(mapMatrix, entities);
         this.remove();
     }
 }
