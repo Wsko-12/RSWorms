@@ -148,10 +148,10 @@ export default abstract class Entity {
     }
 
     protected handleCollision(mapMatrix: MapMatrix) {
-
+        return;
     }
 
-    protected push(vec: Vector2) {
+    public push(vec: Vector2) {
         const { velocity } = this.physics;
         velocity.x += vec.x;
         velocity.y += vec.y;

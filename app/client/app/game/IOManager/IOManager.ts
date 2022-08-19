@@ -1,5 +1,6 @@
 import { TLoopCallback } from '../../../../ts/types';
 import GameInterface from '../gameInterface/GameInterface';
+import Bullet from '../world/entity/worm/weapon/bullet/Bullet';
 import World from '../world/World';
 import WormManager from './wormManager/WormManager';
 
@@ -24,21 +25,17 @@ export default class IOManager {
     private applyListeners() {
         document.addEventListener('keydown', (e) => {
             // here will be check isPlayerTurn()
-
-            /* if(e.code === 'shootKey'){
-                const bullet = this.wormManager.shoot();
-                this.world.mainScene.add(bullet.getObject3d)
-                this.world.entityManager.addEntity(bullet)
-                return;
-            }
-             */
-
             this.wormManager.handleEvent(e);
         });
 
         document.addEventListener('keyup', (e) => {
             // here will be check isPlayerTurn()
-            this.wormManager.handleEvent(e);
+            const result = this.wormManager.handleEvent(e);
+            if (result instanceof Bullet) {
+                const scene = this.world.getMainScene();
+                scene.add(result.getObject3D());
+                this.world.entityManager.addEntity(result);
+            }
         });
     }
 

@@ -2,7 +2,7 @@ import { Scene } from 'three';
 import { TLoopCallback } from '../../../../../ts/types';
 import WorldMap from '../worldMap/WorldMap';
 import Entity from './Entity';
-import Worm from './Worm';
+import Worm from './worm/Worm';
 
 export default class EntityManager {
     private readonly mainScene: Scene;
@@ -54,4 +54,8 @@ export default class EntityManager {
         const entity = this.entities.find((entity) => entity.id === id);
         return entity || null;
     };
+
+    public addEntity(entity: Entity) {
+        this.entities.push(entity);
+    }
 }
