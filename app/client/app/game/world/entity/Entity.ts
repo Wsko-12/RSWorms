@@ -3,6 +3,7 @@ import { IPhysics } from '../../../../../ts/interfaces';
 import { TRemoveEntityCallback } from '../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../utils/geometry';
 import MapMatrix from '../worldMap/mapMatrix/MapMatrix';
+import Bullet from './worm/weapon/bullet/Bullet';
 
 export default abstract class Entity {
     protected abstract object3D: Object3D;
@@ -53,9 +54,9 @@ export default abstract class Entity {
         return left || right;
     }
 
-    public update(matrix: MapMatrix) {
+    public update(matrix: MapMatrix, wind: number) {
         if (matrix) {
-            this.gravity(matrix);
+            this.gravity(matrix, wind);
             this.move(matrix);
         }
 
@@ -113,19 +114,22 @@ export default abstract class Entity {
         return collision ? new Vector2(responseX, responseY) : null;
     }
 
-    protected gravity(mapMatrix: MapMatrix) {
+    protected gravity(mapMatrix: MapMatrix, wind: number) {
         if (this.stable) {
             return;
+        }
+
+        if (this instanceof Bullet) {
+            this.physics.velocity.x += wind;
         }
 
         const vel = this.physics.velocity.clone();
         vel.y -= this.physics.g;
 
         this.stable = false;
-
         const collision = this.checkCollision(mapMatrix, vel);
         if (!collision) {
-            this.position.x += vel.x;
+            this.position.x += this instanceof Bullet ? vel.x : 0;
             this.position.y += vel.y;
             this.physics.velocity = vel;
             return;

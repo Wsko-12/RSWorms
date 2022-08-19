@@ -10,6 +10,7 @@ export default class World {
     private background = new Background();
     private worldMap = new WorldMap();
     private options: IStartGameOptions;
+    public wind = -0.5;
     entityManager = new EntityManager(this.mainScene);
     constructor(options: IStartGameOptions) {
         this.options = options;
@@ -37,7 +38,11 @@ export default class World {
         return this.mainScene;
     }
 
+    public changeWind() {
+        this.wind = (Math.random() - 0.5) * 2;
+    }
+
     public update: TLoopCallback = (time) => {
-        this.entityManager.update(time);
+        this.entityManager.update(time, this.wind);
     };
 }
