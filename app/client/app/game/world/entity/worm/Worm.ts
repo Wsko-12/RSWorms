@@ -47,6 +47,7 @@ export default class Worm extends Entity {
             angle: this.getAimAngle(),
             power: this.getPower(),
             position: this.position.clone(),
+            parentRadius: this.radius,
         };
 
         return this.currentWeapon.shoot(options, this.removeEntityCallback);
@@ -71,7 +72,7 @@ export default class Worm extends Entity {
         this.hp += hp;
     }
 
-    jump(double?: boolean) {
+    public jump(double?: boolean) {
         this.stable = false;
         const vec = double ? this.jumpVectors.backflip.clone() : this.jumpVectors.usual.clone();
         vec.x *= this.movesOptions.direction;

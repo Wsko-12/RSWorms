@@ -132,7 +132,6 @@ export default abstract class Entity {
         return collision ? new Vector2(responseX, responseY) : null;
     }
 
-
     protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
         if (this.stable) {
             return;
