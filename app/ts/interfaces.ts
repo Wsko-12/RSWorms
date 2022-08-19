@@ -29,4 +29,5 @@ export interface IShootOptions {
     angle: number;
     power: number;
     position: Point2;
+    parentRadius: number;
 }
