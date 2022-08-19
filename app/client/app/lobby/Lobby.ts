@@ -11,12 +11,12 @@ export default class Lobby {
         document.body.append(button);
         // button.onclick = () => {
         document.body.innerHTML = '';
-        // const seed = Math.random();
-        const seed = 0.6619390924511701;
+        const seed = Math.random();
+        // const seed = 0.6619390924511701;
         console.log('Seed: ', seed);
         this.startGameCallback({
-            mapTexturePackName: EMapPacksNames.moon,
-            worldSize: EWorldSizes.small,
+            mapTexturePackName: EMapPacksNames.candy,
+            worldSize: EWorldSizes.medium,
             seed,
             decor: {
                 count: EMapPacksDecorItems[EMapPacksNames.moon],
