@@ -1,6 +1,7 @@
 import { Object3D } from 'three';
 import { IPhysics } from '../../../../../ts/interfaces';
 import { Point2, Vector2 } from '../../../../utils/geometry';
+import MapMatrix from '../worldMap/mapMatrix/MapMatrix';
 
 export default abstract class Entity {
     protected abstract object3D: Object3D;
@@ -48,7 +49,7 @@ export default abstract class Entity {
         return left || right;
     }
 
-    public update(matrix: number[][]) {
+    public update(matrix: MapMatrix) {
         if (matrix) {
             this.gravity(matrix);
             this.move(matrix);
@@ -62,7 +63,8 @@ export default abstract class Entity {
         Object.assign(this.movesOptions.flags, flags);
     }
 
-    protected checkCollision(matrix: number[][], vec: Vector2, radAngleShift = this.radiusUnitAngle) {
+    protected checkCollision(mapMatrix: MapMatrix, vec: Vector2, radAngleShift = this.radiusUnitAngle) {
+        const { matrix } = mapMatrix;
         let responseX = 0;
         let responseY = 0;
 
@@ -107,7 +109,7 @@ export default abstract class Entity {
         return collision ? new Vector2(responseX, responseY) : null;
     }
 
-    protected gravity(matrix: number[][]) {
+    protected gravity(mapMatrix: MapMatrix) {
         if (this.stable) {
             return;
         }
@@ -117,13 +119,15 @@ export default abstract class Entity {
 
         this.stable = false;
 
-        const collision = this.checkCollision(matrix, vel);
+        const collision = this.checkCollision(mapMatrix, vel);
         if (!collision) {
             this.position.x += vel.x;
             this.position.y += vel.y;
             this.physics.velocity = vel;
             return;
         }
+
+        this.handleCollision(mapMatrix);
 
         //normal here isn't mean 'normalize'
         const normalSurface = collision.normalize().scale(1);
@@ -143,15 +147,18 @@ export default abstract class Entity {
         }
     }
 
+    protected handleCollision(mapMatrix: MapMatrix) {
+
+    }
+
     protected push(vec: Vector2) {
         const { velocity } = this.physics;
         velocity.x += vec.x;
         velocity.y += vec.y;
     }
 
-    protected move(matrix: number[][]) {
+    protected move(mapMatrix: MapMatrix) {
         // if worm fly
-        this.stable = false;
         if (this.physics.velocity.getLength() > 0.5) {
             return;
         }
@@ -160,6 +167,7 @@ export default abstract class Entity {
         if (!flags.left && !flags.right) {
             return;
         }
+        this.stable = false;
 
         // direction for worm jump and sprite
         if (flags.left && !flags.right) {
@@ -176,7 +184,7 @@ export default abstract class Entity {
 
         a.scale(0);
 
-        const collision = this.checkCollision(matrix, v);
+        const collision = this.checkCollision(mapMatrix, v);
         if (!collision) {
             this.position.x += v.x;
             this.position.y += v.y;
