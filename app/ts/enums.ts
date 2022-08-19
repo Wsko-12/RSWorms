@@ -1,9 +1,11 @@
 export enum EMapPacksNames {
     moon = 'moon',
+    candy = 'candy',
 }
 
 export enum EMapPacksDecorItems {
     moon = 13,
+    candy = 13,
 }
 
 export enum EWorldSizes {
