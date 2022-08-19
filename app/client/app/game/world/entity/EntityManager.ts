@@ -28,7 +28,7 @@ export default class EntityManager {
     public createWorm(id: string) {
         if (this.worldMap) {
             const place = this.findPlace();
-            const worm = new Worm(id, place.x, place.y);
+            const worm = new Worm(this.removeEntity, id, place.x, place.y);
             this.entities.push(worm);
             this.mainScene.add(worm.getObject3D());
             return worm;
@@ -58,4 +58,13 @@ export default class EntityManager {
     public addEntity(entity: Entity) {
         this.entities.push(entity);
     }
+
+    public removeEntity = (entity: Entity) => {
+        const object3D = entity.getObject3D();
+        this.mainScene.remove(object3D);
+        const index = this.entities.indexOf(entity);
+        if (index != -1) {
+            this.entities.splice(index, 1);
+        }
+    };
 }

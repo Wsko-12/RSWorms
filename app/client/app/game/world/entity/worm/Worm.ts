@@ -1,4 +1,6 @@
 import { CircleBufferGeometry, Mesh, MeshBasicMaterial, Object3D } from 'three';
+import { IShootOptions } from '../../../../../../ts/interfaces';
+import { TRemoveEntityCallback } from '../../../../../../ts/types';
 import { Vector2 } from '../../../../../utils/geometry';
 import Entity from '../Entity';
 import Weapon from './weapon/Weapon';
@@ -13,10 +15,11 @@ export default class Worm extends Entity {
     private aimAngle = 0;
     private power = 0;
     private deltaPower = 0.1;
-    private currentWeapon = new Weapon();
+    private currentWeapon: Weapon;
 
-    constructor(id: string, x = 0, y = 0, hp = 100) {
-        super(id, 20, x, y);
+    constructor(removeEntityCallback: TRemoveEntityCallback, id: string, x = 0, y = 0, hp = 100) {
+        super(removeEntityCallback, id, 20, x, y);
+        this.currentWeapon = new Weapon();
         this.id = id;
         const geometry = new CircleBufferGeometry(this.radius, 120);
         const material = new MeshBasicMaterial({ color: 0xc48647, transparent: true, opacity: 0.5 });
@@ -40,7 +43,13 @@ export default class Worm extends Entity {
     }
 
     public shoot() {
-        return this.currentWeapon.shoot({ angle: this.getAimAngle(), power: this.getPower(), position: this.position });
+        const options: IShootOptions = {
+            angle: this.getAimAngle(),
+            power: this.getPower(),
+            position: this.position.clone(),
+        };
+
+        return this.currentWeapon.shoot(options, this.removeEntityCallback);
     }
 
     public changeAngle(direction: number, speed: number) {

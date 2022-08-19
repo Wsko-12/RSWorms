@@ -1,5 +1,6 @@
 import { Object3D } from 'three';
 import { IPhysics } from '../../../../../ts/interfaces';
+import { TRemoveEntityCallback } from '../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../utils/geometry';
 import MapMatrix from '../worldMap/mapMatrix/MapMatrix';
 
@@ -10,6 +11,8 @@ export default abstract class Entity {
     protected radiusUnitAngle: number;
     protected stable = false;
     public id: string;
+
+    protected removeEntityCallback: TRemoveEntityCallback;
 
     public movesOptions = {
         flags: {
@@ -29,7 +32,8 @@ export default abstract class Entity {
         friction: 0.1,
     };
 
-    constructor(id: string, radius = 1, x = 0, y = 0) {
+    constructor(removeEntityCallback: TRemoveEntityCallback, id: string, radius = 1, x = 0, y = 0) {
+        this.removeEntityCallback = removeEntityCallback;
         this.id = id;
         this.position = new Point2(x, y);
         this.radius = radius;
@@ -149,6 +153,10 @@ export default abstract class Entity {
 
     protected handleCollision(mapMatrix: MapMatrix) {
         return;
+    }
+
+    public remove() {
+        this.removeEntityCallback(this);
     }
 
     public push(vec: Vector2) {

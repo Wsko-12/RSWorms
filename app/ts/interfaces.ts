@@ -1,5 +1,5 @@
 import Loop from '../client/app/game/loop/Loop';
-import { Vector2 } from '../client/utils/geometry';
+import { Point2, Vector2 } from '../client/utils/geometry';
 import { EMapPacksNames, EWorldSizes } from './enums';
 
 export interface IStartGameOptions {
@@ -23,4 +23,10 @@ export interface IPhysics {
     velocity: Vector2;
     g: number;
     friction: number;
+}
+
+export interface IShootOptions {
+    angle: number;
+    power: number;
+    position: Point2;
 }
