@@ -1,9 +1,8 @@
 import { Scene } from 'three';
 import { TLoopCallback } from '../../../../../ts/types';
 import WorldMap from '../worldMap/WorldMap';
-import Bullet from './Bullet';
 import Entity from './Entity';
-import Worm from './Worm';
+import Worm from './worm/Worm';
 
 export default class EntityManager {
     private readonly mainScene: Scene;
@@ -24,17 +23,6 @@ export default class EntityManager {
             return { x: width / 2, y: height };
         }
         return { x: 0, y: 0 };
-    }
-
-    public createBullet(bullet: Bullet) {
-        if (this.worldMap) {
-            // const place = this.findPlace();
-            // const bullet = new Bullet(1000, 2000);
-            this.entities.push(bullet);
-            this.mainScene.add(bullet.getObject3D());
-            return bullet;
-        }
-        return null;
     }
 
     public createWorm(id: string) {
@@ -66,4 +54,8 @@ export default class EntityManager {
         const entity = this.entities.find((entity) => entity.id === id);
         return entity || null;
     };
+
+    public addEntity(entity: Entity) {
+        this.entities.push(entity);
+    }
 }

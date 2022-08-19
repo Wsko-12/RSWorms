@@ -1,4 +1,4 @@
-import Worm from '../../world/entity/Worm';
+import Worm from '../../world/entity/worm/Worm';
 
 export default class WormManager {
     private controlledWorm: Worm | null = null;
@@ -48,10 +48,10 @@ export default class WormManager {
                 speed = 2;
             }
             if (e.code === 'ArrowUp') {
-                worm.changeAngle('up', speed);
+                worm.changeAngle(1, speed);
             }
             if (e.code === 'ArrowDown') {
-                worm.changeAngle('down', speed);
+                worm.changeAngle(-1, speed);
             }
         }
 
@@ -93,11 +93,7 @@ export default class WormManager {
         }
 
         if (e.code === 'Space') {
-            // добавить проверку выбрано ли оружие currentWeapon
-            return worm.releaseBullet();
-            // this.entityManager.createBullet(bullet);
+            return worm.shoot();
         }
     }
-
-    //public shoot(){}
 }

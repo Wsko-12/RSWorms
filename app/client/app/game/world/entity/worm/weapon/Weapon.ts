@@ -1,5 +1,5 @@
-import { Point2, Vector2 } from '../../../../utils/geometry';
-import Bullet from './Bullet';
+import { Point2, Vector2 } from '../../../../../../utils/geometry';
+import Bullet from './bullet/Bullet';
 
 export default class Weapon {
     shoot({ angle, power, position }: { angle: number; power: number; position: Point2 }) {

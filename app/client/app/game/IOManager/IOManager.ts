@@ -1,6 +1,6 @@
 import { TLoopCallback } from '../../../../ts/types';
 import GameInterface from '../gameInterface/GameInterface';
-import Bullet from '../world/entity/Bullet';
+import Bullet from '../world/entity/worm/weapon/bullet/Bullet';
 import World from '../world/World';
 import WormManager from './wormManager/WormManager';
 
@@ -34,7 +34,7 @@ export default class IOManager {
             if (result instanceof Bullet) {
                 const scene = this.world.getMainScene();
                 scene.add(result.getObject3D());
-                this.world.entityManager.createBullet(result);
+                this.world.entityManager.addEntity(result);
             }
         });
     }

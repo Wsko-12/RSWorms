@@ -1,6 +1,6 @@
 import { CircleBufferGeometry, Mesh, MeshBasicMaterial, Object3D } from 'three/src/Three';
-import { Point2 } from '../../../../utils/geometry';
-import Entity from './Entity';
+import { Point2 } from '../../../../../../../utils/geometry';
+import Entity from '../../../Entity';
 
 export default class Bullet extends Entity {
     protected object3D: Object3D;
