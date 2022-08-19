@@ -40,7 +40,7 @@ export class Vector2 {
         vector.x = rotatedX;
         vector.y = rotatedY;
     }
-    constructor(x: number, y: number) {
+    constructor(x = 0, y = 0) {
         this.x = x;
         this.y = y;
 
@@ -52,6 +52,17 @@ export class Vector2 {
     add(vec: Vector2) {
         this.x += vec.x;
         this.y += vec.y;
+        return this;
+    }
+
+    setAngle(angle: number) {
+        // in graduses
+        const angleRad = (angle / 180) * Math.PI;
+        this.x = Math.cos(angleRad);
+        this.y = Math.sin(angleRad);
+        this.start = new Point2(0, 0);
+        this.end = new Point2(this.x, this.y);
+        this.length = this.getLength();
         return this;
     }
 
