@@ -40,7 +40,7 @@ export class Vector2 {
         vector.x = rotatedX;
         vector.y = rotatedY;
     }
-    constructor(x = 0, y = 0) {
+    constructor(x = 1, y = 0) {
         this.x = x;
         this.y = y;
 

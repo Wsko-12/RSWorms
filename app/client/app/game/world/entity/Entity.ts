@@ -148,7 +148,7 @@ export default abstract class Entity {
     }
 
     protected handleCollision(mapMatrix: MapMatrix) {
-
+        return;
     }
 
     public push(vec: Vector2) {
