@@ -7,7 +7,6 @@ import Worm from './Worm';
 export default class EntityManager {
     private readonly mainScene: Scene;
     private worldMap: WorldMap | null = null;
-    public selectedWorm: Worm | null = null;
     private entities: Entity[] = [];
     constructor(mainScene: Scene) {
         this.mainScene = mainScene;
@@ -15,8 +14,7 @@ export default class EntityManager {
 
     public setWorldMap(worldMap: WorldMap) {
         this.worldMap = worldMap;
-        const worm = this.createWorm();
-        this.selectedWorm = worm;
+        this.createWorm('test');
     }
 
     private findPlace() {
@@ -27,10 +25,10 @@ export default class EntityManager {
         return { x: 0, y: 0 };
     }
 
-    public createWorm() {
+    public createWorm(id: string) {
         if (this.worldMap) {
             const place = this.findPlace();
-            const worm = new Worm(place.x, place.y);
+            const worm = new Worm(id, place.x, place.y);
             this.entities.push(worm);
             this.mainScene.add(worm.getObject3D());
             return worm;
@@ -45,5 +43,15 @@ export default class EntityManager {
                 entity.update(matrix);
             });
         }
+    };
+
+    public getWorm = (id: string): Worm | null => {
+        const worm = this.getEntity(id);
+        return worm instanceof Worm ? worm : null;
+    };
+
+    public getEntity = (id: string): Entity | null => {
+        const entity = this.entities.find((entity) => entity.id === id);
+        return entity || null;
     };
 }

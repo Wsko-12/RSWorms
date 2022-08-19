@@ -45,6 +45,7 @@ export default class GameManager {
     private async start() {
         await AssetsManager.init(this.options);
         await this.world.init();
+        this.IOManager.DEV__CheckTestWorm();
         Object.values(this.loops.all).forEach((loop) => loop.switcher(true));
         this.interface.buildToDocument();
         this.world.create();

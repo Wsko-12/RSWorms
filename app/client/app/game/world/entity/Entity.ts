@@ -8,6 +8,7 @@ export default abstract class Entity {
     protected radius: number;
     protected radiusUnitAngle: number;
     protected stable = false;
+    public id: string;
 
     public movesOptions = {
         flags: {
@@ -27,7 +28,8 @@ export default abstract class Entity {
         friction: 0.1,
     };
 
-    constructor(radius = 1, x = 0, y = 0) {
+    constructor(id: string, radius = 1, x = 0, y = 0) {
+        this.id = id;
         this.position = new Point2(x, y);
         this.radius = radius;
         this.radiusUnitAngle = Math.asin(0.5 / this.radius) * 2;
