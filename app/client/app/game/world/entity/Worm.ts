@@ -20,6 +20,7 @@ export default class Worm extends Entity {
     }
 
     jump(double?: boolean) {
+        this.stable = false;
         const vec = double ? this.jumpVectors.backflip.clone() : this.jumpVectors.usual.clone();
         vec.x *= this.movesOptions.direction;
         if (double) {
