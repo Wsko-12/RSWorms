@@ -143,7 +143,7 @@ export default abstract class Entity {
         const collision = this.checkCollision(mapMatrix, entities, vel);
 
         if (!collision) {
-            this.position.x += vel.x;
+            this.position.x += this instanceof Bullet ? vel.x : 0;
             this.position.y += vel.y;
             this.physics.velocity = vel;
             return;
@@ -165,7 +165,7 @@ export default abstract class Entity {
 
         if (this.physics.velocity.getLength() < 0.01) {
             this.physics.velocity.scale(0);
-            this.stable = false;
+            this.stable = true;
         }
     }
 

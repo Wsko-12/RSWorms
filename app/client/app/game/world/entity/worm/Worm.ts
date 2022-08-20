@@ -2,6 +2,7 @@ import { CircleBufferGeometry, Mesh, MeshBasicMaterial, Object3D } from 'three';
 import { IShootOptions } from '../../../../../../ts/interfaces';
 import { TRemoveEntityCallback } from '../../../../../../ts/types';
 import { Vector2 } from '../../../../../utils/geometry';
+import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
 import Weapon from './weapon/Weapon';
 
@@ -82,6 +83,60 @@ export default class Worm extends Entity {
         }
         if (this.physics.velocity.getLength() < 0.5) {
             this.push(vec);
+        }
+    }
+
+    protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
+        if (this.stable) {
+            return;
+        }
+
+        const vel = this.physics.velocity.clone();
+        vel.y -= this.physics.g;
+
+        const collision = this.checkCollision(mapMatrix, entities, vel);
+
+        if (!collision) {
+            this.position.x += vel.x;
+            this.position.y += vel.y;
+            this.physics.velocity = vel;
+            return;
+        }
+
+        this.handleCollision(mapMatrix, entities);
+
+        //normal here isn't mean 'normalize'
+        const normalSurface = collision.normalize().scale(-1);
+        const velClone = vel.clone().normalize().scale(-1);
+
+        const slideAngle = Math.PI / 2 - Math.acos(normalSurface.dotProduct(velClone));
+        const isSlide = slideAngle < Math.PI / 3;
+
+        const friction = isSlide ? 0.8 : this.physics.friction;
+
+        const dot = vel.dotProduct(normalSurface);
+
+        const reflectionX = vel.x - 2 * dot * normalSurface.x;
+        const reflectionY = vel.y - 2 * dot * normalSurface.y;
+
+        const reflectedVector = new Vector2(reflectionX, reflectionY);
+
+        if (isSlide) {
+            let speed = vel.getLength() * friction;
+            if (speed < 4) {
+                speed = 0;
+            }
+            const x = vel.x > 0 ? 1 : -1;
+            const newVec = new Vector2(x, 0).scale(speed).add(normalSurface.normalize()).normalize().scale(speed);
+            this.physics.velocity = newVec;
+        } else {
+            const fallSpeed = this.physics.velocity.getLength() * friction;
+            this.physics.velocity = reflectedVector.normalize().scale(fallSpeed);
+        }
+
+        if (this.physics.velocity.getLength() < 0.01) {
+            this.physics.velocity.scale(0);
+            this.stable = false;
         }
     }
 }
