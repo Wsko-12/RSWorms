@@ -248,15 +248,14 @@ export default class Worm extends Entity {
     }
 
     public update(mapMatrix: MapMatrix, entities: Entity[], wind: number): void {
-        this.gravity(mapMatrix, entities, wind);
         this.move(mapMatrix, entities);
+        super.update(mapMatrix, entities, wind);
 
         if (this.isSelected) {
             this.aim.update(this.moveStates, this.currentWeapon, this.radius, this.movesOptions.direction);
         } else {
             this.aim.toggle(false);
         }
-        this.object3D.position.set(this.position.x, this.position.y, ELayersZ.worms);
 
         // temporary
         {
