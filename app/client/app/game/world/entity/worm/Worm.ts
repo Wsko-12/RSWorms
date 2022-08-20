@@ -10,8 +10,9 @@ import Weapon from './weapon/Weapon';
 
 export default class Worm extends Entity {
     protected object3D: Group;
-    protected wormMesh: Mesh;
-    protected aim = new Aim();
+    private wormMesh: Mesh;
+    private aim = new Aim();
+    private fallToJumpCoef = 1.2;
 
     public isSelected = false;
     private jumpVectors = {
@@ -130,7 +131,7 @@ export default class Worm extends Entity {
             }
         }
         if (!collision) {
-            if (vel.getLength() > this.jumpVectors.backflip.getLength() * 1.5) {
+            if (vel.getLength() > this.jumpVectors.backflip.getLength() * this.fallToJumpCoef) {
                 this.moveStates.isFall = true;
                 this.moveStates.isJump = false;
             }
@@ -152,7 +153,7 @@ export default class Worm extends Entity {
 
         const { flags } = this.movesOptions;
 
-        if (vel.getLength() > this.jumpVectors.backflip.getLength() * 1.2) {
+        if (vel.getLength() > this.jumpVectors.backflip.getLength() * this.fallToJumpCoef) {
             this.moveStates.isFall = true;
         } else {
             this.moveStates.isFall = false;
@@ -292,6 +293,15 @@ export default class Worm extends Entity {
                 }
             }
         }
+    }
+
+    protected handleCollision(mapMatrix: MapMatrix, entities: Entity[]): void {
+        // here we can remove hp for fall damage
+        const delta = this.physics.velocity.getLength() - this.jumpVectors.backflip.getLength() * this.fallToJumpCoef;
+        if (delta > 0) {
+            // console.log(delta);
+        }
+        return;
     }
 
     public push(vec: Vector2) {

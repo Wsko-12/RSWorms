@@ -33,7 +33,6 @@ export default class Bullet extends Entity {
     }
 
     protected handleCollision(mapMatrix: MapMatrix, entities: Entity[]): void {
-        super.handleCollision(mapMatrix, entities);
         this.explode(mapMatrix, entities);
     }
 

@@ -146,9 +146,7 @@ export default abstract class Entity {
         }
     }
 
-    protected handleCollision(mapMatrix: MapMatrix, entities: Entity[]) {
-        return;
-    }
+    protected abstract handleCollision(mapMatrix: MapMatrix, entities: Entity[]): void;
 
     public remove() {
         this.removeEntityCallback(this);
