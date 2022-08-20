@@ -1,4 +1,4 @@
-import { CircleBufferGeometry, Color, Mesh, MeshBasicMaterial, Object3D } from 'three';
+import { CircleBufferGeometry, Color, Group, Mesh, MeshBasicMaterial, Object3D, PlaneBufferGeometry } from 'three';
 import { IShootOptions } from '../../../../../../ts/interfaces';
 import { TRemoveEntityCallback } from '../../../../../../ts/types';
 import { Vector2 } from '../../../../../utils/geometry';
@@ -7,7 +7,10 @@ import Entity from '../Entity';
 import Weapon from './weapon/Weapon';
 
 export default class Worm extends Entity {
-    protected object3D: Mesh;
+    protected object3D: Group;
+    protected wormMesh: Mesh;
+    protected aimMesh: Mesh;
+    public isSelected = false;
     private jumpVectors = {
         usual: new Vector2(1, 1).normalize().scale(5),
         backflip: new Vector2(0.2, 1).normalize().scale(8),
@@ -46,9 +49,16 @@ export default class Worm extends Entity {
         this.physics.friction = 0.1;
         const geometry = new CircleBufferGeometry(this.radius, 120);
         const material = new MeshBasicMaterial({ color: 0xc48647, transparent: true, opacity: 0.5 });
-        this.object3D = new Mesh(geometry, material);
+        this.object3D = new Group();
+        this.wormMesh = new Mesh(geometry, material);
+        this.aimMesh = new Mesh(new PlaneBufferGeometry(10, 10, 10), new MeshBasicMaterial());
+        this.object3D.add(this.wormMesh, this.aimMesh);
         this.object3D.position.set(x, y, 0);
         this.hp = hp;
+    }
+
+    public setAsSelected(flag: boolean) {
+        this.isSelected = flag;
     }
 
     public setMoveFlags(flags: { left?: boolean; right?: boolean }) {
@@ -117,6 +127,25 @@ export default class Worm extends Entity {
         return this.moveStates.isMove;
     }
 
+    private setAimAngleToMesh() {
+        if (!this.isSelected) {
+            this.aimMesh.visible = false;
+            return;
+        }
+        if (this.moveStates.isFall || this.moveStates.isSlide || this.moveStates.isJump || this.moveStates.isMove) {
+            this.aimMesh.visible = false;
+            return;
+        }
+
+        this.aimMesh.visible = true;
+
+        const r = this.currentWeapon.aimRadius;
+        const rad = this.getAimAngle() * (Math.PI / 180);
+        const x = Math.cos(rad) * r;
+        const y = Math.sin(rad) * r;
+        this.aimMesh.position.set(x, y, 10);
+    }
+
     protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
         const vel = this.physics.velocity.clone();
         vel.y -= this.physics.g;
@@ -164,7 +193,7 @@ export default class Worm extends Entity {
 
         if (isSlide && !flags.left && !flags.right) {
             this.moveStates.isSlide = true;
-            const friction = 0.94;
+            const friction = 0.98;
             const slideSurface = normalSurface.clone();
             Vector2.rotate(slideSurface, Math.PI / 2);
             if (vel.dotProduct(slideSurface) < 0) {
@@ -244,9 +273,10 @@ export default class Worm extends Entity {
         this.move(mapMatrix, entities);
         this.object3D.position.set(this.position.x, this.position.y, 0);
 
+        this.setAimAngleToMesh();
         //test
         {
-            const material = this.object3D.material;
+            const material = this.wormMesh.material;
             if (material instanceof MeshBasicMaterial) {
                 material.color.set(new Color(0xc48647));
                 if (this.moveStates.isFall) {

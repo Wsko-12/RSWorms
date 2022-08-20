@@ -1,3 +1,4 @@
+import { TLoopCallback } from '../../../../../ts/types';
 import Worm from '../../world/entity/worm/Worm';
 
 export default class WormManager {
@@ -5,9 +6,15 @@ export default class WormManager {
     private jumpButtonTimestamp = 0;
     private jumpButtonDelayMS = 200;
     private timer = 0;
+    private aim: -1 | 0 | 1 = 0;
+    private readonly aimSpeed = 5;
 
     public setWorm(worm: Worm) {
+        if (this.controlledWorm) {
+            this.controlledWorm.setAsSelected(false);
+        }
         this.controlledWorm = worm;
+        worm.setAsSelected(true);
     }
 
     public getWorm() {
@@ -43,15 +50,11 @@ export default class WormManager {
         }
 
         if (e.code === 'ArrowUp' || e.code === 'ArrowDown') {
-            let speed = 1;
-            if (e.repeat) {
-                speed = 2;
-            }
             if (e.code === 'ArrowUp') {
-                worm.changeAngle(1, speed);
+                this.aim = 1;
             }
             if (e.code === 'ArrowDown') {
-                worm.changeAngle(-1, speed);
+                this.aim = -1;
             }
         }
 
@@ -92,8 +95,24 @@ export default class WormManager {
             worm.setMoveFlags({ right: false });
         }
 
+        if (e.code === 'ArrowUp' || e.code === 'ArrowDown') {
+            if (e.code === 'ArrowUp' && this.aim > 0) {
+                this.aim = 0;
+            }
+            if (e.code === 'ArrowDown' && this.aim < 0) {
+                this.aim = 0;
+            }
+        }
+
         if (e.code === 'Space') {
             return worm.shoot();
         }
     }
+
+    public update: TLoopCallback = () => {
+        const worm = this.controlledWorm;
+        if (worm) {
+            worm.changeAngle(this.aim, this.aimSpeed);
+        }
+    };
 }
