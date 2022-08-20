@@ -39,7 +39,8 @@ export default class IOManager {
         });
     }
 
-    public update: TLoopCallback = () => {
+    public update: TLoopCallback = (time) => {
+        this.wormManager.update(time);
         const selectedWorm = this.wormManager.getWorm();
         if (selectedWorm && selectedWorm.isMoves()) {
             const point = selectedWorm.getPositionPoint();

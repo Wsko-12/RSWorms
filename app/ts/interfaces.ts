@@ -31,3 +31,18 @@ export interface IShootOptions {
     position: Point2;
     parentRadius: number;
 }
+
+export interface IExplosionOptions {
+    damage: number;
+    point: Point2;
+    radius: number;
+    kickForce: number;
+}
+
+export interface IWormMoveStates {
+    isSlide: boolean;
+    isMove: boolean;
+    isJump: boolean;
+    isFall: boolean;
+    isDamaged: boolean;
+}

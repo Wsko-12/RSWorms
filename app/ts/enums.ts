@@ -26,4 +26,6 @@ export const enum EConstants {
 export const enum ELayersZ {
     bg = 100,
     map = 0,
+    worms = 0,
+    aim = 25,
 }

@@ -1,31 +1,19 @@
-import { Object3D } from 'three';
-import { IPhysics } from '../../../../../ts/interfaces';
+import { Mesh, Object3D } from 'three';
+import { IExplosionOptions, IPhysics } from '../../../../../ts/interfaces';
 import { TRemoveEntityCallback } from '../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../utils/geometry';
 import MapMatrix from '../worldMap/mapMatrix/MapMatrix';
 import Bullet from './worm/weapon/bullet/Bullet';
 
 export default abstract class Entity {
-    protected abstract object3D: Object3D;
-    protected position: Point2;
-    protected radius: number;
+    protected abstract object3D: Object3D | Mesh;
+    public position: Point2;
+    public radius: number;
     protected radiusUnitAngle: number;
     protected stable = false;
     public id: string;
 
     protected removeEntityCallback: TRemoveEntityCallback;
-
-    public movesOptions = {
-        flags: {
-            left: false,
-            right: false,
-        },
-        direction: 1,
-        speed: 1.5,
-        a: new Vector2(0, 0),
-        v: new Vector2(0, 0),
-        maxAngle: 80,
-    };
 
     protected physics: IPhysics = {
         velocity: new Vector2(0, 0),
@@ -49,23 +37,12 @@ export default abstract class Entity {
         return this.position.clone();
     }
 
-    public isMoves() {
-        const { left, right } = this.movesOptions.flags;
-        return left || right;
-    }
-
     public update(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
         if (mapMatrix) {
             this.gravity(mapMatrix, entities, wind);
-            this.move(mapMatrix, entities);
         }
 
         this.object3D.position.set(this.position.x, this.position.y, 0);
-    }
-
-    public setMoveFlags(flags: { left?: boolean; right?: boolean }) {
-        this.stable = false;
-        Object.assign(this.movesOptions.flags, flags);
     }
 
     protected checkCollision(
@@ -105,21 +82,21 @@ export default abstract class Entity {
                 }
             });
 
-            let iX = Math.floor(x);
-            let iY = Math.floor(y);
+            const iX = Math.floor(x);
+            const iY = Math.floor(y);
 
             if (iX < 0) {
-                iX = 0;
+                return null;
             }
             if (iX >= matrix[0].length) {
-                iX = matrix[0].length - 1;
+                return null;
             }
 
             if (iY < 0) {
-                iY = 0;
+                return null;
             }
             if (iY >= matrix.length) {
-                iY = matrix.length - 1;
+                return null;
             }
 
             if (matrix[iY] && matrix[iY][iX] && matrix[iY][iX] !== 0) {
@@ -137,14 +114,8 @@ export default abstract class Entity {
             return;
         }
 
-        if (this instanceof Bullet) {
-            this.physics.velocity.x += wind;
-        }
-
         const vel = this.physics.velocity.clone();
         vel.y -= this.physics.g;
-
-        this.stable = false;
 
         const collision = this.checkCollision(mapMatrix, entities, vel);
 
@@ -175,9 +146,7 @@ export default abstract class Entity {
         }
     }
 
-    protected handleCollision(mapMatrix: MapMatrix, entities: Entity[]) {
-        return;
-    }
+    protected abstract handleCollision(mapMatrix: MapMatrix, entities: Entity[]): void;
 
     public remove() {
         this.removeEntityCallback(this);
@@ -189,52 +158,18 @@ export default abstract class Entity {
         velocity.y += vec.y;
     }
 
-    protected move(mapMatrix: MapMatrix, entities: Entity[]) {
-        // if worm fly
-        if (this.physics.velocity.getLength() > 0.5) {
+    public acceptExplosion(mapMatrix: MapMatrix, entities: Entity[], options: IExplosionOptions) {
+        //mapMatrix and entities needs for example for barrels we create method explode
+        const vec = new Vector2(this.position.x - options.point.x, this.position.y - options.point.y);
+        const dist = vec.getLength() - this.radius;
+
+        const force = (options.radius - dist) / options.radius;
+        if (force <= 0) {
             return;
         }
 
-        const { flags } = this.movesOptions;
-        if (!flags.left && !flags.right) {
-            return;
-        }
-        this.stable = false;
+        vec.normalize().scale(force * options.kickForce);
 
-        // direction for worm jump and sprite
-        if (flags.left && !flags.right) {
-            this.movesOptions.direction = -1;
-        }
-        if (flags.right && !flags.left) {
-            this.movesOptions.direction = 1;
-        }
-
-        const { a, v, direction, speed, maxAngle } = this.movesOptions;
-        a.x += direction;
-
-        v.add(a).normalize().scale(speed);
-
-        a.scale(0);
-
-        const collision = this.checkCollision(mapMatrix, entities, v);
-        if (!collision) {
-            this.position.x += v.x;
-            this.position.y += v.y;
-            v.scale(0);
-            return;
-        }
-
-        const newVec = collision.normalize().scale(-1);
-        newVec
-            .add(v.normalize())
-            .normalize()
-            .scale(speed * 2);
-
-        const PIhalf = Math.PI / 2;
-        const stepAngle = PIhalf - Math.abs(PIhalf - Math.atan2(newVec.y, newVec.x));
-        if ((stepAngle * 180) / Math.PI < maxAngle) {
-            this.movesOptions.a = newVec;
-        }
-        v.scale(0);
+        this.push(vec);
     }
 }
