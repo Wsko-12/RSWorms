@@ -12,7 +12,9 @@ export default class Lobby {
         // button.onclick = () => {
         document.body.innerHTML = '';
         // const seed = Math.random();
-        const seed = 0.7135371756374531;
+        // const seed = 0.7135371756374531;
+        // const seed = 0.7972989657842342;
+        const seed = 0.7190317696597344;
         console.log('Seed: ', seed);
         this.startGameCallback({
             mapTexturePackName: EMapPacksNames.candy,
