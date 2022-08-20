@@ -150,10 +150,6 @@ export default abstract class Entity {
         return;
     }
 
-    public setStable(flag: boolean) {
-        this.stable = flag;
-    }
-
     public remove() {
         this.removeEntityCallback(this);
     }
@@ -173,8 +169,8 @@ export default abstract class Entity {
         if (force <= 0) {
             return;
         }
+
         vec.normalize().scale(force * options.kickForce);
-        console.log(vec);
 
         this.push(vec);
     }

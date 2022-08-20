@@ -114,10 +114,7 @@ export default class WormManager {
     public update: TLoopCallback = () => {
         const worm = this.controlledWorm;
         if (worm) {
-            worm.changeAngle(this.aim, this.aimSpeed);
-            if (this.shooting) {
-                worm.changePower();
-            }
+            worm.changeAim(this.aim, this.aimSpeed, this.shooting);
         }
     };
 }

@@ -38,3 +38,11 @@ export interface IExplosionOptions {
     radius: number;
     kickForce: number;
 }
+
+export interface IWormMoveStates {
+    isSlide: boolean;
+    isMove: boolean;
+    isJump: boolean;
+    isFall: boolean;
+    isDamaged: boolean;
+}
