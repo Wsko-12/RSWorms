@@ -9,7 +9,7 @@ import {
     Texture,
 } from 'three';
 import { ELayersZ } from '../../../../../../ts/enums';
-import { IShootOptions } from '../../../../../../ts/interfaces';
+import { IExplosionOptions, IShootOptions } from '../../../../../../ts/interfaces';
 import { TRemoveEntityCallback } from '../../../../../../ts/types';
 import { Vector2 } from '../../../../../utils/geometry';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
@@ -36,7 +36,11 @@ export default class Worm extends Entity {
         isMove: false,
         isJump: false,
         isFall: true,
+        isDamaged: false,
     };
+
+    //temporary
+    private lastDamageTimestamp = 0;
 
     public movesOptions = {
         flags: {
@@ -139,7 +143,7 @@ export default class Worm extends Entity {
     }
 
     public jump(double?: boolean) {
-        if (this.moveStates.isFall || this.moveStates.isJump || this.moveStates.isSlide) {
+        if (this.moveStates.isFall || this.moveStates.isJump || this.moveStates.isSlide || this.moveStates.isDamaged) {
             return;
         }
         const vec = double ? this.jumpVectors.backflip.clone() : this.jumpVectors.usual.clone();
@@ -251,7 +255,7 @@ export default class Worm extends Entity {
 
         const { flags } = this.movesOptions;
 
-        if (vel.getLength() > this.jumpVectors.backflip.getLength() * 1.5) {
+        if (vel.getLength() > this.jumpVectors.backflip.getLength() * 1.2) {
             this.moveStates.isFall = true;
         } else {
             this.moveStates.isFall = false;
@@ -260,14 +264,14 @@ export default class Worm extends Entity {
 
         if (isSlide && !flags.left && !flags.right) {
             this.moveStates.isSlide = true;
-            const friction = 0.98;
+            const friction = 0.9;
             const slideSurface = normalSurface.clone();
             Vector2.rotate(slideSurface, Math.PI / 2);
             if (vel.dotProduct(slideSurface) < 0) {
                 slideSurface.scale(-1);
             }
             if (slideSurface.y < 0) {
-                slideSurface.y *= 2.75;
+                // slideSurface.y *= 2;
             }
 
             const speed = vel.getLength() * friction;
@@ -285,9 +289,26 @@ export default class Worm extends Entity {
         }
     }
 
+    public acceptExplosion(mapMatrix: MapMatrix, entities: Entity[], options: IExplosionOptions) {
+        //mapMatrix and entities needs for example for barrels we create method explode
+        const vec = new Vector2(this.position.x - options.point.x, this.position.y - options.point.y);
+
+        const dist = vec.getLength() - this.radius;
+
+        const force = (options.radius - dist) / options.radius;
+        if (force <= 0) {
+            return;
+        }
+        vec.normalize().scale(force * options.kickForce);
+
+        this.lastDamageTimestamp = Date.now();
+        this.moveStates.isDamaged = true;
+        this.push(vec);
+    }
+
     protected move(mapMatrix: MapMatrix, entities: Entity[]) {
         this.moveStates.isMove = false;
-        if (this.moveStates.isFall || this.moveStates.isJump || this.moveStates.isSlide) {
+        if (this.moveStates.isFall || this.moveStates.isJump || this.moveStates.isSlide || this.moveStates.isDamaged) {
             return;
         }
 
@@ -340,15 +361,31 @@ export default class Worm extends Entity {
         this.move(mapMatrix, entities);
         this.object3D.position.set(this.position.x, this.position.y, ELayersZ.worms);
 
+        // temporary
+        if (this.moveStates.isDamaged) {
+            const now = Date.now();
+            const delta = now - this.lastDamageTimestamp;
+
+            if (delta > 2500) {
+                this.moveStates.isDamaged = false;
+            }
+        }
+
         this.setupAimMeshes();
         //test
         {
             const material = this.wormMesh.material;
             if (material instanceof MeshBasicMaterial) {
                 material.color.set(new Color(0xc48647));
+
+                if (this.moveStates.isDamaged) {
+                    material.color.set(new Color(0x00ffff));
+                }
+
                 if (this.moveStates.isFall) {
                     material.color.set(new Color(0xff00ff));
                 }
+
                 if (this.moveStates.isSlide) {
                     material.color.set(new Color(0xff0000));
                 }

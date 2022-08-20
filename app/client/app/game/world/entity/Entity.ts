@@ -176,13 +176,6 @@ export default abstract class Entity {
         }
         vec.normalize().scale(force * options.kickForce);
 
-        // const normale = this.checkCollision(mapMatrix, entities, vec);
-        // if (normale) {
-        //     const speed = vec.getLength();
-        //     const newVec = new Vector2(normale.x, normale.y).normalize().scale(-1).scale(speed);
-        //     vec.add(newVec).normalize().scale(speed);
-        // }
-
         this.push(vec);
     }
 }

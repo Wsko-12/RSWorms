@@ -27,5 +27,5 @@ export const enum ELayersZ {
     bg = 100,
     map = 0,
     worms = 0,
-    aim = 10,
+    aim = 25,
 }

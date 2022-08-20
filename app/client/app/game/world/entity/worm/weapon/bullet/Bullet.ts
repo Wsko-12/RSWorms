@@ -7,9 +7,9 @@ import Entity from '../../../Entity';
 
 export default class Bullet extends Entity {
     protected object3D: Object3D;
-    protected explosionRadius = 100;
+    protected explosionRadius = 150;
     private windCoefficient = 1;
-    private kickForce = 10;
+    private kickForce = 15;
     // how many hp will be removed if it explodes close to the worm
     protected explosionDamage = 50;
     constructor(removeEntityCallback: TRemoveEntityCallback, id: string, options: IShootOptions) {
@@ -21,7 +21,7 @@ export default class Bullet extends Entity {
         this.position.x += Math.cos(angle) * (parentRadius + this.radius + 1);
         this.position.y += Math.sin(angle) * (parentRadius + this.radius + 1);
 
-        this.physics.friction = 0.5;
+        this.physics.friction = 0.05;
         const geometry = new CircleBufferGeometry(this.radius, 120);
         const material = new MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
         this.object3D = new Mesh(geometry, material);
