@@ -112,25 +112,38 @@ export default class Worm extends Entity {
         const slideAngle = Math.PI / 2 - Math.acos(normalSurface.dotProduct(velClone));
         const isSlide = slideAngle < Math.PI / 3;
 
-        const friction = isSlide ? 0.8 : this.physics.friction;
-
-        const dot = vel.dotProduct(normalSurface);
-
-        const reflectionX = vel.x - 2 * dot * normalSurface.x;
-        const reflectionY = vel.y - 2 * dot * normalSurface.y;
-
-        const reflectedVector = new Vector2(reflectionX, reflectionY);
-
         if (isSlide) {
+            // чтобы он нормально скользил, надо дать ему высокий friction
+            const friction = 0.8;
+            // смотрим скорость падения
             let speed = vel.getLength() * friction;
+
+            // фикс бага скользит в прышках и не может подняться на горки
+            // надо сделать какую-то нормальную проверку
+            // убери ее, если хочешь, чтобы он скользил дольше
             if (speed < 4) {
                 speed = 0;
             }
+            //смотрим, куда был направлен вектор падения по x
             const x = vel.x > 0 ? 1 : -1;
-            const newVec = new Vector2(x, 0).scale(speed).add(normalSurface.normalize()).normalize().scale(speed);
+
+            //создаем новый вектор (просто влево или вправо)
+            const newVec = new Vector2(x, 0);
+            // увеличиаваем его длинну в нашу скорость падения
+            newVec.scale(speed);
+            // добавляем ему вектор поверхности, чтобы получить вектор куда скользить
+            newVec.add(normalSurface);
+            // нормализуем его и делаем длиной в нашу скорость
+            newVec.normalize().scale(speed);
+            // и просто на следующий фрейм скидываем этот вектор
             this.physics.velocity = newVec;
         } else {
-            const fallSpeed = this.physics.velocity.getLength() * friction;
+            const dot = vel.dotProduct(normalSurface);
+
+            const reflectionX = vel.x - 2 * dot * normalSurface.x;
+            const reflectionY = vel.y - 2 * dot * normalSurface.y;
+            const reflectedVector = new Vector2(reflectionX, reflectionY);
+            const fallSpeed = this.physics.velocity.getLength() * this.physics.friction;
             this.physics.velocity = reflectedVector.normalize().scale(fallSpeed);
         }
 
