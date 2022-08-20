@@ -167,7 +167,6 @@ export default abstract class Entity {
     public acceptExplosion(mapMatrix: MapMatrix, entities: Entity[], options: IExplosionOptions) {
         //mapMatrix and entities needs for example for barrels we create method explode
         const vec = new Vector2(this.position.x - options.point.x, this.position.y - options.point.y);
-
         const dist = vec.getLength() - this.radius;
 
         const force = (options.radius - dist) / options.radius;
@@ -175,6 +174,7 @@ export default abstract class Entity {
             return;
         }
         vec.normalize().scale(force * options.kickForce);
+        console.log(vec);
 
         this.push(vec);
     }

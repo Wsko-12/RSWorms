@@ -18,7 +18,7 @@ export default class Lobby {
         // const seed = 0.4884739715122959;
         console.log('Seed: ', seed);
         this.startGameCallback({
-            mapTexturePackName: EMapPacksNames.candy,
+            mapTexturePackName: EMapPacksNames.moon,
             worldSize: EWorldSizes.medium,
             seed,
             decor: {

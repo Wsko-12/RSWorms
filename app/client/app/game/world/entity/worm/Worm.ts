@@ -271,7 +271,7 @@ export default class Worm extends Entity {
                 slideSurface.scale(-1);
             }
             if (slideSurface.y < 0) {
-                // slideSurface.y *= 2;
+                slideSurface.y *= 2;
             }
 
             const speed = vel.getLength() * friction;
@@ -299,6 +299,8 @@ export default class Worm extends Entity {
         if (force <= 0) {
             return;
         }
+        vec.y = Math.abs(vec.y);
+
         vec.normalize().scale(force * options.kickForce);
 
         this.lastDamageTimestamp = Date.now();
