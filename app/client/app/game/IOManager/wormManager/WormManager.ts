@@ -7,7 +7,8 @@ export default class WormManager {
     private jumpButtonDelayMS = 200;
     private timer = 0;
     private aim: -1 | 0 | 1 = 0;
-    private readonly aimSpeed = 5;
+    private shooting = false;
+    private readonly aimSpeed = 2;
 
     public setWorm(worm: Worm) {
         if (this.controlledWorm) {
@@ -59,7 +60,7 @@ export default class WormManager {
         }
 
         if (e.code === 'Space') {
-            worm.changePower();
+            this.shooting = true;
         }
 
         const jumpTimeout = () => {
@@ -105,6 +106,7 @@ export default class WormManager {
         }
 
         if (e.code === 'Space') {
+            this.shooting = false;
             return worm.shoot();
         }
     }
@@ -113,6 +115,9 @@ export default class WormManager {
         const worm = this.controlledWorm;
         if (worm) {
             worm.changeAngle(this.aim, this.aimSpeed);
+            if (this.shooting) {
+                worm.changePower();
+            }
         }
     };
 }

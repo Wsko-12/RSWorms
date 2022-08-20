@@ -1,4 +1,14 @@
-import { CircleBufferGeometry, Color, Group, Mesh, MeshBasicMaterial, Object3D, PlaneBufferGeometry } from 'three';
+import {
+    CircleBufferGeometry,
+    Color,
+    Group,
+    Mesh,
+    MeshBasicMaterial,
+    Object3D,
+    PlaneBufferGeometry,
+    Texture,
+} from 'three';
+import { ELayersZ } from '../../../../../../ts/enums';
 import { IShootOptions } from '../../../../../../ts/interfaces';
 import { TRemoveEntityCallback } from '../../../../../../ts/types';
 import { Vector2 } from '../../../../../utils/geometry';
@@ -10,6 +20,10 @@ export default class Worm extends Entity {
     protected object3D: Group;
     protected wormMesh: Mesh;
     protected aimMesh: Mesh;
+    protected shootPowerMesh: Mesh;
+    protected shootPowerCanvas = document.createElement('canvas');
+    protected shootPowerCtx = this.shootPowerCanvas.getContext('2d');
+
     public isSelected = false;
     private jumpVectors = {
         usual: new Vector2(1, 1).normalize().scale(5),
@@ -51,9 +65,23 @@ export default class Worm extends Entity {
         const material = new MeshBasicMaterial({ color: 0xc48647, transparent: true, opacity: 0.5 });
         this.object3D = new Group();
         this.wormMesh = new Mesh(geometry, material);
-        this.aimMesh = new Mesh(new PlaneBufferGeometry(10, 10, 10), new MeshBasicMaterial());
-        this.object3D.add(this.wormMesh, this.aimMesh);
-        this.object3D.position.set(x, y, 0);
+        this.aimMesh = new Mesh(new PlaneBufferGeometry(10, 10), new MeshBasicMaterial());
+        const shootingPowerTexture = new Texture(this.shootPowerCanvas);
+        this.shootPowerMesh = new Mesh(
+            new PlaneBufferGeometry(1, 1),
+            new MeshBasicMaterial({
+                map: shootingPowerTexture,
+                alphaTest: 0.5,
+            })
+        );
+
+        this.shootPowerMesh.position.set(0, 0, ELayersZ.aim);
+
+        this.shootPowerCanvas.width = 256;
+        this.shootPowerCanvas.height = 256;
+
+        this.object3D.add(this.wormMesh, this.aimMesh, this.shootPowerMesh);
+        this.object3D.position.set(x, y, ELayersZ.worms);
         this.hp = hp;
     }
 
@@ -68,7 +96,7 @@ export default class Worm extends Entity {
 
     public changePower() {
         // y = x**2
-        this.deltaPower += 0.5;
+        this.deltaPower += 0.25;
         this.power = this.deltaPower ** 2;
         if (this.power > 100) this.power = 100;
     }
@@ -127,23 +155,62 @@ export default class Worm extends Entity {
         return this.moveStates.isMove;
     }
 
-    private setAimAngleToMesh() {
-        if (!this.isSelected) {
+    private setupAimMeshes() {
+        if (!this.isSelected || !this.currentWeapon) {
             this.aimMesh.visible = false;
+            this.shootPowerMesh.visible = false;
             return;
         }
         if (this.moveStates.isFall || this.moveStates.isSlide || this.moveStates.isJump || this.moveStates.isMove) {
             this.aimMesh.visible = false;
+            this.shootPowerMesh.visible = false;
             return;
         }
 
         this.aimMesh.visible = true;
+        this.shootPowerMesh.visible = true;
 
         const r = this.currentWeapon.aimRadius;
         const rad = this.getAimAngle() * (Math.PI / 180);
         const x = Math.cos(rad) * r;
         const y = Math.sin(rad) * r;
-        this.aimMesh.position.set(x, y, 10);
+        this.shootPowerMesh.rotation.z = rad;
+        this.aimMesh.position.set(x, y, ELayersZ.aim);
+        this.shootPowerMesh.scale.set(this.radius * 2 + r * 1.5, this.radius * 2 + r * 1.5, 1);
+        this.drawShootPower();
+    }
+
+    public drawShootPower() {
+        const ctx = this.shootPowerCtx;
+        if (ctx) {
+            if (this.power) {
+                for (let i = 0; i < this.power; i += 5) {
+                    let green = 255;
+                    let red = 0;
+                    if (i < 50) {
+                        red += 255 * (i / 50);
+                    } else {
+                        red = 255;
+                        green -= 255 * ((i - 50) / 50);
+                    }
+                    ctx.fillStyle = `rgb(${red},${green},0)`;
+                    // ctx.fillStyle = `rgb(255, 255, 0)`;
+                    const radius = 128 * (i * 0.0015);
+                    ctx.beginPath();
+                    ctx.arc(128 + (128 * (i / 100) - radius), 128, radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            } else {
+                ctx.clearRect(0, 0, 256, 256);
+            }
+        }
+
+        if (this.shootPowerMesh.material instanceof MeshBasicMaterial) {
+            const texture = this.shootPowerMesh.material.map;
+            if (texture) {
+                texture.needsUpdate = true;
+            }
+        }
     }
 
     protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
@@ -271,9 +338,9 @@ export default class Worm extends Entity {
     public update(mapMatrix: MapMatrix, entities: Entity[], wind: number): void {
         this.gravity(mapMatrix, entities, wind);
         this.move(mapMatrix, entities);
-        this.object3D.position.set(this.position.x, this.position.y, 0);
+        this.object3D.position.set(this.position.x, this.position.y, ELayersZ.worms);
 
-        this.setAimAngleToMesh();
+        this.setupAimMeshes();
         //test
         {
             const material = this.wormMesh.material;
