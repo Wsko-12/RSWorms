@@ -3,6 +3,7 @@ import { IStartGameOptions } from '../../../../ts/interfaces';
 import { TLoopCallback } from '../../../../ts/types';
 import Background from './background/Background';
 import EntityManager from './entity/EntityManager';
+import Wind from './wind/Wind';
 import WorldMap from './worldMap/WorldMap';
 
 export default class World {
@@ -10,8 +11,8 @@ export default class World {
     private background = new Background();
     private worldMap = new WorldMap();
     private options: IStartGameOptions;
-    public wind = 0;
-    entityManager = new EntityManager(this.mainScene);
+    private wind = new Wind();
+    public entityManager = new EntityManager(this.mainScene);
     constructor(options: IStartGameOptions) {
         this.options = options;
     }
@@ -19,6 +20,7 @@ export default class World {
     public async init() {
         this.background.init(this.options.worldSize);
         await this.worldMap.init(this.options);
+        this.wind.init(this.options.worldSize);
         this.entityManager.setWorldMap(this.worldMap);
         return true;
     }
@@ -33,16 +35,23 @@ export default class World {
         if (mapPlane) {
             this.mainScene.add(mapPlane);
         }
+
+        const windParticles = this.wind.getObject3D();
+        if (windParticles) {
+            console.log(windParticles);
+            this.mainScene.add(windParticles);
+        }
     }
     public getMainScene() {
         return this.mainScene;
     }
 
     public changeWind() {
-        this.wind = (Math.random() - 0.5) * 2;
+        this.wind.change();
     }
 
     public update: TLoopCallback = (time) => {
-        this.entityManager.update(time, this.wind);
+        this.wind.update(time);
+        this.entityManager.update(time, this.wind.getCurrentValue());
     };
 }
