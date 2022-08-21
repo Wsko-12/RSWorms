@@ -8,6 +8,7 @@ import Entity from '../Entity';
 import Aim from './aim/Aim';
 import Bazooka from './weapon/Bazooka/Bazooka';
 import Grenade from './weapon/Grenade/Grenade';
+import TimerWeapon from './weapon/TimerWeapon';
 import Weapon from './weapon/Weapon';
 
 export default class Worm extends Entity {
@@ -73,7 +74,7 @@ export default class Worm extends Entity {
     }
 
     changeWeaponTimer() {
-        if (this.currentWeapon instanceof Grenade) this.currentWeapon.changeTimer(); 
+        if (this.currentWeapon instanceof TimerWeapon) this.currentWeapon.changeTimer();
     }
 
     public setAsSelected(flag: boolean) {
