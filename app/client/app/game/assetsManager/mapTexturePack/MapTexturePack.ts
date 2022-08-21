@@ -42,6 +42,7 @@ export default class MapTexturePack {
         this.textures.bg = await this.loadImage(path + 'bg.png');
         this.textures.ground = await this.loadImage(path + 'ground.png');
         this.textures.grass = await this.loadImage(path + 'grass.png');
+        this.textures.particle = await this.loadImage(path + 'particle.png');
 
         const loadDecors = (): Promise<boolean> => {
             return new Promise((allDecorsLoaded) => {

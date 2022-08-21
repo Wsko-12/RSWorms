@@ -11,18 +11,21 @@ export default class Lobby {
         document.body.append(button);
         // button.onclick = () => {
         document.body.innerHTML = '';
-        // const seed = Math.random();
+        const seed = Math.random();
         // const seed = 0.7135371756374531;
         // const seed = 0.7972989657842342;
         // const seed = 0.7190317696597344;
-        const seed = 0.4884739715122959;
+        // const seed = 0.4884739715122959;
+
+        //worms bug
+        //const seed = 0.6469262503466888
         console.log('Seed: ', seed);
         this.startGameCallback({
-            mapTexturePackName: EMapPacksNames.moon,
+            mapTexturePackName: EMapPacksNames.candy,
             worldSize: EWorldSizes.medium,
             seed,
             decor: {
-                count: EMapPacksDecorItems[EMapPacksNames.moon],
+                count: EMapPacksDecorItems[EMapPacksNames.candy],
                 max: 6,
                 min: 2,
             },
