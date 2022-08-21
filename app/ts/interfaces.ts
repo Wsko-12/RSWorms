@@ -26,6 +26,7 @@ export interface IPhysics {
 }
 
 export interface IShootOptions {
+    timer?: number;
     angle: number;
     power: number;
     position: Point2;
