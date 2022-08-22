@@ -4,7 +4,7 @@ import { TLoopCallback } from '../../../../../ts/types';
 import AssetsManager from '../../assetsManager/AssetsManager';
 
 export default class Wind {
-    private direction = 0.1;
+    private direction = 0;
     private object3D: Object3D | null = null;
     private height = 0;
     private width = 0;

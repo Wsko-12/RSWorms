@@ -1,6 +1,6 @@
 import { Mesh, Object3D } from 'three';
 import { IExplosionOptions, IPhysics } from '../../../../../ts/interfaces';
-import { TRemoveEntityCallback } from '../../../../../ts/types';
+import { TLoopCallback, TRemoveEntityCallback } from '../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../utils/geometry';
 import MapMatrix from '../worldMap/mapMatrix/MapMatrix';
 import Bullet from './worm/weapon/bullet/Bullet';
@@ -172,4 +172,6 @@ export default abstract class Entity {
 
         this.push(vec);
     }
+
+    public spriteLoop: TLoopCallback = (time) => {};
 }

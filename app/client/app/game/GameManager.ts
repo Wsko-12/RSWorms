@@ -29,6 +29,10 @@ export default class GameManager {
                     this.world.update(time);
                     this.IOManager.update(time);
                 }),
+
+                sprite: new Loop(25, (time) => {
+                    this.world.spriteLoop(time);
+                }),
             },
         };
 

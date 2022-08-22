@@ -1,18 +1,21 @@
-import { CircleBufferGeometry, Color, Group, Mesh, MeshBasicMaterial } from 'three';
+import { CircleBufferGeometry, Color, Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from 'three';
 import { ELayersZ } from '../../../../../../ts/enums';
 import { IExplosionOptions, IShootOptions, IWormMoveStates } from '../../../../../../ts/interfaces';
-import { TRemoveEntityCallback } from '../../../../../../ts/types';
+import { TLoopCallback, TRemoveEntityCallback } from '../../../../../../ts/types';
 import { Vector2 } from '../../../../../utils/geometry';
+import AssetsManager from '../../../assetsManager/AssetsManager';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
 import Aim from './aim/Aim';
 import Weapon from './weapon/Weapon';
+import WormAnimation from './WormAnimation';
 
 export default class Worm extends Entity {
     protected object3D: Group;
     private wormMesh: Mesh;
     private aim = new Aim();
     private fallToJumpCoef = 1.2;
+    private animation = new WormAnimation();
 
     public isSelected = false;
     private jumpVectors = {
@@ -25,6 +28,7 @@ export default class Worm extends Entity {
         isSlide: false,
         isMove: false,
         isJump: false,
+        isDoubleJump: false,
         isFall: true,
         isDamaged: false,
     };
@@ -52,8 +56,11 @@ export default class Worm extends Entity {
         this.currentWeapon = new Weapon();
         this.id = id;
         this.physics.friction = 0.1;
-        const geometry = new CircleBufferGeometry(this.radius, 120);
-        const material = new MeshBasicMaterial({ color: 0xc48647, transparent: true, opacity: 0.5 });
+        const geometry = new PlaneBufferGeometry(this.radius * 5, this.radius * 5);
+        const material = new MeshBasicMaterial({
+            map: this.animation.getTexture(),
+            alphaTest: 0.5,
+        });
         this.object3D = new Group();
         this.wormMesh = new Mesh(geometry, material);
 
@@ -108,6 +115,7 @@ export default class Worm extends Entity {
             vec.x *= -1;
         }
         this.moveStates.isJump = true;
+        this.moveStates.isDoubleJump = !!double;
         this.push(vec);
     }
 
@@ -159,6 +167,7 @@ export default class Worm extends Entity {
             this.moveStates.isFall = false;
         }
         this.moveStates.isJump = false;
+        this.moveStates.isDoubleJump = false;
 
         if (isSlide && !flags.left && !flags.right) {
             let friction = 0.95;
@@ -180,6 +189,8 @@ export default class Worm extends Entity {
             const speed = vel.getLength() * friction;
             const slideVec = slideSurface.clone().normalize();
             slideVec.scale(speed);
+            this.movesOptions.direction = slideVec.x > 0 ? 1 : -1;
+
             this.physics.velocity = slideVec;
         } else {
             this.moveStates.isSlide = false;
@@ -251,6 +262,7 @@ export default class Worm extends Entity {
     public update(mapMatrix: MapMatrix, entities: Entity[], wind: number): void {
         this.move(mapMatrix, entities);
         super.update(mapMatrix, entities, wind);
+        this.object3D.position.z = ELayersZ.worms;
 
         if (this.isSelected) {
             this.aim.update(this.moveStates, this.currentWeapon, this.radius, this.movesOptions.direction);
@@ -270,28 +282,28 @@ export default class Worm extends Entity {
             }
             //test
             const material = this.wormMesh.material;
-            if (material instanceof MeshBasicMaterial) {
-                material.color.set(new Color(0xc48647));
+            // if (material instanceof MeshBasicMaterial) {
+            //     material.color.set(new Color(0xc48647));
 
-                if (this.moveStates.isDamaged) {
-                    material.color.set(new Color(0x00ffff));
-                }
+            //     if (this.moveStates.isDamaged) {
+            //         material.color.set(new Color(0x00ffff));
+            //     }
 
-                if (this.moveStates.isFall) {
-                    material.color.set(new Color(0xff00ff));
-                }
+            //     if (this.moveStates.isFall) {
+            //         material.color.set(new Color(0xff00ff));
+            //     }
 
-                if (this.moveStates.isSlide) {
-                    material.color.set(new Color(0xff0000));
-                }
-                if (this.moveStates.isMove) {
-                    material.color.set(new Color(0xffff00));
-                }
+            //     if (this.moveStates.isSlide) {
+            //         material.color.set(new Color(0xff0000));
+            //     }
+            //     if (this.moveStates.isMove) {
+            //         material.color.set(new Color(0xffff00));
+            //     }
 
-                if (this.moveStates.isJump) {
-                    material.color.set(new Color(0x00ff00));
-                }
-            }
+            //     if (this.moveStates.isJump) {
+            //         material.color.set(new Color(0x00ff00));
+            //     }
+            // }
         }
     }
 
@@ -308,4 +320,8 @@ export default class Worm extends Entity {
         this.moveStates.isFall = true;
         super.push(vec);
     }
+
+    public spriteLoop: TLoopCallback = (time) => {
+        this.animation.spriteLoop(this.moveStates, this.movesOptions.direction);
+    };
 }
