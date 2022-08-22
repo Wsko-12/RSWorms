@@ -1,0 +1,63 @@
+.header {
+  height: 150px;
+  padding: 20px;
+}
+
+.title {
+  margin: 0 auto;
+  width: 200px;
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.btns-wrapper {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  width: 50%;
+  height: 450px;
+  margin: 0 auto;
+}
+
+.lobby-btn {
+  width: 40%;
+  height: 35%;
+}
+
+.custom-game-set {
+  display: none;
+  position: absolute;
+  width: 300px;
+  height: 350px;
+  left: calc(50% - 150px);
+  top: calc(50vh - 175px);
+  background-color: #0000008d;
+  padding: 10px;
+}
+
+.custom-game-set.open {
+  display: block;
+}
+
+.custom-title {
+  width: 150px;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 auto 10px;
+}
+
+.map-texture-sel-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 40%;
+  margin-bottom: 20px;
+}
+
+.map-size-sel-wrapper {
+  margin-bottom: 20px;
+}
+
+.button {
+  margin-right: 10px;
+}
