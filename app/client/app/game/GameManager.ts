@@ -4,6 +4,7 @@ import AssetsManager from './assetsManager/AssetsManager';
 import GameInterface from './gameInterface/GameInterface';
 import IOManager from './IOManager/IOManager';
 import Loop from './loop/Loop';
+import SoundManager from './soundManager/SoundManager';
 import World from './world/World';
 
 export default class GameManager {
@@ -11,10 +12,12 @@ export default class GameManager {
     private world: World;
     private loops: IGMLoops;
     private interface = new GameInterface();
+    private soundManager: SoundManager;
     private IOManager: IOManager;
     constructor(options: IStartGameOptions) {
         this.options = options;
         this.world = new World(options);
+        this.soundManager = new SoundManager();
         this.IOManager = new IOManager(this.interface, this.world);
         this.loops = {
             paused: false,
@@ -54,6 +57,7 @@ export default class GameManager {
         Object.values(this.loops.all).forEach((loop) => loop.switcher(true));
         this.interface.buildToDocument();
         this.world.create();
+        SoundManager.playBackground();
         this.loop();
     }
 
