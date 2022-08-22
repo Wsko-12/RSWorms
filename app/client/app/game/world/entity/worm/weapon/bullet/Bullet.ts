@@ -9,7 +9,7 @@ export default class Bullet extends Entity {
     protected object3D: Object3D;
     protected explosionRadius = 150;
     private windCoefficient = 1;
-    private kickForce = 15;
+    private kickForce = 25;
     // how many hp will be removed if it explodes close to the worm
     protected explosionDamage = 50;
     constructor(removeEntityCallback: TRemoveEntityCallback, id: string, options: IShootOptions) {

@@ -299,6 +299,10 @@ export default class Worm extends Entity {
     }
 
     public spriteLoop: TLoopCallback = (time) => {
-        this.animation.spriteLoop(this.moveStates, this.movesOptions.direction);
+        this.animation.spriteLoop(
+            this.moveStates,
+            this.movesOptions.direction,
+            this.isSelected ? this.aim.getRawAngle() : undefined
+        );
     };
 }

@@ -117,6 +117,9 @@ export default class Aim {
         };
     }
 
+    public getRawAngle() {
+        return this.angle;
+    }
     private getPower() {
         const power = this.power;
         this.power = 0;

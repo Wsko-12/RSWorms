@@ -14,18 +14,28 @@ export default class WormAnimation {
 
     constructor() {
         this.texture.wrapS = RepeatWrapping;
-        // this.texture.magFilter = NearestFilter;
+        this.texture.magFilter = NearestFilter;
     }
     getCanvas() {
         return this.canvas;
     }
 
-    public spriteLoop = (wormStates: IWormMoveStates, wormDirection: number) => {
+    public spriteLoop = (wormStates: IWormMoveStates, wormDirection: number, aim?: number) => {
         this.texture.needsUpdate = true;
 
         let image = AssetsManager.getWormTexture('breath');
         if (!wormStates.isMove && !wormStates.isJump && !wormStates.isFall && !wormStates.isSlide) {
             this.lastAnimation = 'breath';
+            if (aim !== undefined) {
+                this.lastAnimation = 'aim';
+                const angle = aim + 45;
+                image = AssetsManager.getWormTexture('aim');
+                if (image) {
+                    const steps = image?.naturalHeight / image?.naturalWidth;
+                    const step = Math.floor((angle / 135) * steps);
+                    this.currentStep = step;
+                }
+            }
         }
 
         if (wormStates.isMove) {
