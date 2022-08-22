@@ -29,7 +29,7 @@ export default class WormAnimation {
             if (aim !== undefined) {
                 this.lastAnimation = 'aim';
                 const angle = aim + 45;
-                image = AssetsManager.getWormTexture('aim');
+                image = AssetsManager.getWormTexture('aiming');
                 if (image) {
                     const steps = image?.naturalHeight / image?.naturalWidth;
                     const step = Math.floor((angle / 135) * steps);
