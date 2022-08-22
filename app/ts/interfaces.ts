@@ -1,6 +1,7 @@
 import Loop from '../client/app/game/loop/Loop';
 import { Point2, Vector2 } from '../client/utils/geometry';
 import { EMapPacksNames, EWorldSizes } from './enums';
+import { TClassProperty, TAttrProperty, TDatasetProperty, TContentProperty } from './types';
 
 export interface IStartGameOptions {
     mapTexturePackName: EMapPacksNames;
@@ -47,4 +48,12 @@ export interface IWormMoveStates {
     isDoubleJump: boolean;
     isFall: boolean;
     isDamaged: boolean;
+}
+
+export interface ICreateElementProps {
+    classes?: TClassProperty;
+    id?: string;
+    attrs?: TAttrProperty;
+    dataset?: TDatasetProperty;
+    content?: TContentProperty;
 }
