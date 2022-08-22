@@ -1,9 +1,8 @@
-import { CircleBufferGeometry, Color, Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from 'three';
+import { Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from 'three';
 import { ELayersZ } from '../../../../../../ts/enums';
 import { IExplosionOptions, IShootOptions, IWormMoveStates } from '../../../../../../ts/interfaces';
 import { TLoopCallback, TRemoveEntityCallback } from '../../../../../../ts/types';
 import { Vector2 } from '../../../../../utils/geometry';
-import AssetsManager from '../../../assetsManager/AssetsManager';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
 import Aim from './aim/Aim';
