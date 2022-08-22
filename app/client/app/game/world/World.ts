@@ -38,7 +38,6 @@ export default class World {
 
         const windParticles = this.wind.getObject3D();
         if (windParticles) {
-            console.log(windParticles);
             this.mainScene.add(windParticles);
         }
     }
@@ -53,5 +52,12 @@ export default class World {
     public update: TLoopCallback = (time) => {
         this.wind.update(time);
         this.entityManager.update(time, this.wind.getCurrentValue());
-    };
+    }
+
+    public spriteLoop: TLoopCallback = (time) => {
+        this.wind.update(time);
+        this.entityManager.spriteLoop(time);
+        this.entityManager.update(time, this.wind.getCurrentValue());
+    }
+
 }

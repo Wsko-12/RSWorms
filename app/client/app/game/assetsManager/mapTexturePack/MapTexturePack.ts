@@ -1,39 +1,17 @@
 import { EMapPacksDecorItems, EMapPacksNames } from '../../../../../ts/enums';
+import PackTextureLoader from '../PackTextureLoader';
 
-export default class MapTexturePack {
+export default class MapTexturePack extends PackTextureLoader {
     private packName: EMapPacksNames;
-    private textures: Record<string, HTMLImageElement> = {};
-
-    private loaded = false;
     public decorItems: number;
     constructor(packName: EMapPacksNames) {
+        super();
         this.packName = packName;
         this.decorItems = EMapPacksDecorItems[packName];
     }
 
-    public isLoaded() {
-        return this.loaded;
-    }
-
     public getPackName() {
         return this.packName;
-    }
-
-    public getTexture(name: string) {
-        const texture = this.textures[name];
-        return texture ? texture : null;
-    }
-
-    private loadImage(path: string): Promise<HTMLImageElement> {
-        return new Promise((res) => {
-            const img = new Image();
-            img.src = path;
-            img.onload = () => {
-                img.width = img.naturalWidth;
-                img.height = img.naturalHeight;
-                res(img);
-            };
-        });
     }
 
     public async load() {

@@ -1,6 +1,7 @@
-import { Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Texture } from 'three';
+import { Group, Mesh, MeshBasicMaterial, NearestFilter, PlaneBufferGeometry, Texture } from 'three';
 import { ELayersZ } from '../../../../../../../ts/enums';
 import { IWormMoveStates } from '../../../../../../../ts/interfaces';
+import AssetsManager from '../../../../assetsManager/AssetsManager';
 import Weapon from '../weapon/Weapon';
 
 export default class Aim {
@@ -14,7 +15,20 @@ export default class Aim {
     protected shootPowerCtx = this.shootPowerCanvas.getContext('2d');
 
     constructor() {
-        this.aimMesh = new Mesh(new PlaneBufferGeometry(10, 10), new MeshBasicMaterial());
+        const aimSprite = AssetsManager.getWormTexture('aim');
+        if (!aimSprite) {
+            throw new Error("[Worm Aim] can't load aim sprite");
+        }
+        const aimTexture = new Texture(aimSprite);
+        aimTexture.magFilter = NearestFilter;
+        aimTexture.needsUpdate = true;
+        this.aimMesh = new Mesh(
+            new PlaneBufferGeometry(25, 25),
+            new MeshBasicMaterial({
+                map: aimTexture,
+                alphaTest: 0.5,
+            })
+        );
         const shootingPowerTexture = new Texture(this.shootPowerCanvas);
         this.shootPowerMesh = new Mesh(
             new PlaneBufferGeometry(1, 1),
@@ -61,6 +75,7 @@ export default class Aim {
         const x = Math.cos(rad) * r;
         const y = Math.sin(rad) * r;
         this.shootPowerMesh.rotation.z = rad;
+        this.aimMesh.rotation.z = rad;
         this.aimMesh.position.set(x, y, ELayersZ.aim);
         this.shootPowerMesh.scale.set(wormRadius * 2 + r * 1.5, wormRadius * 2 + r * 1.5, 1);
         this.drawShootPower(this.power);
@@ -117,6 +132,9 @@ export default class Aim {
         };
     }
 
+    public getRawAngle() {
+        return this.angle;
+    }
     private getPower() {
         const power = this.power;
         this.power = 0;

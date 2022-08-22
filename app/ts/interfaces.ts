@@ -43,6 +43,7 @@ export interface IWormMoveStates {
     isSlide: boolean;
     isMove: boolean;
     isJump: boolean;
+    isDoubleJump: boolean;
     isFall: boolean;
     isDamaged: boolean;
 }
