@@ -28,4 +28,9 @@ export const enum ELayersZ {
     map = 0,
     worms = 1,
     aim = 25,
+    weapons = 10,
+}
+
+export const enum ESizes {
+    worm = 20,
 }
