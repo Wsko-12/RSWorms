@@ -24,7 +24,7 @@ export default class WormAnimation {
         this.texture.needsUpdate = true;
 
         let image = AssetsManager.getWormTexture('breath');
-        if (Object.values(wormStates).every((value) => !value)) {
+        if (!wormStates.isMove && !wormStates.isJump && !wormStates.isFall && !wormStates.isSlide) {
             this.lastAnimation = 'breath';
         }
 
@@ -69,8 +69,11 @@ export default class WormAnimation {
             this.maxSteps = image.naturalHeight / image.naturalWidth;
 
             const size = image.naturalWidth;
-            this.canvas.width = size;
-            this.canvas.height = size;
+            if (this.canvas.width != size) {
+                this.canvas.width = size;
+                this.canvas.height = size;
+            }
+
             if (this.currentStep >= this.maxSteps - 1) {
                 this.animationDirection = -1;
             }
@@ -80,6 +83,7 @@ export default class WormAnimation {
 
             this.currentStep += this.animationDirection;
 
+            this.ctx?.clearRect(0, 0, size, size);
             this.ctx?.drawImage(image, 0, -this.currentStep * size);
         }
     };

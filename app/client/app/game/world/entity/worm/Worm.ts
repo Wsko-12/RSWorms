@@ -166,6 +166,7 @@ export default class Worm extends Entity {
         } else {
             this.moveStates.isFall = false;
         }
+
         this.moveStates.isJump = false;
         this.moveStates.isDoubleJump = false;
 
@@ -280,30 +281,6 @@ export default class Worm extends Entity {
                     this.moveStates.isDamaged = false;
                 }
             }
-            //test
-            const material = this.wormMesh.material;
-            // if (material instanceof MeshBasicMaterial) {
-            //     material.color.set(new Color(0xc48647));
-
-            //     if (this.moveStates.isDamaged) {
-            //         material.color.set(new Color(0x00ffff));
-            //     }
-
-            //     if (this.moveStates.isFall) {
-            //         material.color.set(new Color(0xff00ff));
-            //     }
-
-            //     if (this.moveStates.isSlide) {
-            //         material.color.set(new Color(0xff0000));
-            //     }
-            //     if (this.moveStates.isMove) {
-            //         material.color.set(new Color(0xffff00));
-            //     }
-
-            //     if (this.moveStates.isJump) {
-            //         material.color.set(new Color(0x00ff00));
-            //     }
-            // }
         }
     }
 
