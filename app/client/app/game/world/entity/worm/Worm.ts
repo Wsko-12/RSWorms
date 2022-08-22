@@ -6,6 +6,9 @@ import { Vector2 } from '../../../../../utils/geometry';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
 import Aim from './aim/Aim';
+import Bazooka from './weapon/Bazooka/Bazooka';
+import Grenade from './weapon/Grenade/Grenade';
+import TimerWeapon from './weapon/TimerWeapon';
 import Weapon from './weapon/Weapon';
 import WormAnimation from './WormAnimation';
 
@@ -48,11 +51,13 @@ export default class Worm extends Entity {
     };
 
     private hp: number;
-    private currentWeapon: Weapon;
+    private currentWeapon: Weapon | null;
+    private weapons: Weapon[];
 
     constructor(removeEntityCallback: TRemoveEntityCallback, id: string, x = 0, y = 0, hp = 100) {
         super(removeEntityCallback, id, 20, x, y);
-        this.currentWeapon = new Weapon();
+        this.currentWeapon = null;
+        this.weapons = [new Bazooka(), new Grenade()];
         this.id = id;
         this.physics.friction = 0.1;
         const geometry = new PlaneBufferGeometry(this.radius * 5, this.radius * 5);
@@ -68,6 +73,16 @@ export default class Worm extends Entity {
         this.hp = hp;
     }
 
+    changeWeapon() {
+        if (this.currentWeapon instanceof Bazooka) this.currentWeapon = this.weapons[1];
+        else this.currentWeapon = this.weapons[0];
+        console.log(this.currentWeapon);
+    }
+
+    changeWeaponTimer() {
+        if (this.currentWeapon instanceof TimerWeapon) this.currentWeapon.changeTimer();
+    }
+
     public setAsSelected(flag: boolean) {
         this.isSelected = flag;
     }
@@ -78,6 +93,7 @@ export default class Worm extends Entity {
     }
 
     public shoot() {
+        if (!this.currentWeapon) return;
         const { power, angle } = this.aim.getShootData(this.movesOptions.direction);
         const options: IShootOptions = {
             angle,
@@ -90,6 +106,7 @@ export default class Worm extends Entity {
     }
 
     public changeAim(direction: number, speed: number, power: boolean) {
+        if (!this.currentWeapon) return;
         this.aim.changeAngle(direction, speed);
         if (power) {
             this.aim.changePower();

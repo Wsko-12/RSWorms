@@ -41,6 +41,13 @@ export default class WormManager {
         }
         const worm = this.controlledWorm;
 
+        if (e.code === 'KeyH') {
+            worm.changeWeapon();
+        }
+        if (e.code === 'KeyJ') {
+            worm.changeWeaponTimer();
+        }
+
         if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') {
             if (e.code === 'ArrowLeft') {
                 worm.setMoveFlags({ left: true });
