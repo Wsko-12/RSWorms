@@ -151,6 +151,7 @@ export default abstract class Entity {
     }
 
     public push(vec: Vector2) {
+        this.stable = false;
         const { velocity } = this.physics;
         velocity.x += vec.x;
         velocity.y += vec.y;
@@ -165,9 +166,14 @@ export default abstract class Entity {
             return;
         }
 
+        if (vec.getLength() === 0) {
+            vec.y = force;
+        }
         vec.normalize().scale(force * options.kickForce);
         this.push(vec);
     }
 
-    public spriteLoop: TLoopCallback = (time) => {};
+    public spriteLoop: TLoopCallback = (time) => {
+        return;
+    };
 }

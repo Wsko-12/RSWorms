@@ -1,4 +1,4 @@
-import { Mesh, MeshBasicMaterial, Object3D, PlaneBufferGeometry, Texture } from 'three';
+import { Mesh, MeshBasicMaterial, NearestFilter, Object3D, PlaneBufferGeometry, Texture } from 'three';
 import { EWeapons } from '../../../../../../../../ts/enums';
 import { IBulletOptions, IExplosionOptions } from '../../../../../../../../ts/interfaces';
 import { TRemoveEntityCallback } from '../../../../../../../../ts/types';
@@ -49,6 +49,7 @@ export default class Bullet extends Entity {
         }
         const texture = new Texture(image);
         texture.needsUpdate = true;
+        texture.magFilter = NearestFilter;
         this.texture = texture;
         const material = new MeshBasicMaterial({
             map: texture,
