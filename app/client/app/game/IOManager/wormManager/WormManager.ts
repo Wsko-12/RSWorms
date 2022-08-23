@@ -1,4 +1,5 @@
 import { TLoopCallback } from '../../../../../ts/types';
+import SoundManager from '../../soundManager/SoundManager';
 import Worm from '../../world/entity/worm/Worm';
 
 export default class WormManager {
@@ -51,9 +52,11 @@ export default class WormManager {
         if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') {
             if (e.code === 'ArrowLeft') {
                 worm.setMoveFlags({ left: true });
+                SoundManager.playWorm('walk');
             }
             if (e.code === 'ArrowRight') {
                 worm.setMoveFlags({ right: true });
+                SoundManager.playWorm('walk');
             }
         }
 
@@ -73,6 +76,7 @@ export default class WormManager {
         const jumpTimeout = () => {
             const t = setTimeout(() => {
                 worm.jump();
+                SoundManager.playWorm('jump1');
             }, this.jumpButtonDelayMS + 1);
             return Number(t);
         };
@@ -86,6 +90,7 @@ export default class WormManager {
             } else {
                 clearTimeout(this.timer);
                 worm.jump(true);
+                SoundManager.playWorm('jump2');
             }
         }
     }
@@ -114,6 +119,7 @@ export default class WormManager {
 
         if (e.code === 'Space') {
             this.shooting = false;
+            SoundManager.playWorm('shoot');
             return worm.shoot();
         }
     }

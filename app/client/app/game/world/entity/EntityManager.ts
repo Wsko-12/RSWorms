@@ -73,7 +73,7 @@ export default class EntityManager {
 
     public spriteLoop: TLoopCallback = (time) => {
         this.entities.forEach((entity) => {
-            entity.spriteLoop(time)
-        })
+            entity.spriteLoop(time);
+        });
     };
 }

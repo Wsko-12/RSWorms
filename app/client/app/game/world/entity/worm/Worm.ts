@@ -26,7 +26,7 @@ export default class Worm extends Entity {
     };
 
     // for animations
-    private moveStates: IWormMoveStates = {
+    public moveStates: IWormMoveStates = {
         isSlide: false,
         isMove: false,
         isJump: false,

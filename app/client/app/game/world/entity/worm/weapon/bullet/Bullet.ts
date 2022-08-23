@@ -2,6 +2,7 @@ import { CircleBufferGeometry, Mesh, MeshBasicMaterial, Object3D } from 'three/s
 import { IExplosionOptions, IShootOptions } from '../../../../../../../../ts/interfaces';
 import { TRemoveEntityCallback } from '../../../../../../../../ts/types';
 import { Vector2 } from '../../../../../../../utils/geometry';
+import SoundManager from '../../../../../soundManager/SoundManager';
 import MapMatrix from '../../../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../../../Entity';
 
@@ -37,6 +38,7 @@ export default class Bullet extends Entity {
     }
 
     protected explode(mapMatrix: MapMatrix, entities: Entity[]) {
+        SoundManager.playSFX('explosion');
         mapMatrix.destroy(this.position, this.explosionRadius);
         const explosionOptions: IExplosionOptions = {
             damage: this.explosionDamage,
