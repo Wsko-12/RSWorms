@@ -94,14 +94,14 @@ export default abstract class Weapon {
     private updateShowView() {
         const { showOptions } = this;
         if (!showOptions.needShows && showOptions.currentScale > 0) {
-            showOptions.currentScale -= 0.25;
+            showOptions.currentScale -= 0.1;
             if (showOptions.currentScale < 0) {
                 showOptions.currentScale = 0;
             }
         }
 
         if (showOptions.needShows && showOptions.currentScale < 1) {
-            showOptions.currentScale += 0.25;
+            showOptions.currentScale += 0.1;
             if (showOptions.currentScale > 1) {
                 showOptions.currentScale = 1;
             }
