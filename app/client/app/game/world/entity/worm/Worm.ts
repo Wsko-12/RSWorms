@@ -7,6 +7,7 @@ import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
 import WBazooka from './weapon/weapon/powerable/bazooka/Bazooka';
 import WGrenade from './weapon/weapon/powerable/grenade/Grenade';
+import WDynamite from './weapon/weapon/static/dynamite/Dynamite';
 import Weapon from './weapon/weapon/Weapon';
 import WormAnimation from './WormAnimation';
 
@@ -21,6 +22,7 @@ export default class Worm extends Entity {
     private weaponPack: Record<EWeapons, Weapon> = {
         bazooka: new WBazooka(),
         grenade: new WGrenade(),
+        dynamite: new WDynamite(),
     };
 
     public isSelected = false;

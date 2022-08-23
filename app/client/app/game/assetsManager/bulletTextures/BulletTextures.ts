@@ -6,6 +6,7 @@ export default class BulletTextures extends PackTextureLoader {
         const path = mapTexturesFolder;
         this.textures.bazooka = await this.loadImage(path + 'bazooka.png');
         this.textures.grenade = await this.loadImage(path + 'grenade.png');
+        this.textures.dynamite = await this.loadImage(path + 'dynamite.png');
         return true;
     }
 }

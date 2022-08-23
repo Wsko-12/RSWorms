@@ -40,4 +40,6 @@ export const enum ESizes {
 export const enum EWeapons {
     bazooka = 'bazooka',
     grenade = 'grenade',
+    dynamite = 'dynamite',
+    // mine = 'mine',
 }

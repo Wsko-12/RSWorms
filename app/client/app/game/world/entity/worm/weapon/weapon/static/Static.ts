@@ -8,5 +8,6 @@ export default abstract class StaticWeapon extends Weapon {
     };
     constructor(textureName: EWeapons) {
         super(textureName);
+        this.aim.hide(this.aimOptions.hidePower, this.aimOptions.hideAim);
     }
 }

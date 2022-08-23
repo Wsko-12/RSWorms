@@ -73,6 +73,9 @@ export default class WormManager {
         if (e.code === 'KeyB') {
             this.controlledWorm.selectWeapon(EWeapons.bazooka);
         }
+        if (e.code === 'KeyD') {
+            this.controlledWorm.selectWeapon(EWeapons.dynamite);
+        }
 
         const jumpTimeout = () => {
             const t = setTimeout(() => {
