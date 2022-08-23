@@ -3,7 +3,7 @@ import TimerWeapon from '../TimerWeapon';
 
 export default class Grenade extends TimerWeapon {
     constructor() {
-        super();
+        super('grenade');
         this.bulletType = GrenadeBullet;
     }
 }

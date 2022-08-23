@@ -43,7 +43,7 @@ export default class Aim {
         this.group.add(this.aimMesh, this.shootPowerMesh);
         this.shootPowerCanvas.width = 256;
         this.shootPowerCanvas.height = 256;
-        this.toggle(false);
+        this.show(false);
     }
 
     public getObject3D() {
@@ -57,13 +57,9 @@ export default class Aim {
         if (this.angle < -45) this.angle = -45;
     }
 
-    public update(wormStates: IWormMoveStates, weapon: Weapon | null, wormRadius: number, wormDirection: number) {
+    public update(weapon: Weapon | null, wormRadius: number, wormDirection: number) {
         if (!weapon) {
-            this.toggle(false);
-            return;
-        }
-        if (wormStates.isFall || wormStates.isSlide || wormStates.isJump || wormStates.isMove) {
-            this.toggle(false);
+            this.show(false);
             return;
         }
 
@@ -120,7 +116,7 @@ export default class Aim {
         if (this.power > 100) this.power = 100;
     }
 
-    public toggle(flag: boolean) {
+    public show(flag: boolean) {
         this.aimMesh.visible = flag;
         this.shootPowerMesh.visible = flag;
     }
@@ -142,7 +138,7 @@ export default class Aim {
         return power;
     }
 
-    private getAngle(wormDirection: number) {
+    public getAngle(wormDirection: number) {
         return wormDirection === 1 ? this.angle : 180 - this.angle;
     }
 }

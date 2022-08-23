@@ -1,5 +1,5 @@
 import { Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from 'three';
-import { ELayersZ } from '../../../../../../ts/enums';
+import { ELayersZ, ESizes } from '../../../../../../ts/enums';
 import { IExplosionOptions, IShootOptions, IWormMoveStates } from '../../../../../../ts/interfaces';
 import { TLoopCallback, TRemoveEntityCallback } from '../../../../../../ts/types';
 import { Vector2 } from '../../../../../utils/geometry';
@@ -55,7 +55,7 @@ export default class Worm extends Entity {
     private weapons: Weapon[];
 
     constructor(removeEntityCallback: TRemoveEntityCallback, id: string, x = 0, y = 0, hp = 100) {
-        super(removeEntityCallback, id, 20, x, y);
+        super(removeEntityCallback, id, ESizes.worm, x, y);
         this.currentWeapon = null;
         this.weapons = [new Bazooka(), new Grenade()];
         this.id = id;
@@ -73,13 +73,26 @@ export default class Worm extends Entity {
         this.hp = hp;
     }
 
-    changeWeapon() {
+    public changeWeapon() {
+        const before = this.currentWeapon;
         if (this.currentWeapon instanceof Bazooka) this.currentWeapon = this.weapons[1];
         else this.currentWeapon = this.weapons[0];
-        console.log(this.currentWeapon);
+
+        if (before) {
+            before.show(false, 0);
+            const object = before.getObject3D();
+            this.object3D.remove(object);
+        }
+
+        const after = this.currentWeapon;
+        if (after) {
+            after.show(true);
+            const object = after.getObject3D();
+            this.object3D.add(object);
+        }
     }
 
-    changeWeaponTimer() {
+    public changeWeaponTimer() {
         if (this.currentWeapon instanceof TimerWeapon) this.currentWeapon.changeTimer();
     }
 
@@ -276,15 +289,22 @@ export default class Worm extends Entity {
         v.scale(0);
     }
 
+    public isStable() {
+        return (
+            !this.moveStates.isFall && !this.moveStates.isJump && !this.moveStates.isMove && !this.moveStates.isSlide
+        );
+    }
+
     public update(mapMatrix: MapMatrix, entities: Entity[], wind: number): void {
         this.move(mapMatrix, entities);
         super.update(mapMatrix, entities, wind);
         this.object3D.position.z = ELayersZ.worms;
 
+        this.aim.show(this.isSelected && this.isStable() && !!this.currentWeapon);
+        this.currentWeapon?.show(this.isSelected && this.isStable());
+
         if (this.isSelected) {
-            this.aim.update(this.moveStates, this.currentWeapon, this.radius, this.movesOptions.direction);
-        } else {
-            this.aim.toggle(false);
+            this.aim.update(this.currentWeapon, this.radius, this.movesOptions.direction);
         }
 
         // temporary
@@ -315,6 +335,8 @@ export default class Worm extends Entity {
     }
 
     public spriteLoop: TLoopCallback = (time) => {
+        const direction = this.movesOptions.direction;
+        this.currentWeapon?.update(this.aim.getAngle(direction), direction);
         this.animation.spriteLoop(
             this.moveStates,
             this.movesOptions.direction,
