@@ -1,5 +1,6 @@
 import { EMapPacksNames } from '../../../../ts/enums';
 import { IStartGameOptions } from '../../../../ts/interfaces';
+import BulletTextures from './bulletTextures/BulletTextures';
 import MapTexturePack from './mapTexturePack/MapTexturePack';
 import WeaponTextures from './weaponTextures/WeaponTextures';
 import WormTextures from './wormTextures/WormTextures';
@@ -8,6 +9,7 @@ export default class AssetsManager {
     private static mapTexturePack: MapTexturePack | null = null;
     private static wormTextures: WormTextures | null = null;
     private static weaponTextures: WeaponTextures | null = null;
+    private static bulletTextures: BulletTextures | null = null;
 
     private static isMapTexturePackReady(packName: EMapPacksNames) {
         return this.mapTexturePack && this.mapTexturePack.getPackName() === packName && this.mapTexturePack.isLoaded();
@@ -28,6 +30,9 @@ export default class AssetsManager {
                 this.weaponTextures = new WeaponTextures();
                 await this.weaponTextures.load();
 
+                this.bulletTextures = new BulletTextures();
+                await this.bulletTextures.load();
+
                 res(true);
             }
         });
@@ -43,5 +48,9 @@ export default class AssetsManager {
 
     static getWeaponTexture(name: string) {
         return this.weaponTextures?.getTexture(name);
+    }
+
+    static getBulletTexture(name: string) {
+        return this.bulletTextures?.getTexture(name);
     }
 }
