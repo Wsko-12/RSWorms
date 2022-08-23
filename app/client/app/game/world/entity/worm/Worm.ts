@@ -1,23 +1,24 @@
 import { Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from 'three';
-import { ELayersZ, ESizes } from '../../../../../../ts/enums';
-import { IExplosionOptions, IShootOptions, IWormMoveStates } from '../../../../../../ts/interfaces';
+import { ELayersZ, ESizes, EWeapons } from '../../../../../../ts/enums';
+import { IExplosionOptions, IShootOptions, IWormMoveOptions, IWormMoveStates } from '../../../../../../ts/interfaces';
 import { TLoopCallback, TRemoveEntityCallback } from '../../../../../../ts/types';
 import { Vector2 } from '../../../../../utils/geometry';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
-import Aim from './aim/Aim';
-import Bazooka from './weapon/Bazooka/Bazooka';
-import Grenade from './weapon/Grenade/Grenade';
-import TimerWeapon from './weapon/TimerWeapon';
-import Weapon from './weapon/Weapon';
+import Weapon from './weapon/weapon/Weapon';
 import WormAnimation from './WormAnimation';
 
 export default class Worm extends Entity {
     protected object3D: Group;
     private wormMesh: Mesh;
-    private aim = new Aim();
     private fallToJumpCoef = 1.2;
     private animation = new WormAnimation();
+
+    private currentWeapon: null | Weapon = null;
+
+    private weaponPack: Record<EWeapons, Weapon> = {
+        bazooka: new Weapon(EWeapons.bazooka),
+    };
 
     public isSelected = false;
     private jumpVectors = {
@@ -38,7 +39,7 @@ export default class Worm extends Entity {
     //temporary
     private lastDamageTimestamp = 0;
 
-    public movesOptions = {
+    public movesOptions: IWormMoveOptions = {
         flags: {
             left: false,
             right: false,
@@ -51,13 +52,9 @@ export default class Worm extends Entity {
     };
 
     private hp: number;
-    private currentWeapon: Weapon | null;
-    private weapons: Weapon[];
 
     constructor(removeEntityCallback: TRemoveEntityCallback, id: string, x = 0, y = 0, hp = 100) {
         super(removeEntityCallback, id, ESizes.worm, x, y);
-        this.currentWeapon = null;
-        this.weapons = [new Bazooka(), new Grenade()];
         this.id = id;
         this.physics.friction = 0.1;
         const geometry = new PlaneBufferGeometry(this.radius * 5, this.radius * 5);
@@ -68,32 +65,9 @@ export default class Worm extends Entity {
         this.object3D = new Group();
         this.wormMesh = new Mesh(geometry, material);
 
-        this.object3D.add(this.wormMesh, this.aim.getObject3D());
+        this.object3D.add(this.wormMesh);
         this.object3D.position.set(x, y, ELayersZ.worms);
         this.hp = hp;
-    }
-
-    public changeWeapon() {
-        const before = this.currentWeapon;
-        if (this.currentWeapon instanceof Bazooka) this.currentWeapon = this.weapons[1];
-        else this.currentWeapon = this.weapons[0];
-
-        if (before) {
-            before.show(false, 0);
-            const object = before.getObject3D();
-            this.object3D.remove(object);
-        }
-
-        const after = this.currentWeapon;
-        if (after) {
-            after.show(true);
-            const object = after.getObject3D();
-            this.object3D.add(object);
-        }
-    }
-
-    public changeWeaponTimer() {
-        if (this.currentWeapon instanceof TimerWeapon) this.currentWeapon.changeTimer();
     }
 
     public setAsSelected(flag: boolean) {
@@ -103,27 +77,6 @@ export default class Worm extends Entity {
     public setMoveFlags(flags: { left?: boolean; right?: boolean }) {
         this.stable = false;
         Object.assign(this.movesOptions.flags, flags);
-    }
-
-    public shoot() {
-        if (!this.currentWeapon) return;
-        const { power, angle } = this.aim.getShootData(this.movesOptions.direction);
-        const options: IShootOptions = {
-            angle,
-            power,
-            position: this.position.clone(),
-            parentRadius: this.radius,
-        };
-
-        return this.currentWeapon.shoot(options, this.removeEntityCallback);
-    }
-
-    public changeAim(direction: number, speed: number, power: boolean) {
-        if (!this.currentWeapon) return;
-        this.aim.changeAngle(direction, speed);
-        if (power) {
-            this.aim.changePower();
-        }
     }
 
     public getHP() {
@@ -146,6 +99,41 @@ export default class Worm extends Entity {
         this.moveStates.isJump = true;
         this.moveStates.isDoubleJump = !!double;
         this.push(vec);
+    }
+
+    public shoot() {
+        if (!this.currentWeapon) return;
+        const options: IShootOptions = {
+            position: this.position.clone(),
+            parentRadius: this.radius,
+            wormDirection: this.movesOptions.direction,
+        };
+        return this.currentWeapon.shoot(options, this.removeEntityCallback);
+    }
+    public selectWeapon(weapon: EWeapons | null) {
+        const before = this.currentWeapon;
+        if (before) {
+            const object = before.getObject3D();
+            before.show(false, 0);
+            this.object3D.remove(object);
+        }
+
+        if (!weapon) {
+            this.currentWeapon = null;
+            return;
+        }
+        this.currentWeapon = this.weaponPack[weapon];
+
+        const after = this.currentWeapon;
+        if (after) {
+            const object = after.getObject3D();
+            this.object3D.add(object);
+            after.show(true);
+        }
+    }
+
+    public changeAim(direction: 1 | -1 | 0, speed: number, power: boolean) {
+        this.currentWeapon?.changeAim(direction, speed, power);
     }
 
     public isMoves() {
@@ -300,12 +288,8 @@ export default class Worm extends Entity {
         super.update(mapMatrix, entities, wind);
         this.object3D.position.z = ELayersZ.worms;
 
-        this.aim.show(this.isSelected && this.isStable() && !!this.currentWeapon);
         this.currentWeapon?.show(this.isSelected && this.isStable());
-
-        if (this.isSelected) {
-            this.aim.update(this.currentWeapon, this.radius, this.movesOptions.direction);
-        }
+        this.currentWeapon?.update(this.movesOptions.direction);
 
         // temporary
         {
@@ -335,12 +319,6 @@ export default class Worm extends Entity {
     }
 
     public spriteLoop: TLoopCallback = (time) => {
-        const direction = this.movesOptions.direction;
-        this.currentWeapon?.update(this.aim.getAngle(direction), direction);
-        this.animation.spriteLoop(
-            this.moveStates,
-            this.movesOptions.direction,
-            this.isSelected ? this.aim.getRawAngle() : undefined
-        );
+        this.animation.spriteLoop(this.moveStates, this.movesOptions.direction, undefined);
     };
 }

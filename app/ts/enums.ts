@@ -34,3 +34,7 @@ export const enum ELayersZ {
 export const enum ESizes {
     worm = 20,
 }
+
+export const enum EWeapons {
+    bazooka = 'bazooka',
+}

@@ -3,8 +3,6 @@ import { IExplosionOptions, IPhysics } from '../../../../../ts/interfaces';
 import { TLoopCallback, TRemoveEntityCallback } from '../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../utils/geometry';
 import MapMatrix from '../worldMap/mapMatrix/MapMatrix';
-import Bullet from './worm/weapon/bullet/Bullet';
-
 export default abstract class Entity {
     protected abstract object3D: Object3D | Mesh;
     public position: Point2;
@@ -120,7 +118,7 @@ export default abstract class Entity {
         const collision = this.checkCollision(mapMatrix, entities, vel);
 
         if (!collision) {
-            this.position.x += this instanceof Bullet ? vel.x : 0;
+            this.position.x += vel.x;
             this.position.y += vel.y;
             this.physics.velocity = vel;
             return;

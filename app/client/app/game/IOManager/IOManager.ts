@@ -31,6 +31,7 @@ export default class IOManager {
         document.addEventListener('keyup', (e) => {
             // here will be check isPlayerTurn()
             const result = this.wormManager.handleEvent(e);
+            console.log(result);
             if (result instanceof Bullet) {
                 const scene = this.world.getMainScene();
                 scene.add(result.getObject3D());
