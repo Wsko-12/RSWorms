@@ -12,7 +12,7 @@ export default class Bullet extends Entity {
     private texture: Texture;
     protected rotationCoef = 1;
     protected explosionRadius = 150;
-    private windCoefficient = 1;
+    private windCoefficient = 0;
     private kickForce = 25;
     // how many hp will be removed if it explodes close to the worm
     protected explosionDamage = 50;
@@ -82,8 +82,13 @@ export default class Bullet extends Entity {
     }
 
     public updateObjectRotation() {
-        const { x, y } = this.physics.velocity;
-        const angle = Math.atan2(y, x);
-        this.object3D.rotation.z = angle * this.rotationCoef;
+        if (this.rotationCoef === 0) {
+            const { x, y } = this.physics.velocity;
+            const angle = Math.atan2(y, x);
+            this.object3D.rotation.z = angle;
+        }else{
+            const direction = this.physics.velocity.x > 0 ? -1 : 1;
+            this.object3D.rotation.z += direction * this.rotationCoef * (this.physics.velocity.getLength() * 0.01);
+        }
     }
 }
