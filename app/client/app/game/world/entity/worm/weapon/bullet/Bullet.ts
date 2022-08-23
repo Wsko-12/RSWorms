@@ -1,5 +1,6 @@
-import { Mesh, MeshBasicMaterial, Object3D, PlaneBufferGeometry, Texture } from 'three/src/Three';
-import { IExplosionOptions, IShootOptions } from '../../../../../../../../ts/interfaces';
+import { Mesh, MeshBasicMaterial, NearestFilter, Object3D, PlaneBufferGeometry, Texture } from 'three';
+import { EWeapons } from '../../../../../../../../ts/enums';
+import { IBulletOptions, IExplosionOptions } from '../../../../../../../../ts/interfaces';
 import { TRemoveEntityCallback } from '../../../../../../../../ts/types';
 import { Vector2 } from '../../../../../../../utils/geometry';
 import AssetsManager from '../../../../../assetsManager/AssetsManager';
@@ -10,25 +11,37 @@ import Entity from '../../../Entity';
 export default class Bullet extends Entity {
     protected object3D: Object3D;
     private texture: Texture;
-    protected rotationCoef = 0;
-    protected explosionRadius = 150;
-    private windCoefficient = 0;
-    private kickForce = 25;
-    // how many hp will be removed if it explodes close to the worm
-    protected explosionDamage = 50;
-    constructor(removeEntityCallback: TRemoveEntityCallback, id: string, options: IShootOptions, textureName?: string) {
+    protected windCoefficient = 1;
+    public name: EWeapons;
+
+    private explosion = {
+        damage: 150,
+        radius: 150,
+        kick: 15,
+    };
+
+    constructor(
+        removeEntityCallback: TRemoveEntityCallback,
+        id: string,
+        options: IBulletOptions,
+        textureName: EWeapons
+    ) {
         let { angle } = options;
-        const { power, position, parentRadius } = options;
+        const { power, position } = options;
         angle = (angle / 180) * Math.PI;
         super(removeEntityCallback, id, 10, position.x, position.y);
 
-        this.position.x += Math.cos(angle) * (parentRadius + this.radius + 1);
-        this.position.y += Math.sin(angle) * (parentRadius + this.radius + 1);
+        this.position.x += Math.cos(angle) * (options.parentRadius + this.radius + 1);
+        this.position.y += Math.sin(angle) * (options.parentRadius + this.radius + 1);
 
         this.physics.friction = 0.05;
+
         if (!textureName) {
             throw new Error(`[Weapon] no provided texture name`);
         }
+
+        this.name = textureName;
+
         const geometry = new PlaneBufferGeometry(100, 100);
         const image = AssetsManager.getBulletTexture(textureName);
         if (!image) {
@@ -36,6 +49,7 @@ export default class Bullet extends Entity {
         }
         const texture = new Texture(image);
         texture.needsUpdate = true;
+        texture.magFilter = NearestFilter;
         this.texture = texture;
         const material = new MeshBasicMaterial({
             map: texture,
@@ -51,17 +65,17 @@ export default class Bullet extends Entity {
     }
 
     protected handleCollision(mapMatrix: MapMatrix, entities: Entity[]): void {
-        this.explode(mapMatrix, entities);
+        return;
     }
 
     protected explode(mapMatrix: MapMatrix, entities: Entity[]) {
         SoundManager.playSFX('explosion');
-        mapMatrix.destroy(this.position, this.explosionRadius);
+        mapMatrix.destroy(this.position, this.explosion.radius);
         const explosionOptions: IExplosionOptions = {
-            damage: this.explosionDamage,
+            damage: this.explosion.damage,
             point: this.position.clone(),
-            radius: this.explosionRadius,
-            kickForce: this.kickForce,
+            radius: this.explosion.radius,
+            kickForce: this.explosion.kick,
         };
 
         entities.forEach((entity) => {
@@ -76,19 +90,13 @@ export default class Bullet extends Entity {
     }
 
     public update(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
-        this.physics.velocity.x += wind * this.windCoefficient;
         this.updateObjectRotation();
         super.update(mapMatrix, entities, wind);
     }
 
     public updateObjectRotation() {
-        if (this.rotationCoef === 0) {
-            const { x, y } = this.physics.velocity;
-            const angle = Math.atan2(y, x);
-            this.object3D.rotation.z = angle;
-        } else {
-            const direction = this.physics.velocity.x > 0 ? -1 : 1;
-            this.object3D.rotation.z += direction * this.rotationCoef * (this.physics.velocity.getLength() * 0.01);
-        }
+        const { x, y } = this.physics.velocity;
+        const angle = Math.atan2(y, x);
+        this.object3D.rotation.z = angle;
     }
 }

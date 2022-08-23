@@ -1,3 +1,4 @@
+import { EWeapons } from '../../../../../ts/enums';
 import { TLoopCallback } from '../../../../../ts/types';
 import SoundManager from '../../soundManager/SoundManager';
 import Worm from '../../world/entity/worm/Worm';
@@ -42,13 +43,6 @@ export default class WormManager {
         }
         const worm = this.controlledWorm;
 
-        if (e.code === 'KeyH') {
-            worm.changeWeapon();
-        }
-        if (e.code === 'KeyJ') {
-            worm.changeWeaponTimer();
-        }
-
         if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') {
             if (e.code === 'ArrowLeft') {
                 worm.setMoveFlags({ left: true });
@@ -71,6 +65,19 @@ export default class WormManager {
 
         if (e.code === 'Space') {
             this.shooting = true;
+        }
+
+        if (e.code === 'KeyG') {
+            this.controlledWorm.selectWeapon(EWeapons.grenade);
+        }
+        if (e.code === 'KeyB') {
+            this.controlledWorm.selectWeapon(EWeapons.bazooka);
+        }
+        if (e.code === 'KeyD') {
+            this.controlledWorm.selectWeapon(EWeapons.dynamite);
+        }
+        if (e.code === 'KeyM') {
+            this.controlledWorm.selectWeapon(EWeapons.mine);
         }
 
         const jumpTimeout = () => {
