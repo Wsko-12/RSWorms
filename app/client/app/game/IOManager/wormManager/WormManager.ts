@@ -67,7 +67,10 @@ export default class WormManager {
             this.shooting = true;
         }
 
-        if (e.code === 'KeyJ') {
+        if (e.code === 'KeyG') {
+            this.controlledWorm.selectWeapon(EWeapons.grenade);
+        }
+        if (e.code === 'KeyB') {
             this.controlledWorm.selectWeapon(EWeapons.bazooka);
         }
 

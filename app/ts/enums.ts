@@ -21,6 +21,8 @@ export const enum EProportions {
 export const enum EConstants {
     bgScale = 4,
     cameraFov = 45,
+
+    throwableExplosionDelay = 5000,
 }
 
 export const enum ELayersZ {
@@ -37,4 +39,5 @@ export const enum ESizes {
 
 export const enum EWeapons {
     bazooka = 'bazooka',
+    grenade = 'grenade',
 }

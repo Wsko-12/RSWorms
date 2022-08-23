@@ -15,8 +15,9 @@ import AssetsManager from '../../../../../assetsManager/AssetsManager';
 import Bullet from '../bullet/Bullet';
 import Aim from './aim/Aim';
 
-export default class Weapon {
-    private name: EWeapons = EWeapons.bazooka;
+export default abstract class Weapon {
+    protected abstract name: EWeapons;
+    protected bullet = Bullet;
     protected object3D: Object3D;
     protected aim = new Aim();
     private weaponMesh: Mesh;
@@ -77,6 +78,9 @@ export default class Weapon {
         this.rotateMesh(wormDirection);
     }
 
+    public getRawAngle() {
+        return this.aim.getRawAngle();
+    }
     private rotateMesh(wormDirection: 1 | -1) {
         this.texture.repeat.x = -wormDirection;
 
@@ -122,7 +126,7 @@ export default class Weapon {
             position: options.position,
             parentRadius: options.parentRadius,
         };
-        const bullet = new Bullet(removeEntityCallback, `id_${Math.random()}`, bulletOptions, this.name);
+        const bullet = new this.bullet(removeEntityCallback, `id_${Math.random()}`, bulletOptions, this.name);
         return bullet;
     }
 }

@@ -1,0 +1,30 @@
+import { EConstants, EWeapons } from '../../../../../../../../../ts/enums';
+import { IBulletOptions } from '../../../../../../../../../ts/interfaces';
+import { TRemoveEntityCallback } from '../../../../../../../../../ts/types';
+import MapMatrix from '../../../../../worldMap/mapMatrix/MapMatrix';
+import Entity from '../../../../Entity';
+import Bullet from '../Bullet';
+
+export default abstract class ThrowableBullet extends Bullet {
+    protected timer = Date.now();
+    constructor(
+        removeEntityCallback: TRemoveEntityCallback,
+        id: string,
+        options: IBulletOptions,
+        textureName: EWeapons
+    ) {
+        super(removeEntityCallback, id, options, textureName);
+        this.physics.friction = 0.4;
+    }
+
+    protected handleCollision(mapMatrix: MapMatrix, entities: Entity[]): void {
+        return;
+    }
+
+    public update(mapMatrix: MapMatrix, entities: Entity[], wind: number): void {
+        if (Date.now() - this.timer > EConstants.throwableExplosionDelay) {
+            this.explode(mapMatrix, entities);
+        }
+        super.update(mapMatrix, entities, wind);
+    }
+}

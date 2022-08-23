@@ -5,6 +5,8 @@ import { TLoopCallback, TRemoveEntityCallback } from '../../../../../../ts/types
 import { Vector2 } from '../../../../../utils/geometry';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
+import WBazooka from './weapon/weapon/powerable/bazooka/Bazooka';
+import WGrenade from './weapon/weapon/powerable/grenade/Grenade';
 import Weapon from './weapon/weapon/Weapon';
 import WormAnimation from './WormAnimation';
 
@@ -17,7 +19,8 @@ export default class Worm extends Entity {
     private currentWeapon: null | Weapon = null;
 
     private weaponPack: Record<EWeapons, Weapon> = {
-        bazooka: new Weapon(EWeapons.bazooka),
+        bazooka: new WBazooka(),
+        grenade: new WGrenade(),
     };
 
     public isSelected = false;
@@ -319,6 +322,10 @@ export default class Worm extends Entity {
     }
 
     public spriteLoop: TLoopCallback = (time) => {
-        this.animation.spriteLoop(this.moveStates, this.movesOptions.direction, undefined);
+        this.animation.spriteLoop(
+            this.moveStates,
+            this.movesOptions.direction,
+            this.isSelected ? this.currentWeapon?.getRawAngle() : undefined
+        );
     };
 }

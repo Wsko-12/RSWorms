@@ -12,6 +12,7 @@ export default class Bullet extends Entity {
     protected object3D: Object3D;
     private texture: Texture;
     protected windCoefficient = 1;
+    public name: EWeapons;
 
     private explosion = {
         damage: 150,
@@ -23,7 +24,7 @@ export default class Bullet extends Entity {
         removeEntityCallback: TRemoveEntityCallback,
         id: string,
         options: IBulletOptions,
-        textureName?: EWeapons
+        textureName: EWeapons
     ) {
         let { angle } = options;
         const { power, position } = options;
@@ -38,6 +39,9 @@ export default class Bullet extends Entity {
         if (!textureName) {
             throw new Error(`[Weapon] no provided texture name`);
         }
+
+        this.name = textureName;
+
         const geometry = new PlaneBufferGeometry(100, 100);
         const image = AssetsManager.getBulletTexture(textureName);
         if (!image) {
@@ -60,7 +64,7 @@ export default class Bullet extends Entity {
     }
 
     protected handleCollision(mapMatrix: MapMatrix, entities: Entity[]): void {
-        this.explode(mapMatrix, entities);
+        return;
     }
 
     protected explode(mapMatrix: MapMatrix, entities: Entity[]) {
@@ -85,7 +89,6 @@ export default class Bullet extends Entity {
     }
 
     public update(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
-        this.physics.velocity.x += wind * this.windCoefficient;
         this.updateObjectRotation();
         super.update(mapMatrix, entities, wind);
     }
@@ -94,11 +97,5 @@ export default class Bullet extends Entity {
         const { x, y } = this.physics.velocity;
         const angle = Math.atan2(y, x);
         this.object3D.rotation.z = angle;
-        // if (this.rotationCoef === 0) {
-
-        // } else {
-        //     const direction = this.physics.velocity.x > 0 ? -1 : 1;
-        //     this.object3D.rotation.z += direction * this.rotationCoef * (this.physics.velocity.getLength() * 0.01);
-        // }
     }
 }
