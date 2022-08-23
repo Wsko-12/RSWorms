@@ -6,6 +6,7 @@ import Entity from '../../../../Entity';
 import Bullet from '../Bullet';
 
 export default abstract class ThrowableBullet extends Bullet {
+    protected isActivated = false;
     protected timer = Date.now();
     constructor(
         removeEntityCallback: TRemoveEntityCallback,
@@ -21,9 +22,13 @@ export default abstract class ThrowableBullet extends Bullet {
         return;
     }
 
+    protected activate(mapMatrix: MapMatrix, entities: Entity[]) {
+        this.explode(mapMatrix, entities);
+    }
+
     public update(mapMatrix: MapMatrix, entities: Entity[], wind: number): void {
         if (Date.now() - this.timer > EConstants.throwableExplosionDelay) {
-            this.explode(mapMatrix, entities);
+            this.activate(mapMatrix, entities);
         }
         super.update(mapMatrix, entities, wind);
     }

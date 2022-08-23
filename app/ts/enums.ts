@@ -41,5 +41,5 @@ export const enum EWeapons {
     bazooka = 'bazooka',
     grenade = 'grenade',
     dynamite = 'dynamite',
-    // mine = 'mine',
+    mine = 'mine',
 }

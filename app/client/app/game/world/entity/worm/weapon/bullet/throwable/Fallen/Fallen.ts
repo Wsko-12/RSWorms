@@ -6,7 +6,7 @@ import MapMatrix from '../../../../../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../../../../../Entity';
 import ThrowableBullet from '../Throwable';
 
-export default abstract class FallenWeapon extends ThrowableBullet {
+export default abstract class FallenBullet extends ThrowableBullet {
     constructor(
         removeEntityCallback: TRemoveEntityCallback,
         id: string,
