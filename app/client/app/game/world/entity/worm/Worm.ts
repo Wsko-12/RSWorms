@@ -3,6 +3,7 @@ import { ELayersZ, ESizes, EWeapons } from '../../../../../../ts/enums';
 import { IExplosionOptions, IShootOptions, IWormMoveOptions, IWormMoveStates } from '../../../../../../ts/interfaces';
 import { TLoopCallback, TRemoveEntityCallback } from '../../../../../../ts/types';
 import { Vector2 } from '../../../../../utils/geometry';
+import SoundManager from '../../../soundManager/SoundManager';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
 import WBazooka from './weapon/weapon/powerable/bazooka/Bazooka';
@@ -180,7 +181,7 @@ export default class Worm extends Entity {
         const slideAngle = Math.PI / 2 - Math.acos(normalSurface.dotProduct(velClone));
         const fallSpeed = vel.getLength();
         const isSlide = slideAngle > Math.PI / 8 && this.moveStates.isFall;
-
+        if (isSlide) SoundManager.playWorm('oof1');
         const fallSpeedWithFriction = fallSpeed * this.physics.friction;
 
         const { flags } = this.movesOptions;

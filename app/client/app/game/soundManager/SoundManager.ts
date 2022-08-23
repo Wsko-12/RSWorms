@@ -38,6 +38,9 @@ export default class SoundManager {
         if (state === 'shoot') {
             this.worm.src = this.pathToAudio + '/user/speech/russian/' + state + '.wav';
         }
+        if (state === 'oof1') {
+            this.worm.src = this.pathToAudio + '/user/speech/russian/' + state + '.wav';
+        }
         this.worm.play();
     }
 }
