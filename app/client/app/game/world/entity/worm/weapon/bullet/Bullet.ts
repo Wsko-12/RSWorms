@@ -86,7 +86,7 @@ export default class Bullet extends Entity {
             const { x, y } = this.physics.velocity;
             const angle = Math.atan2(y, x);
             this.object3D.rotation.z = angle;
-        }else{
+        } else {
             const direction = this.physics.velocity.x > 0 ? -1 : 1;
             this.object3D.rotation.z += direction * this.rotationCoef * (this.physics.velocity.getLength() * 0.01);
         }
