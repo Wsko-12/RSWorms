@@ -4,7 +4,8 @@ import TimerBullet from '../TImerBullet';
 
 export default class GrenadeBullet extends TimerBullet {
     constructor(removeEntityCallback: TRemoveEntityCallback, id: string, options: IShootOptions) {
-        super(removeEntityCallback, id, options);
+        super(removeEntityCallback, id, options, 'grenade');
         this.physics.friction = 0.4;
+        this.rotationCoef = 5;
     }
 }

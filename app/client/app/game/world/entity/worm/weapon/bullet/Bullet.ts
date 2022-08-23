@@ -1,19 +1,22 @@
-import { CircleBufferGeometry, Mesh, MeshBasicMaterial, Object3D } from 'three/src/Three';
+import { Mesh, MeshBasicMaterial, Object3D, PlaneBufferGeometry, Texture } from 'three/src/Three';
 import { IExplosionOptions, IShootOptions } from '../../../../../../../../ts/interfaces';
 import { TRemoveEntityCallback } from '../../../../../../../../ts/types';
 import { Vector2 } from '../../../../../../../utils/geometry';
+import AssetsManager from '../../../../../assetsManager/AssetsManager';
 import SoundManager from '../../../../../soundManager/SoundManager';
 import MapMatrix from '../../../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../../../Entity';
 
 export default class Bullet extends Entity {
     protected object3D: Object3D;
+    private texture: Texture;
+    protected rotationCoef = 1;
     protected explosionRadius = 150;
     private windCoefficient = 1;
     private kickForce = 25;
     // how many hp will be removed if it explodes close to the worm
     protected explosionDamage = 50;
-    constructor(removeEntityCallback: TRemoveEntityCallback, id: string, options: IShootOptions) {
+    constructor(removeEntityCallback: TRemoveEntityCallback, id: string, options: IShootOptions, textureName?: string) {
         let { angle } = options;
         const { power, position, parentRadius } = options;
         angle = (angle / 180) * Math.PI;
@@ -23,8 +26,22 @@ export default class Bullet extends Entity {
         this.position.y += Math.sin(angle) * (parentRadius + this.radius + 1);
 
         this.physics.friction = 0.05;
-        const geometry = new CircleBufferGeometry(this.radius, 120);
-        const material = new MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
+        if (!textureName) {
+            throw new Error(`[Weapon] no provided texture name`);
+        }
+        const geometry = new PlaneBufferGeometry(100, 100);
+        const image = AssetsManager.getBulletTexture(textureName);
+        if (!image) {
+            throw new Error(`[Weapon] can't load texture: ${textureName}`);
+        }
+        const texture = new Texture(image);
+        texture.needsUpdate = true;
+        this.texture = texture;
+        const material = new MeshBasicMaterial({
+            map: texture,
+            alphaTest: 0.5,
+        });
+
         this.object3D = new Mesh(geometry, material);
         this.object3D.position.set(this.position.x, this.position.y, 0);
 
@@ -60,6 +77,13 @@ export default class Bullet extends Entity {
 
     public update(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
         this.physics.velocity.x += wind * this.windCoefficient;
+        this.updateObjectRotation();
         super.update(mapMatrix, entities, wind);
+    }
+
+    public updateObjectRotation() {
+        const { x, y } = this.physics.velocity;
+        const angle = Math.atan2(y, x);
+        this.object3D.rotation.z = angle * this.rotationCoef;
     }
 }
