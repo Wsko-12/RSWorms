@@ -10,7 +10,7 @@ import Entity from '../../../Entity';
 export default class Bullet extends Entity {
     protected object3D: Object3D;
     private texture: Texture;
-    protected rotationCoef = 1;
+    protected rotationCoef = 0;
     protected explosionRadius = 150;
     private windCoefficient = 0;
     private kickForce = 25;
