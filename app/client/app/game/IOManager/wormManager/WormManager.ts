@@ -41,6 +41,7 @@ export default class WormManager {
         if (!this.controlledWorm) {
             return;
         }
+
         const worm = this.controlledWorm;
 
         if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') {

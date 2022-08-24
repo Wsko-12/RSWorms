@@ -1,7 +1,7 @@
 import { Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from 'three';
 import { ELayersZ, ESizes, EWeapons } from '../../../../../../ts/enums';
 import { IExplosionOptions, IShootOptions, IWormMoveOptions, IWormMoveStates } from '../../../../../../ts/interfaces';
-import { TLoopCallback, TRemoveEntityCallback } from '../../../../../../ts/types';
+import { TEndTurnCallback, TLoopCallback, TRemoveEntityCallback } from '../../../../../../ts/types';
 import { Vector2 } from '../../../../../utils/geometry';
 import SoundManager from '../../../soundManager/SoundManager';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
@@ -18,6 +18,10 @@ export default class Worm extends Entity {
     private wormMesh: Mesh;
     private fallToJumpCoef = 1.2;
     private animation = new WormAnimation();
+    private index: number;
+    private team: number;
+
+    private endTurnCallback: TEndTurnCallback | null = null;
 
     private currentWeapon: null | Weapon = null;
 
@@ -61,9 +65,17 @@ export default class Worm extends Entity {
 
     private hp: number;
 
-    constructor(removeEntityCallback: TRemoveEntityCallback, id: string, x = 0, y = 0, hp = 100) {
-        super(removeEntityCallback, id, ESizes.worm, x, y);
-        this.id = id;
+    constructor(
+        removeEntityCallback: TRemoveEntityCallback,
+        wormIndex: number,
+        teamIndex: number,
+        x = 0,
+        y = 0,
+        hp = 100
+    ) {
+        super(removeEntityCallback, ESizes.worm, x, y);
+        this.index = wormIndex;
+        this.team = teamIndex;
         this.physics.friction = 0.1;
         const geometry = new PlaneBufferGeometry(this.radius * 5, this.radius * 5);
         const material = new MeshBasicMaterial({
@@ -80,6 +92,9 @@ export default class Worm extends Entity {
 
     public setAsSelected(flag: boolean) {
         this.isSelected = flag;
+
+        this.movesOptions.flags.left = false;
+        this.movesOptions.flags.right = false;
     }
 
     public setMoveFlags(flags: { left?: boolean; right?: boolean }) {
@@ -116,6 +131,9 @@ export default class Worm extends Entity {
             parentRadius: this.radius,
             wormDirection: this.movesOptions.direction,
         };
+        if (this.endTurnCallback) {
+            this.endTurnCallback(5);
+        }
         return this.currentWeapon.shoot(options, this.removeEntityCallback);
     }
     public selectWeapon(weapon: EWeapons | null) {
@@ -146,6 +164,16 @@ export default class Worm extends Entity {
 
     public isMoves() {
         return this.moveStates.isMove;
+    }
+
+    public startTurn(nextTurnCallback: TEndTurnCallback) {
+        this.endTurnCallback = nextTurnCallback;
+        //hide hp bar
+    }
+
+    public endTurn() {
+        this.endTurnCallback = null;
+        //show hp bar
     }
 
     protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
@@ -231,6 +259,9 @@ export default class Worm extends Entity {
 
     public acceptExplosion(mapMatrix: MapMatrix, entities: Entity[], options: IExplosionOptions) {
         super.acceptExplosion(mapMatrix, entities, options);
+        if (this.endTurnCallback) {
+            this.endTurnCallback(0);
+        }
         this.lastDamageTimestamp = Date.now();
         this.moveStates.isDamaged = true;
     }
@@ -317,6 +348,9 @@ export default class Worm extends Entity {
         const delta = this.physics.velocity.getLength() - this.jumpVectors.backflip.getLength() * this.fallToJumpCoef;
         if (delta > 0) {
             // console.log(delta);
+            if (this.endTurnCallback) {
+                this.endTurnCallback(0);
+            }
         }
         return;
     }

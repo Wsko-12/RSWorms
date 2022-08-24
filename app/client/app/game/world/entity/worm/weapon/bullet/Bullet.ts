@@ -32,16 +32,11 @@ export default class Bullet extends Entity {
         kick: 15,
     };
 
-    constructor(
-        removeEntityCallback: TRemoveEntityCallback,
-        id: string,
-        options: IBulletOptions,
-        textureName: EWeapons
-    ) {
+    constructor(removeEntityCallback: TRemoveEntityCallback, options: IBulletOptions, textureName: EWeapons) {
         let { angle } = options;
         const { power, position } = options;
         angle = (angle / 180) * Math.PI;
-        super(removeEntityCallback, id, 10, position.x, position.y);
+        super(removeEntityCallback, 10, position.x, position.y);
 
         this.position.x += Math.cos(angle) * (options.parentRadius + this.radius + 1);
         this.position.y += Math.sin(angle) * (options.parentRadius + this.radius + 1);

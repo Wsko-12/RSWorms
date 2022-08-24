@@ -126,7 +126,7 @@ export default abstract class Weapon {
             position: options.position,
             parentRadius: options.parentRadius,
         };
-        const bullet = new this.bullet(removeEntityCallback, `id_${Math.random()}`, bulletOptions, this.name);
+        const bullet = new this.bullet(removeEntityCallback, bulletOptions, this.name);
         return bullet;
     }
 }

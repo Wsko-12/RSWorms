@@ -1,4 +1,5 @@
 import { Scene } from 'three';
+import { ESizes } from '../../../../../ts/enums';
 import { TLoopCallback } from '../../../../../ts/types';
 import WorldMap from '../worldMap/WorldMap';
 import Entity from './Entity';
@@ -16,23 +17,23 @@ export default class EntityManager {
 
     public setWorldMap(worldMap: WorldMap) {
         this.worldMap = worldMap;
-        this.createWorm('test');
     }
 
     private findPlace() {
         test += 80;
         if (this.worldMap) {
             const { width, height } = this.worldMap.getSizes();
-            return { x: width / 2 + test, y: height };
+            return { x: width / 4 + test, y: height };
         }
         return { x: 0, y: 0 };
     }
 
-    public createWorm(id: string) {
+    public generateWorm(teamIndex: number, wormIndex: number) {
         if (this.worldMap) {
             const place = this.findPlace();
-            const worm = new Worm(this.removeEntity, id, place.x, place.y);
-            this.entities.push(worm);
+            place.y += ESizes.worm;
+            const worm = new Worm(this.removeEntity, wormIndex, teamIndex, place.x, place.y);
+            this.addEntity(worm);
             this.mainScene.add(worm.getObject3D());
             return worm;
         }
@@ -46,16 +47,6 @@ export default class EntityManager {
                 entity.update(matrix, this.entities, wind);
             });
         }
-    };
-
-    public getWorm = (id: string): Worm | null => {
-        const worm = this.getEntity(id);
-        return worm instanceof Worm ? worm : null;
-    };
-
-    public getEntity = (id: string): Entity | null => {
-        const entity = this.entities.find((entity) => entity.id === id);
-        return entity || null;
     };
 
     public addEntity(entity: Entity) {

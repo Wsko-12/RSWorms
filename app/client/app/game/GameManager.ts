@@ -5,6 +5,7 @@ import GameInterface from './gameInterface/GameInterface';
 import IOManager from './IOManager/IOManager';
 import Loop from './loop/Loop';
 import SoundManager from './soundManager/SoundManager';
+import GameplayManager from './gameplayManager/GameplayManager';
 import World from './world/World';
 
 export default class GameManager {
@@ -12,6 +13,7 @@ export default class GameManager {
     private world: World;
     private loops: IGMLoops;
     private interface = new GameInterface();
+    private gameplayManager: GameplayManager;
     private soundManager: SoundManager;
     private IOManager: IOManager;
     constructor(options: IStartGameOptions) {
@@ -19,6 +21,7 @@ export default class GameManager {
         this.world = new World(options);
         this.soundManager = new SoundManager();
         this.IOManager = new IOManager(this.interface, this.world);
+        this.gameplayManager = new GameplayManager(this.world.entityManager, this.IOManager);
         this.loops = {
             paused: false,
             timestamp: Date.now(),
@@ -36,6 +39,10 @@ export default class GameManager {
                 sprite: new Loop(25, (time) => {
                     this.world.spriteLoop(time);
                 }),
+
+                turnLoop: new Loop(1, () => {
+                    this.gameplayManager.turnLoop();
+                }),
             },
         };
 
@@ -52,8 +59,7 @@ export default class GameManager {
     private async start() {
         await AssetsManager.init(this.options);
         await this.world.init();
-        this.IOManager.DEV__CheckTestWorm();
-        this.world.entityManager.createWorm('test_2');
+        this.gameplayManager.init(this.options);
         Object.values(this.loops.all).forEach((loop) => loop.switcher(true));
         this.interface.buildToDocument();
         this.world.create();

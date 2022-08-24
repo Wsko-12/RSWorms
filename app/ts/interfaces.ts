@@ -11,6 +11,10 @@ export interface IStartGameOptions {
         max: number;
         min: number;
     };
+    wormsCount: number;
+    multiplayer: boolean;
+    teamNames: string[];
+    playerNames: string[];
 }
 
 export interface IGMLoops {

@@ -9,7 +9,6 @@ export default abstract class Entity {
     public radius: number;
     protected radiusUnitAngle: number;
     protected stable = false;
-    public id: string;
 
     protected removeEntityCallback: TRemoveEntityCallback;
 
@@ -19,9 +18,8 @@ export default abstract class Entity {
         friction: 0.1,
     };
 
-    constructor(removeEntityCallback: TRemoveEntityCallback, id: string, radius = 1, x = 0, y = 0) {
+    constructor(removeEntityCallback: TRemoveEntityCallback, radius = 1, x = 0, y = 0) {
         this.removeEntityCallback = removeEntityCallback;
-        this.id = id;
         this.position = new Point2(x, y);
         this.radius = radius;
         this.radiusUnitAngle = Math.asin(0.5 / this.radius) * 2;
