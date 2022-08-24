@@ -52,13 +52,22 @@ export default class GameManager {
     private async start() {
         await AssetsManager.init(this.options);
         await this.world.init();
-        this.IOManager.DEV__CheckTestWorm();
-        this.world.entityManager.createWorm('test_2');
+        // this.IOManager.DEV__CheckTestWorm();
+        // this.world.entityManager.createWorm('test_2');
         Object.values(this.loops.all).forEach((loop) => loop.switcher(true));
         this.interface.buildToDocument();
         this.world.create();
         SoundManager.playBackground();
         this.loop();
+
+        this.world.entityManager.createTeams();
+        this.world.entityManager.appendWorms();
+        setInterval(() => {
+            const nextWorm = this.world.entityManager.getNextTeam().getNextWorm();
+            this.IOManager.wormManager.setWorm(nextWorm);
+        }, 10000);
+        
+        // create teams EntityManager.createTeams().appendWorms()
     }
 
     private loop = () => {

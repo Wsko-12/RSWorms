@@ -44,3 +44,8 @@ export const enum EWeapons {
     dynamite = 'dynamite',
     mine = 'mine',
 }
+
+export const enum ELangs {
+    eng = 'english',
+    rus = 'russian',
+}

@@ -60,9 +60,11 @@ export default class Worm extends Entity {
     };
 
     private hp: number;
+    public name: string;
 
-    constructor(removeEntityCallback: TRemoveEntityCallback, id: string, x = 0, y = 0, hp = 100) {
+    constructor(removeEntityCallback: TRemoveEntityCallback, id: string, name: string, x = 0, y = 0, hp = 100) {
         super(removeEntityCallback, id, ESizes.worm, x, y);
+        this.name = name;
         this.id = id;
         this.physics.friction = 0.1;
         const geometry = new PlaneBufferGeometry(this.radius * 5, this.radius * 5);

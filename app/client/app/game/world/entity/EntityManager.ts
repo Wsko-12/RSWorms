@@ -1,5 +1,7 @@
 import { Scene } from 'three';
+import { ELangs } from '../../../../../ts/enums';
 import { TLoopCallback } from '../../../../../ts/types';
+import Team from '../../team/Team';
 import WorldMap from '../worldMap/WorldMap';
 import Entity from './Entity';
 import Worm from './worm/Worm';
@@ -10,20 +12,51 @@ export default class EntityManager {
     private readonly mainScene: Scene;
     private worldMap: WorldMap | null = null;
     private entities: Entity[] = [];
+    private teams: Team[] = [];
+    private currentTeamIdx = 0;
     constructor(mainScene: Scene) {
         this.mainScene = mainScene;
     }
 
+    public createTeams(quantity = 2, names = ['Developers', 'Computer']) {
+        names.forEach((name) => this.createTeam(name));
+    }
+
+    public createTeam(name: string, lang = ELangs.rus, quantity?: number, wormNames?: string[]) {
+        const team = new Team(name, lang, quantity, wormNames, this.removeEntity);
+        this.teams.push(team);
+        team.worms.forEach((worm) => this.entities.push(worm));
+    }
+
+    public getNextTeam() {
+        if (this.currentTeamIdx >= this.teams.length) {
+            this.currentTeamIdx = 0;
+        }
+        return this.teams[this.currentTeamIdx++];
+    }
+
+    public appendWorms() {
+        this.entities.forEach((entity) => {
+            if (entity instanceof Worm) {
+                const place = this.findPlace();
+                entity.position.x = place.x;
+                entity.position.y = place.y;
+                this.mainScene.add(entity.getObject3D());
+                console.log(entity);
+            }
+        })
+    }
+
     public setWorldMap(worldMap: WorldMap) {
         this.worldMap = worldMap;
-        this.createWorm('test');
+        // this.createWorm('test');
     }
 
     private findPlace() {
-        test += 80;
+        test += 200;
         if (this.worldMap) {
             const { width, height } = this.worldMap.getSizes();
-            return { x: width / 2 + test, y: height };
+            return { x: width / 2 - 800 + test, y: height };
         }
         return { x: 0, y: 0 };
     }
@@ -31,7 +64,7 @@ export default class EntityManager {
     public createWorm(id: string) {
         if (this.worldMap) {
             const place = this.findPlace();
-            const worm = new Worm(this.removeEntity, id, place.x, place.y);
+            const worm = new Worm(this.removeEntity, id, 'vasya', place.x, place.y);
             this.entities.push(worm);
             this.mainScene.add(worm.getObject3D());
             return worm;
