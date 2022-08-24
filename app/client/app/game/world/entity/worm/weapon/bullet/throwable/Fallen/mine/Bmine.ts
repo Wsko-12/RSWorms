@@ -10,8 +10,8 @@ export default class BMine extends FallenBullet {
     private actuationRadius = 100;
     private start: number;
     private isDetonated = false;
-    constructor(removeEntityCallback: TRemoveEntityCallback, options: IBulletOptions) {
-        super(removeEntityCallback, options, EWeapons.mine);
+    constructor(options: IBulletOptions) {
+        super(options, EWeapons.mine);
         this.start = Date.now();
     }
 

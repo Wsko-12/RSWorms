@@ -118,7 +118,7 @@ export default abstract class Weapon {
         }
     }
 
-    public shoot(options: IShootOptions, removeEntityCallback: TRemoveEntityCallback) {
+    public shoot(options: IShootOptions) {
         const { angle, power } = this.aim.getShootDirection(options.wormDirection);
         const bulletOptions: IBulletOptions = {
             angle,
@@ -126,7 +126,7 @@ export default abstract class Weapon {
             position: options.position,
             parentRadius: options.parentRadius,
         };
-        const bullet = new this.bullet(removeEntityCallback, bulletOptions, this.name);
+        const bullet = new this.bullet(bulletOptions, this.name);
         return bullet;
     }
 }

@@ -65,15 +65,8 @@ export default class Worm extends Entity {
 
     private hp: number;
 
-    constructor(
-        removeEntityCallback: TRemoveEntityCallback,
-        wormIndex: number,
-        teamIndex: number,
-        x = 0,
-        y = 0,
-        hp = 100
-    ) {
-        super(removeEntityCallback, ESizes.worm, x, y);
+    constructor(wormIndex: number, teamIndex: number, x = 0, y = 0, hp = 100) {
+        super(ESizes.worm, x, y);
         this.index = wormIndex;
         this.team = teamIndex;
         this.physics.friction = 0.1;
@@ -134,7 +127,7 @@ export default class Worm extends Entity {
         if (this.endTurnCallback) {
             this.endTurnCallback(5);
         }
-        return this.currentWeapon.shoot(options, this.removeEntityCallback);
+        return this.currentWeapon.shoot(options);
     }
     public selectWeapon(weapon: EWeapons | null) {
         const before = this.currentWeapon;
