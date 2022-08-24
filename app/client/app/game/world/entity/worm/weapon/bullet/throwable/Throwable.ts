@@ -1,6 +1,5 @@
 import { EConstants, EWeapons } from '../../../../../../../../../ts/enums';
 import { IBulletOptions } from '../../../../../../../../../ts/interfaces';
-import { TRemoveEntityCallback } from '../../../../../../../../../ts/types';
 import MapMatrix from '../../../../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../../../../Entity';
 import Bullet from '../Bullet';
@@ -8,8 +7,8 @@ import Bullet from '../Bullet';
 export default abstract class ThrowableBullet extends Bullet {
     protected isActivated = false;
     protected timer = Date.now();
-    constructor(removeEntityCallback: TRemoveEntityCallback, options: IBulletOptions, textureName: EWeapons) {
-        super(removeEntityCallback, options, textureName);
+    constructor(options: IBulletOptions, textureName: EWeapons) {
+        super(options, textureName);
         this.physics.friction = 0.4;
     }
 

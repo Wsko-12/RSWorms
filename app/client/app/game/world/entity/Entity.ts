@@ -10,7 +10,7 @@ export default abstract class Entity {
     protected radiusUnitAngle: number;
     protected stable = false;
 
-    protected removeEntityCallback: TRemoveEntityCallback;
+    protected removeFromEntityCallback: TRemoveEntityCallback | null = null;
 
     protected physics: IPhysics = {
         velocity: new Vector2(0, 0),
@@ -18,8 +18,7 @@ export default abstract class Entity {
         friction: 0.1,
     };
 
-    constructor(removeEntityCallback: TRemoveEntityCallback, radius = 1, x = 0, y = 0) {
-        this.removeEntityCallback = removeEntityCallback;
+    constructor(radius = 1, x = 0, y = 0) {
         this.position = new Point2(x, y);
         this.radius = radius;
         this.radiusUnitAngle = Math.asin(0.5 / this.radius) * 2;
@@ -144,8 +143,15 @@ export default abstract class Entity {
 
     protected abstract handleCollision(mapMatrix: MapMatrix, entities: Entity[]): void;
 
+    public setRemoveFromEntityCallback(cb: TRemoveEntityCallback) {
+        this.removeFromEntityCallback = cb;
+    }
+
     public remove() {
-        this.removeEntityCallback(this);
+        if (this.removeFromEntityCallback) {
+            this.removeFromEntityCallback(this);
+            this.removeFromEntityCallback = null;
+        }
     }
 
     public push(vec: Vector2) {

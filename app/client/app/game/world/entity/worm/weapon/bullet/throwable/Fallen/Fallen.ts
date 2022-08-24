@@ -1,18 +1,22 @@
 import { EWeapons } from '../../../../../../../../../../ts/enums';
 import { IBulletOptions } from '../../../../../../../../../../ts/interfaces';
-import { TRemoveEntityCallback } from '../../../../../../../../../../ts/types';
 import { Vector2 } from '../../../../../../../../../utils/geometry';
 import MapMatrix from '../../../../../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../../../../../Entity';
 import ThrowableBullet from '../Throwable';
 
 export default abstract class FallenBullet extends ThrowableBullet {
-    constructor(removeEntityCallback: TRemoveEntityCallback, options: IBulletOptions, textureName: EWeapons) {
+    constructor(options: IBulletOptions, textureName: EWeapons) {
         options.power = 0;
-        super(removeEntityCallback, options, textureName);
+        super(options, textureName);
     }
 
-    checkCollision(mapMatrix: MapMatrix, entities: Entity[], vec: Vector2, radAngleShift = this.radiusUnitAngle) {
+    protected checkCollision(
+        mapMatrix: MapMatrix,
+        entities: Entity[],
+        vec: Vector2,
+        radAngleShift = this.radiusUnitAngle
+    ) {
         const { matrix } = mapMatrix;
         let responseX = 0;
         let responseY = 0;

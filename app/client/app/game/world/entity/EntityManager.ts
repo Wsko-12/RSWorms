@@ -32,7 +32,7 @@ export default class EntityManager {
         if (this.worldMap) {
             const place = this.findPlace();
             place.y += ESizes.worm;
-            const worm = new Worm(this.removeEntity, wormIndex, teamIndex, place.x, place.y);
+            const worm = new Worm(wormIndex, teamIndex, place.x, place.y);
             this.addEntity(worm);
             this.mainScene.add(worm.getObject3D());
             return worm;
@@ -50,6 +50,7 @@ export default class EntityManager {
     };
 
     public addEntity(entity: Entity) {
+        entity.setRemoveFromEntityCallback(this.removeEntity);
         this.entities.push(entity);
     }
 
