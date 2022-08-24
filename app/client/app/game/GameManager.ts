@@ -62,12 +62,16 @@ export default class GameManager {
 
         this.world.entityManager.createTeams();
         this.world.entityManager.appendWorms();
+        this.nextTurn();
+        // create teams EntityManager.createTeams().appendWorms()
+    }
+
+    nextTurn() {
+        this.world.changeWind();
         setInterval(() => {
             const nextWorm = this.world.entityManager.getNextTeam().getNextWorm();
             this.IOManager.wormManager.setWorm(nextWorm);
         }, 10000);
-        
-        // create teams EntityManager.createTeams().appendWorms()
     }
 
     private loop = () => {
