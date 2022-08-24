@@ -7,14 +7,9 @@ import Entity from '../../../../../Entity';
 import ThrowableBullet from '../Throwable';
 
 export default abstract class FallenBullet extends ThrowableBullet {
-    constructor(
-        removeEntityCallback: TRemoveEntityCallback,
-        id: string,
-        options: IBulletOptions,
-        textureName: EWeapons
-    ) {
+    constructor(removeEntityCallback: TRemoveEntityCallback, options: IBulletOptions, textureName: EWeapons) {
         options.power = 0;
-        super(removeEntityCallback, id, options, textureName);
+        super(removeEntityCallback, options, textureName);
     }
 
     checkCollision(mapMatrix: MapMatrix, entities: Entity[], vec: Vector2, radAngleShift = this.radiusUnitAngle) {

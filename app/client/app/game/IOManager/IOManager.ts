@@ -15,13 +15,6 @@ export default class IOManager {
         this.applyListeners();
     }
 
-    //Delete later. Used in GameManager.start()
-    public DEV__CheckTestWorm() {
-        const worm = this.world.entityManager.getWorm('test');
-        if (worm) {
-            this.wormManager.setWorm(worm);
-        }
-    }
     private applyListeners() {
         document.addEventListener('keydown', (e) => {
             // here will be check isPlayerTurn()

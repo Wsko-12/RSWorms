@@ -6,3 +6,5 @@ export type TLoopCallback = (time: number) => void;
 export type TStartGameCallback = (options: IStartGameOptions) => void;
 
 export type TRemoveEntityCallback = (entity: Entity) => void;
+
+export type TEndTurnCallback = (delaySec: number) => void;

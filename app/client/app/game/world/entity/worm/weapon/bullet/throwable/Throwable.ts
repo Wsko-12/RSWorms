@@ -8,13 +8,8 @@ import Bullet from '../Bullet';
 export default abstract class ThrowableBullet extends Bullet {
     protected isActivated = false;
     protected timer = Date.now();
-    constructor(
-        removeEntityCallback: TRemoveEntityCallback,
-        id: string,
-        options: IBulletOptions,
-        textureName: EWeapons
-    ) {
-        super(removeEntityCallback, id, options, textureName);
+    constructor(removeEntityCallback: TRemoveEntityCallback, options: IBulletOptions, textureName: EWeapons) {
+        super(removeEntityCallback, options, textureName);
         this.physics.friction = 0.4;
     }
 

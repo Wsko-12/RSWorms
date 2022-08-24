@@ -23,13 +23,17 @@ export default class Lobby {
         console.log('Seed: ', seed);
         this.startGameCallback({
             mapTexturePackName: EMapPacksNames.candy,
-            worldSize: EWorldSizes.medium,
+            worldSize: EWorldSizes.small,
             seed,
             decor: {
                 count: EMapPacksDecorItems[EMapPacksNames.candy],
                 max: 6,
                 min: 2,
             },
+            wormsCount: 3,
+            multiplayer: false,
+            teamNames: ['team-a', 'team-b', 'team-c'],
+            playerNames: [],
         });
         // };
         button.innerHTML = 'Start game';

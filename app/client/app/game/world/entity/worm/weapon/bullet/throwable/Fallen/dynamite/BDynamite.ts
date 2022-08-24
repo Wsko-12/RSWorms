@@ -4,7 +4,7 @@ import { TRemoveEntityCallback } from '../../../../../../../../../../../ts/types
 import FallenBullet from '../Fallen';
 
 export default class BDynamite extends FallenBullet {
-    constructor(removeEntityCallback: TRemoveEntityCallback, id: string, options: IBulletOptions) {
-        super(removeEntityCallback, id, options, EWeapons.dynamite);
+    constructor(removeEntityCallback: TRemoveEntityCallback, options: IBulletOptions) {
+        super(removeEntityCallback, options, EWeapons.dynamite);
     }
 }
