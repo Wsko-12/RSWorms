@@ -12,6 +12,7 @@ export default class Lobby {
     clouds: any[] = [];
     cloud: any;
     mainScreen: any;
+    settings: any;
     customGameScreen: any;
     lobbyWrapper: any;
     canvasHeight = 0;
@@ -26,7 +27,7 @@ export default class Lobby {
         this.createLobby();
         this.createMainScreen();
         this.createCustomGameScreen();
-        this.mainScreen.scrollIntoView();
+        this.createSettings();
         this.mainScreen.scrollIntoView();
         this.createClouds();
         this.loop();
@@ -45,6 +46,24 @@ export default class Lobby {
                 });
             }
         });
+    }
+
+    createSettings() {
+        this.settings = PageBuilder.createElement('div', { classes: 'settings' });
+        this.settings.style.width = this.windowWidth + 'px';
+        this.settings.style.height = this.windowHeight + 'px';
+        this.settings.style.top = this.windowHeight * 2 + 'px';
+        this.settings.style.left = this.windowWidth * 2 + 'px';
+        const returnBtn = PageBuilder.createElement('div', { classes: 'return-button' });
+        returnBtn.innerText = 'return';
+        returnBtn.addEventListener('click', () => {
+            this.mainScreen.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+            });
+        });
+        this.settings.append(returnBtn);
+        this.lobbyWrapper.append(this.settings);
     }
 
     createLobby() {
@@ -84,6 +103,12 @@ export default class Lobby {
         networkGameBtn.style.backgroundImage = 'url(./assets/lobby/main-screen/wormsnetwork.jpeg)';
         const settingBtn = PageBuilder.createElement('div', { classes: 'main-screen-button' });
         settingBtn.style.backgroundImage = 'url(./assets/lobby/main-screen/wormssettings.jpeg)';
+        settingBtn.addEventListener('click', () => {
+            this.settings.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+            });
+        });
 
         const title = PageBuilder.createElement('div', { classes: 'main-screen-title' });
 
@@ -102,17 +127,17 @@ export default class Lobby {
 
         const quickGameBtn = PageBuilder.createElement('div', { classes: 'custom-game-screen-button' });
         const customGameBtn = PageBuilder.createElement('div', { classes: 'custom-game-screen-button' });
-        customGameBtn.innerText = 'Click Me';
-        customGameBtn.addEventListener('click', () => {
+        const networkGameBtn = PageBuilder.createElement('div', { classes: 'custom-game-screen-button' });
+        const settingBtn = PageBuilder.createElement('div', { classes: 'custom-game-screen-button' });
+        const returnBtn = PageBuilder.createElement('div', { classes: 'return-button' });
+        returnBtn.innerText = 'return';
+        returnBtn.addEventListener('click', () => {
             this.mainScreen.scrollIntoView({
                 behavior: 'smooth',
                 block: 'start',
             });
         });
-
-        const networkGameBtn = PageBuilder.createElement('div', { classes: 'custom-game-screen-button' });
-        const settingBtn = PageBuilder.createElement('div', { classes: 'custom-game-screen-button' });
-        this.customGameScreen.append(quickGameBtn, customGameBtn, networkGameBtn, settingBtn);
+        this.customGameScreen.append(quickGameBtn, customGameBtn, networkGameBtn, settingBtn, returnBtn);
 
         this.lobbyWrapper.append(this.customGameScreen);
     }
