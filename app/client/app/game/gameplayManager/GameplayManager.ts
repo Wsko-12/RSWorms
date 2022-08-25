@@ -1,5 +1,6 @@
 import { IStartGameOptions } from '../../../../ts/interfaces';
 import { TEndTurnCallback } from '../../../../ts/types';
+import GameInterface from '../gameInterface/GameInterface';
 import IOManager from '../IOManager/IOManager';
 import EntityManager from '../world/entity/EntityManager';
 import Team from './team/Team';
@@ -7,15 +8,17 @@ import Team from './team/Team';
 export default class gameplayManager {
     private entityManager: EntityManager;
     private ioManager: IOManager;
+    private gameInterface: GameInterface;
     private teams: Team[] = [];
     private currentTurn = -1;
     private turnTimestamp = 0;
-    private turnTime = 45;
+    private turnTime = 30;
     private endTurnTime = 5;
     private isEnding = 0;
-    constructor(entityManager: EntityManager, ioManager: IOManager) {
+    constructor(entityManager: EntityManager, ioManager: IOManager, gameInterface: GameInterface) {
         this.entityManager = entityManager;
         this.ioManager = ioManager;
+        this.gameInterface = gameInterface;
     }
 
     private createTeams(options: IStartGameOptions) {
@@ -53,6 +56,7 @@ export default class gameplayManager {
             previousWorm.endTurn();
         }
         currentWorm.startTurn(this.endTurn);
+        this.gameInterface.timerElement.show(true);
         this.ioManager.wormManager.setWorm(currentWorm);
     }
 
@@ -62,12 +66,12 @@ export default class gameplayManager {
 
     turnLoop() {
         if (this.isEnding) {
-            console.log((Date.now() - this.isEnding) / 1000);
+            this.gameInterface.timerElement.update(this.isEnding - Date.now() + 1000);
             if (Date.now() > this.isEnding) {
                 this.nextTurn();
             }
         } else {
-            console.log((Date.now() - this.turnTimestamp) / 1000);
+            this.gameInterface.timerElement.update(this.turnTime * 1000 - (Date.now() - this.turnTimestamp) + 1000);
 
             if (Date.now() - this.turnTimestamp > this.turnTime * 1000) {
                 this.nextTurn();

@@ -10,6 +10,8 @@ export default class GameInterface {
     private renderer = new Renderer(this.view.getMainCanvas());
     private camera = new GameCamera();
 
+    public timerElement = this.view.timerElement;
+
     constructor() {
         const eventsHandler = this.view.getMainHandler();
         this.camera.setEventsHandler(eventsHandler);

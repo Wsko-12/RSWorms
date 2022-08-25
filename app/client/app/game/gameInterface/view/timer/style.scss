@@ -1,0 +1,20 @@
+.timer{
+    padding: 10px;
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    background-color: rgba($color: #000000, $alpha: 0.3);
+    border-radius: 10px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.timer__counter{
+    font-family: 'DynaPuff', cursive;
+    font-weight: bold;
+    color: white;
+    font-size: 2rem;
+    margin: 0;
+}
