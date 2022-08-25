@@ -38,7 +38,7 @@ export const enum ESizes {
     worm = 20,
 }
 
-export const enum EWeapons {
+export enum EWeapons {
     bazooka = 'bazooka',
     grenade = 'grenade',
     dynamite = 'dynamite',
@@ -48,4 +48,15 @@ export const enum EWeapons {
 export const enum ELangs {
     eng = 'english',
     rus = 'russian',
+}
+
+export enum ETeamColors {
+    '#eb3b3b',
+    '#3b55eb',
+    '#6beb54',
+    '#eb54c8',
+}
+
+export const enum ECustomEvents {
+    click = 'custom-click',
 }
