@@ -17,6 +17,7 @@ export default class gameplayManager {
     private turnTime = 30;
     private endTurnTime = 5;
     private isEnding = 0;
+
     constructor(world: World, ioManager: IOManager, gameInterface: GameInterface) {
         this.world = world;
         this.entityManager = world.entityManager;
@@ -60,6 +61,7 @@ export default class gameplayManager {
         if (previousWorm) {
             previousWorm.endTurn();
         }
+        this.world.raiseWaterLevel();
         currentWorm.startTurn(this.endTurn);
         this.gameInterface.timerElement.show(true);
         this.ioManager.wormManager.setWorm(currentWorm);

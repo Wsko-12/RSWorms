@@ -32,6 +32,7 @@ export const enum ELayersZ {
     aim = 25,
     weapons = 10,
     bullets = 10,
+    water = 50,
 }
 
 export const enum ESizes {
@@ -60,3 +61,4 @@ export enum ETeamColors {
 export const enum ECustomEvents {
     click = 'custom-click',
 }
+

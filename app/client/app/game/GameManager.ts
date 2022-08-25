@@ -21,6 +21,7 @@ export default class GameManager {
         this.world = new World(options);
         this.soundManager = new SoundManager();
         this.IOManager = new IOManager(this.interface, this.world);
+
         this.gameplayManager = new GameplayManager(this.world, this.IOManager, this.interface);
         this.loops = {
             paused: false,
