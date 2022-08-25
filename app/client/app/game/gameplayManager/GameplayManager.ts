@@ -2,6 +2,7 @@ import { IStartGameOptions } from '../../../../ts/interfaces';
 import { TEndTurnCallback } from '../../../../ts/types';
 import IOManager from '../IOManager/IOManager';
 import EntityManager from '../world/entity/EntityManager';
+import World from '../world/World';
 import Team from './team/Team';
 
 export default class gameplayManager {
@@ -13,8 +14,10 @@ export default class gameplayManager {
     private turnTime = 45;
     private endTurnTime = 5;
     private isEnding = 0;
-    constructor(entityManager: EntityManager, ioManager: IOManager) {
-        this.entityManager = entityManager;
+    private world: World;
+    constructor(world: World, ioManager: IOManager) {
+        this.entityManager = world.entityManager;
+        this.world = world;
         this.ioManager = ioManager;
     }
 
@@ -52,6 +55,7 @@ export default class gameplayManager {
         if (previousWorm) {
             previousWorm.endTurn();
         }
+        this.world.raiseWaterLevel();
         currentWorm.startTurn(this.endTurn);
         this.ioManager.wormManager.setWorm(currentWorm);
     }
