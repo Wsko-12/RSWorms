@@ -1,11 +1,11 @@
 import './style.scss';
-import TImer from './timer/Timer';
+import TimerInterface from './timer/Timer';
 import WindInterface from './wind/Wind';
 export default class View {
     private mainCanvas = document.createElement('canvas');
     private mainHandler = document.createElement('div');
     private guiContainer = document.createElement('div');
-    private timer = new TImer();
+    private timer = new TimerInterface();
     private wind = new WindInterface();
 
     public timerElement = {

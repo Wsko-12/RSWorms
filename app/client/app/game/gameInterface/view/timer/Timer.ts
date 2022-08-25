@@ -1,6 +1,6 @@
 import './style.scss';
 
-export default class TImer {
+export default class TimerInterface {
     private element: HTMLDivElement;
     private timer: HTMLParagraphElement;
     constructor() {
