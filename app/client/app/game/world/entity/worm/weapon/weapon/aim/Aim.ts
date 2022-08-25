@@ -48,6 +48,9 @@ export default class Aim {
     }
 
     public hide(power: boolean, aim?: boolean) {
+        this.shootPowerMesh.visible = true;
+        this.aimMesh.visible = true;
+
         if (power) {
             this.shootPowerMesh.visible = false;
         }

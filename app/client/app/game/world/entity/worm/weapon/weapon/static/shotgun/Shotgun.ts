@@ -15,6 +15,5 @@ export default class WShotgun extends StaticWeapon {
         super(EWeapons.shotgun);
         this.aim.hide(this.aimOptions.hidePower, this.aimOptions.hideAim);
         // this.aim.power = 100;
-        console.log(this.aim);
     }
 }
