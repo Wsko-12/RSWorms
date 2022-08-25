@@ -11,6 +11,7 @@ export default class GameInterface {
     private camera = new GameCamera();
 
     public timerElement = this.view.timerElement;
+    public windElement = this.view.windElement;
 
     constructor() {
         const eventsHandler = this.view.getMainHandler();

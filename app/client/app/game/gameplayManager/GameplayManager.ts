@@ -3,20 +3,23 @@ import { TEndTurnCallback } from '../../../../ts/types';
 import GameInterface from '../gameInterface/GameInterface';
 import IOManager from '../IOManager/IOManager';
 import EntityManager from '../world/entity/EntityManager';
+import World from '../world/World';
 import Team from './team/Team';
 
 export default class gameplayManager {
     private entityManager: EntityManager;
     private ioManager: IOManager;
     private gameInterface: GameInterface;
+    private world: World;
     private teams: Team[] = [];
     private currentTurn = -1;
     private turnTimestamp = 0;
     private turnTime = 30;
     private endTurnTime = 5;
     private isEnding = 0;
-    constructor(entityManager: EntityManager, ioManager: IOManager, gameInterface: GameInterface) {
-        this.entityManager = entityManager;
+    constructor(world: World, ioManager: IOManager, gameInterface: GameInterface) {
+        this.world = world;
+        this.entityManager = world.entityManager;
         this.ioManager = ioManager;
         this.gameInterface = gameInterface;
     }
@@ -47,6 +50,8 @@ export default class gameplayManager {
         this.isEnding = 0;
         this.turnTimestamp = Date.now();
         this.currentTurn++;
+        const wind = this.world.changeWind();
+        this.gameInterface.windElement.update(wind);
         const teamIndex = this.currentTurn % this.teams.length;
         const currentTeam = this.teams[teamIndex];
         const currentWorm = currentTeam.getNextWorm();
