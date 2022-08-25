@@ -69,3 +69,8 @@ export interface IWormMoveOptions {
     v: Vector2;
     maxAngle: number;
 }
+
+export interface ICustomMouseEvent {
+    x: number;
+    y: number;
+}

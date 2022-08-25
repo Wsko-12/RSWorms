@@ -12,6 +12,7 @@ export default class GameInterface {
 
     public timerElement = this.view.timerElement;
     public windElement = this.view.windElement;
+    public inventoryElement = this.view.inventoryElement;
 
     constructor() {
         const eventsHandler = this.view.getMainHandler();
@@ -24,6 +25,10 @@ export default class GameInterface {
 
     public getGameCamera() {
         return this.camera;
+    }
+
+    public showInventory(flag: boolean) {
+        this.view.showInventory(flag);
     }
 
     public setCameraBorders(x: number, y: number, width: number, height: number) {

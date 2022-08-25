@@ -1,3 +1,4 @@
+import Inventory from './inventory/Inventory';
 import './style.scss';
 import TimerInterface from './timer/Timer';
 import WindInterface from './wind/Wind';
@@ -7,6 +8,7 @@ export default class View {
     private guiContainer = document.createElement('div');
     private timer = new TimerInterface();
     private wind = new WindInterface();
+    private inventory = new Inventory();
 
     public timerElement = {
         update: this.timer.update,
@@ -15,6 +17,10 @@ export default class View {
 
     public windElement = {
         update: this.wind.update,
+    };
+
+    public inventoryElement = {
+        setChooseWeaponCallback: this.inventory.setChooseWeaponCallback,
     };
 
     public build() {
@@ -28,9 +34,16 @@ export default class View {
         const windElement = this.wind.getElement();
         this.guiContainer.append(windElement);
 
+        const inventory = this.inventory.getElement();
+
         document.body.append(this.mainCanvas);
         document.body.append(this.mainHandler);
         document.body.append(this.guiContainer);
+        document.body.append(inventory);
+    }
+
+    public showInventory(flag: boolean) {
+        this.inventory.show(flag);
     }
 
     public getMainCanvas() {
