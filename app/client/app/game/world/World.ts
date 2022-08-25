@@ -60,12 +60,14 @@ export default class World {
 
     public changeWind() {
         this.wind.change();
+        return this.wind.getCurrentValue();
     }
 
     public update: TLoopCallback = (time) => {
         this.wind.update(time);
         this.entityManager.update(time, this.wind.getCurrentValue());
         this.water.update(time);
+
     };
 
     public spriteLoop: TLoopCallback = (time) => {

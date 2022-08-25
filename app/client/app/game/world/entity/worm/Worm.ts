@@ -2,7 +2,7 @@ import { Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from 'three';
 import { ELayersZ, ESizes, EWeapons } from '../../../../../../ts/enums';
 import { IExplosionOptions, IShootOptions, IWormMoveOptions, IWormMoveStates } from '../../../../../../ts/interfaces';
 import { TEndTurnCallback, TLoopCallback, TRemoveEntityCallback } from '../../../../../../ts/types';
-import { Vector2 } from '../../../../../utils/geometry';
+import { Point2, Vector2 } from '../../../../../utils/geometry';
 import SoundManager from '../../../soundManager/SoundManager';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
@@ -12,14 +12,17 @@ import WDynamite from './weapon/weapon/static/dynamite/Dynamite';
 import WMine from './weapon/weapon/static/mine/Mine';
 import Weapon from './weapon/weapon/Weapon';
 import WormAnimation from './WormAnimation';
+import WormGui from './WormGui';
 
 export default class Worm extends Entity {
     protected object3D: Group;
     private wormMesh: Mesh;
     private fallToJumpCoef = 1.2;
     private animation = new WormAnimation();
+    private gui: WormGui;
     private index: number;
     private team: number;
+    private name: string;
 
     private endTurnCallback: TEndTurnCallback | null = null;
 
@@ -69,6 +72,7 @@ export default class Worm extends Entity {
         super(ESizes.worm, x, y);
         this.index = wormIndex;
         this.team = teamIndex;
+        this.name = 'Worm_' + wormIndex;
         this.physics.friction = 0.1;
         const geometry = new PlaneBufferGeometry(this.radius * 5, this.radius * 5);
         const material = new MeshBasicMaterial({
@@ -77,8 +81,13 @@ export default class Worm extends Entity {
         });
         this.object3D = new Group();
         this.wormMesh = new Mesh(geometry, material);
+        this.gui = new WormGui(this.name, teamIndex);
+        this.gui.setActualHp(hp);
 
-        this.object3D.add(this.wormMesh);
+        // TEST LINE
+        this.gui.setActualHp(hp + Math.round((Math.random() - 0.5) * hp));
+
+        this.object3D.add(this.wormMesh, this.gui.getObject3D());
         this.object3D.position.set(x, y, ELayersZ.worms);
         this.hp = hp;
     }
@@ -91,7 +100,6 @@ export default class Worm extends Entity {
     }
 
     public setMoveFlags(flags: { left?: boolean; right?: boolean }) {
-        this.stable = false;
         Object.assign(this.movesOptions.flags, flags);
     }
 
@@ -250,6 +258,72 @@ export default class Worm extends Entity {
         }
     }
 
+    protected checkCollision(
+        mapMatrix: MapMatrix,
+        entities: Entity[],
+        vec: Vector2,
+        radAngleShift = this.radiusUnitAngle
+    ) {
+        const { matrix } = mapMatrix;
+        let responseX = 0;
+        let responseY = 0;
+
+        let collision = false;
+
+        const potentialX = this.position.x + vec.x;
+        const potentialY = this.position.y + vec.y;
+        const vecAngle = Math.atan2(vec.y, vec.x);
+        const PIhalf = Math.PI / 2;
+
+        const startAngle = vecAngle - PIhalf + radAngleShift;
+        const endAngle = vecAngle + PIhalf - radAngleShift;
+
+        for (let ang = startAngle; ang < endAngle; ang += this.radiusUnitAngle) {
+            const x = this.radius * Math.cos(ang) + potentialX;
+            const y = this.radius * Math.sin(ang) + potentialY;
+            const point = new Point2(x, y);
+
+            entities.forEach((entity) => {
+                if (entity != this) {
+                    const dist = point.getDistanceToPoint(entity.position);
+                    if (dist <= entity.radius) {
+                        const dY = y - this.position.y;
+                        if (dY < 0) {
+                            collision = true;
+                            responseX += x - this.position.x;
+                            responseY += y - this.position.y;
+                        }
+                    }
+                }
+            });
+
+            const iX = Math.floor(x);
+            const iY = Math.floor(y);
+
+            if (iX < 0) {
+                return null;
+            }
+            if (iX >= matrix[0].length) {
+                return null;
+            }
+
+            if (iY < 0) {
+                return null;
+            }
+            if (iY >= matrix.length) {
+                return null;
+            }
+
+            if (matrix[iY] && matrix[iY][iX] && matrix[iY][iX] !== 0) {
+                responseX += x - this.position.x;
+                responseY += y - this.position.y;
+                collision = true;
+            }
+        }
+
+        return collision ? new Vector2(responseX, responseY) : null;
+    }
+
     public acceptExplosion(mapMatrix: MapMatrix, entities: Entity[], options: IExplosionOptions) {
         super.acceptExplosion(mapMatrix, entities, options);
         if (this.endTurnCallback) {
@@ -359,5 +433,7 @@ export default class Worm extends Entity {
             this.movesOptions.direction,
             this.isSelected ? this.currentWeapon?.getRawAngle() : undefined
         );
+
+        this.gui.spriteLoop();
     };
 }

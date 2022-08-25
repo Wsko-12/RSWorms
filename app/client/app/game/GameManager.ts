@@ -21,7 +21,8 @@ export default class GameManager {
         this.world = new World(options);
         this.soundManager = new SoundManager();
         this.IOManager = new IOManager(this.interface, this.world);
-        this.gameplayManager = new GameplayManager(this.world, this.IOManager);
+
+        this.gameplayManager = new GameplayManager(this.world, this.IOManager, this.interface);
         this.loops = {
             paused: false,
             timestamp: Date.now(),
@@ -40,7 +41,7 @@ export default class GameManager {
                     this.world.spriteLoop(time);
                 }),
 
-                turnLoop: new Loop(1, () => {
+                turnLoop: new Loop(2, () => {
                     this.gameplayManager.turnLoop();
                 }),
             },

@@ -1,5 +1,5 @@
 import { EWeapons } from '../../../../../ts/enums';
-import { TLoopCallback } from '../../../../../ts/types';
+import { TChooseWeaponCallback, TLoopCallback } from '../../../../../ts/types';
 import SoundManager from '../../soundManager/SoundManager';
 import Worm from '../../world/entity/worm/Worm';
 
@@ -90,6 +90,9 @@ export default class WormManager {
         };
 
         if (e.code === 'Enter') {
+            if (e.repeat) {
+                return;
+            }
             const now = Date.now();
             const delta = now - this.jumpButtonTimestamp;
             this.jumpButtonTimestamp = now;
@@ -102,6 +105,10 @@ export default class WormManager {
             }
         }
     }
+
+    public chooseWeapon: TChooseWeaponCallback = (weapon) => {
+        this.controlledWorm?.selectWeapon(weapon);
+    };
 
     private handleKeyUp(e: KeyboardEvent) {
         if (!this.controlledWorm) {
