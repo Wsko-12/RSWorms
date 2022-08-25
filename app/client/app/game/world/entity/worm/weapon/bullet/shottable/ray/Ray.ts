@@ -4,6 +4,7 @@ import ShottableBullet from '../Shottable';
 
 export default class RayBullet extends ShottableBullet {
     constructor(options: IBulletOptions, textureName: EWeapons) {
+        options.power = 100;
         super(options, textureName);
         this.physics.g = 0;
         this.radius = 2;

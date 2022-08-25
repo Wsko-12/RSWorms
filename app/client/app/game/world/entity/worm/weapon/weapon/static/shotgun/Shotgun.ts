@@ -1,4 +1,5 @@
 import { EWeapons } from '../../../../../../../../../../ts/enums';
+import { IBulletOptions, IShootOptions } from '../../../../../../../../../../ts/interfaces';
 import Bullet from '../../../bullet/Bullet';
 import BShotgun from '../../../bullet/shottable/ray/shotgun/Shotgun';
 import StaticWeapon from '../Static';
@@ -14,6 +15,5 @@ export default class WShotgun extends StaticWeapon {
     constructor() {
         super(EWeapons.shotgun);
         this.aim.hide(this.aimOptions.hidePower, this.aimOptions.hideAim);
-        // this.aim.power = 100;
     }
 }
