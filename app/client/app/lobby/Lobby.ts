@@ -27,14 +27,23 @@ export default class Lobby {
         this.createMainScreen();
         this.createCustomGameScreen();
         this.mainScreen.scrollIntoView();
+        this.mainScreen.scrollIntoView();
         this.createClouds();
         this.loop();
 
-        document.addEventListener('keydown', () => {
-            this.customGameScreen.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start',
-            });
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyL') {
+                this.mainScreen.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                });
+            }
+            if (e.code === 'KeyC') {
+                this.customGameScreen.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                });
+            }
         });
     }
 
@@ -63,6 +72,13 @@ export default class Lobby {
 
         const quickGameBtn = PageBuilder.createElement('div', { classes: 'main-screen-button' });
         const customGameBtn = PageBuilder.createElement('div', { classes: 'main-screen-button' });
+        customGameBtn.innerText = 'Click Me';
+        customGameBtn.addEventListener('click', () => {
+            this.customGameScreen.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+            });
+        });
         const networkGameBtn = PageBuilder.createElement('div', { classes: 'main-screen-button' });
         const settingBtn = PageBuilder.createElement('div', { classes: 'main-screen-button' });
         this.mainScreen.append(quickGameBtn, customGameBtn, networkGameBtn, settingBtn);
@@ -79,6 +95,14 @@ export default class Lobby {
 
         const quickGameBtn = PageBuilder.createElement('div', { classes: 'custom-game-screen-button' });
         const customGameBtn = PageBuilder.createElement('div', { classes: 'custom-game-screen-button' });
+        customGameBtn.innerText = 'Click Me';
+        customGameBtn.addEventListener('click', () => {
+            this.mainScreen.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+            });
+        });
+
         const networkGameBtn = PageBuilder.createElement('div', { classes: 'custom-game-screen-button' });
         const settingBtn = PageBuilder.createElement('div', { classes: 'custom-game-screen-button' });
         this.customGameScreen.append(quickGameBtn, customGameBtn, networkGameBtn, settingBtn);
