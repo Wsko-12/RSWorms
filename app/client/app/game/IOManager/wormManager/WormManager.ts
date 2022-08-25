@@ -90,6 +90,9 @@ export default class WormManager {
         };
 
         if (e.code === 'Enter') {
+            if (e.repeat) {
+                return;
+            }
             const now = Date.now();
             const delta = now - this.jumpButtonTimestamp;
             this.jumpButtonTimestamp = now;
