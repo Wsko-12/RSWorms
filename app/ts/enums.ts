@@ -49,3 +49,10 @@ export const enum ELangs {
     eng = 'english',
     rus = 'russian',
 }
+
+export enum ETeamColors {
+    '#eb3b3b',
+    '#3b55eb',
+    '#6beb54',
+    '#eb54c8',
+}

@@ -12,14 +12,17 @@ import WDynamite from './weapon/weapon/static/dynamite/Dynamite';
 import WMine from './weapon/weapon/static/mine/Mine';
 import Weapon from './weapon/weapon/Weapon';
 import WormAnimation from './WormAnimation';
+import WormGui from './WormGui';
 
 export default class Worm extends Entity {
     protected object3D: Group;
     private wormMesh: Mesh;
     private fallToJumpCoef = 1.2;
     private animation = new WormAnimation();
+    private gui: WormGui;
     private index: number;
     private team: number;
+    private name: string;
 
     private endTurnCallback: TEndTurnCallback | null = null;
 
@@ -69,6 +72,7 @@ export default class Worm extends Entity {
         super(ESizes.worm, x, y);
         this.index = wormIndex;
         this.team = teamIndex;
+        this.name = 'Worm_' + wormIndex;
         this.physics.friction = 0.1;
         const geometry = new PlaneBufferGeometry(this.radius * 5, this.radius * 5);
         const material = new MeshBasicMaterial({
@@ -77,8 +81,13 @@ export default class Worm extends Entity {
         });
         this.object3D = new Group();
         this.wormMesh = new Mesh(geometry, material);
+        this.gui = new WormGui(this.name, teamIndex);
+        this.gui.setActualHp(hp);
 
-        this.object3D.add(this.wormMesh);
+        // TEST LINE
+        this.gui.setActualHp(hp + Math.round((Math.random() - 0.5) * hp));
+
+        this.object3D.add(this.wormMesh, this.gui.getObject3D());
         this.object3D.position.set(x, y, ELayersZ.worms);
         this.hp = hp;
     }
@@ -359,5 +368,7 @@ export default class Worm extends Entity {
             this.movesOptions.direction,
             this.isSelected ? this.currentWeapon?.getRawAngle() : undefined
         );
+
+        this.gui.spriteLoop();
     };
 }
