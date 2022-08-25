@@ -62,12 +62,12 @@ export default class gameplayManager {
 
     turnLoop() {
         if (this.isEnding) {
-            console.log((Date.now() - this.isEnding) / 1000);
+            // console.log((Date.now() - this.isEnding) / 1000);
             if (Date.now() > this.isEnding) {
                 this.nextTurn();
             }
         } else {
-            console.log((Date.now() - this.turnTimestamp) / 1000);
+            // console.log((Date.now() - this.turnTimestamp) / 1000);
 
             if (Date.now() - this.turnTimestamp > this.turnTime * 1000) {
                 this.nextTurn();

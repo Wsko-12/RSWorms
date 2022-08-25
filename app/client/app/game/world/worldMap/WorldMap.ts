@@ -33,7 +33,7 @@ export default class WorldMap {
 
             return { element, ctx };
         } else {
-            throw new Error("[WordMap createCanvas]: can't receive canvas ctx");
+            throw new Error("[WorldMap createCanvas]: can't receive canvas ctx");
         }
     }
 

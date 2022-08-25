@@ -27,7 +27,7 @@ export default class Bullet extends Entity {
     };
 
     protected explosion = {
-        damage: 150,
+        damage: 45,
         radius: 150,
         kick: 15,
     };
@@ -162,11 +162,34 @@ export default class Bullet extends Entity {
             kickForce: this.explosion.kick,
         };
 
+        // for (let i = 0; i < entities.length; i++) {
+        //     if (entities[i] != this) {
+        //         const dist = this.position.getDistanceToPoint(entities[i].position);
+        //         if (explosionOptions.radius >= dist - entities[i].radius) {
+        //             console.log('dist=', dist);
+        //             console.log('r=', explosionOptions.radius);
+        //             console.log(this.explosion.damage)
+        //             const k = Math.abs(1 - dist / this.explosion.radius);
+        //             console.log('k=', k);
+        //             explosionOptions.damage *= k > 0.75 ? 1 : k;
+        //             console.log('damage = ', explosionOptions.damage);
+        //             entities[i].acceptExplosion(mapMatrix, entities, explosionOptions);
+        //         }
+        //     }
+        // }
+
         entities.forEach((entity) => {
             if (entity != this) {
                 const dist = this.position.getDistanceToPoint(entity.position);
                 if (explosionOptions.radius >= dist - entity.radius) {
-                    entity.acceptExplosion(mapMatrix, entities, explosionOptions);
+                    const options = Object.assign({}, explosionOptions);
+                    console.log('dist=', dist);
+                    console.log('r=', explosionOptions.radius);
+                    const k = Math.abs(1 - dist / this.explosion.radius);
+                    console.log('k=', k);
+                    options.damage *= k > 0.75 ? 1 : k;
+                    console.log('damage = ', options.damage);
+                    entity.acceptExplosion(mapMatrix, entities, options);
                 }
             }
         });

@@ -43,6 +43,7 @@ export const enum EWeapons {
     grenade = 'grenade',
     dynamite = 'dynamite',
     mine = 'mine',
+    shotgun = 'shotgun',
 }
 
 export const enum ELangs {

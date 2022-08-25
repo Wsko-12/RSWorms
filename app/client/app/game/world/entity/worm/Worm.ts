@@ -6,10 +6,12 @@ import { Vector2 } from '../../../../../utils/geometry';
 import SoundManager from '../../../soundManager/SoundManager';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
+import Shotgun from './weapon/bullet/shottable/ray/shotgun/Shotgun';
 import WBazooka from './weapon/weapon/powerable/bazooka/Bazooka';
 import WGrenade from './weapon/weapon/powerable/grenade/Grenade';
 import WDynamite from './weapon/weapon/static/dynamite/Dynamite';
 import WMine from './weapon/weapon/static/mine/Mine';
+import WShotgun from './weapon/weapon/static/shotgun/Shotgun';
 import Weapon from './weapon/weapon/Weapon';
 import WormAnimation from './WormAnimation';
 
@@ -30,6 +32,7 @@ export default class Worm extends Entity {
         grenade: new WGrenade(),
         dynamite: new WDynamite(),
         mine: new WMine(),
+        shotgun: new WShotgun(),
     };
 
     public isSelected = false;
@@ -202,7 +205,11 @@ export default class Worm extends Entity {
         const slideAngle = Math.PI / 2 - Math.acos(normalSurface.dotProduct(velClone));
         const fallSpeed = vel.getLength();
         const isSlide = slideAngle > Math.PI / 8 && this.moveStates.isFall;
-        if (isSlide) SoundManager.playWorm('oof1');
+        if (isSlide) {
+            SoundManager.playWorm('oof1');
+            this.setHP(-fallSpeed / 5);
+            console.log(this.hp)
+        }
         const fallSpeedWithFriction = fallSpeed * this.physics.friction;
 
         const { flags } = this.movesOptions;
@@ -255,6 +262,9 @@ export default class Worm extends Entity {
         if (this.endTurnCallback) {
             this.endTurnCallback(0);
         }
+
+        this.setHP(-options.damage);
+        console.log(this.hp);
         this.lastDamageTimestamp = Date.now();
         this.moveStates.isDamaged = true;
     }

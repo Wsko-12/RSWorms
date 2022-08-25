@@ -80,6 +80,9 @@ export default class WormManager {
         if (e.code === 'KeyM') {
             this.controlledWorm.selectWeapon(EWeapons.mine);
         }
+        if (e.code === 'KeyT') {
+            this.controlledWorm.selectWeapon(EWeapons.shotgun);
+        }
 
         const jumpTimeout = () => {
             const t = setTimeout(() => {
