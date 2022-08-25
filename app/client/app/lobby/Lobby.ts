@@ -71,8 +71,9 @@ export default class Lobby {
         this.mainScreen.style.left = this.windowWidth + 'px';
 
         const quickGameBtn = PageBuilder.createElement('div', { classes: 'main-screen-button' });
+        quickGameBtn.style.backgroundImage = 'url(./assets/lobby/main-screen/worms-single.jpeg)';
         const customGameBtn = PageBuilder.createElement('div', { classes: 'main-screen-button' });
-        customGameBtn.innerText = 'Click Me';
+        customGameBtn.style.backgroundImage = 'url(./assets/lobby/main-screen/worms-custom.jpeg)';
         customGameBtn.addEventListener('click', () => {
             this.customGameScreen.scrollIntoView({
                 behavior: 'smooth',
@@ -80,8 +81,14 @@ export default class Lobby {
             });
         });
         const networkGameBtn = PageBuilder.createElement('div', { classes: 'main-screen-button' });
+        networkGameBtn.style.backgroundImage = 'url(./assets/lobby/main-screen/wormsnetwork.jpeg)';
         const settingBtn = PageBuilder.createElement('div', { classes: 'main-screen-button' });
-        this.mainScreen.append(quickGameBtn, customGameBtn, networkGameBtn, settingBtn);
+        settingBtn.style.backgroundImage = 'url(./assets/lobby/main-screen/wormssettings.jpeg)';
+
+        const title = PageBuilder.createElement('div', { classes: 'main-screen-title' });
+
+
+        this.mainScreen.append(quickGameBtn, customGameBtn, networkGameBtn, settingBtn, title);
 
         this.lobbyWrapper.append(this.mainScreen);
     }
