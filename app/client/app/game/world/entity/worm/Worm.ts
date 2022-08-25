@@ -91,7 +91,6 @@ export default class Worm extends Entity {
     }
 
     public setMoveFlags(flags: { left?: boolean; right?: boolean }) {
-        this.stable = false;
         Object.assign(this.movesOptions.flags, flags);
     }
 

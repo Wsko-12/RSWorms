@@ -8,7 +8,6 @@ export default abstract class Entity {
     public position: Point2;
     public radius: number;
     protected radiusUnitAngle: number;
-    protected stable = false;
 
     protected removeFromEntityCallback: TRemoveEntityCallback | null = null;
 
@@ -69,7 +68,6 @@ export default abstract class Entity {
                 if (entity != this) {
                     const dist = point.getDistanceToPoint(entity.position);
                     if (dist <= entity.radius) {
-                        entity.stable = false;
                         collision = true;
                         responseX += x - this.position.x;
                         responseY += y - this.position.y;
@@ -105,10 +103,6 @@ export default abstract class Entity {
     }
 
     protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
-        if (this.stable) {
-            return;
-        }
-
         const vel = this.physics.velocity.clone();
         vel.y -= this.physics.g;
 
@@ -137,7 +131,6 @@ export default abstract class Entity {
 
         if (this.physics.velocity.getLength() < 0.01) {
             this.physics.velocity.scale(0);
-            this.stable = true;
         }
     }
 
@@ -155,7 +148,6 @@ export default abstract class Entity {
     }
 
     public push(vec: Vector2) {
-        this.stable = false;
         const { velocity } = this.physics;
         velocity.x += vec.x;
         velocity.y += vec.y;
