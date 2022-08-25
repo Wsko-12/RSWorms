@@ -30,9 +30,9 @@ export default class Lobby {
                 max: 6,
                 min: 2,
             },
-            wormsCount: 3,
+            wormsCount: 1,
             multiplayer: false,
-            teamNames: ['team-a', 'team-b', 'team-c'],
+            teamNames: ['team-a', 'team-b'],
             playerNames: [],
         });
         // };
