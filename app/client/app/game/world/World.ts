@@ -66,13 +66,10 @@ export default class World {
     public update: TLoopCallback = (time) => {
         this.wind.update(time);
         this.entityManager.update(time, this.wind.getCurrentValue());
-        this.water.update(time);
-
     };
 
     public spriteLoop: TLoopCallback = (time) => {
-        this.wind.update(time);
+        this.water.update(time);
         this.entityManager.spriteLoop(time);
-        this.entityManager.update(time, this.wind.getCurrentValue());
     };
 }
