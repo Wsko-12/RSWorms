@@ -7,7 +7,8 @@ import Loop from './loop/Loop';
 import SoundManager from './soundManager/SoundManager';
 import GameplayManager from './gameplayManager/GameplayManager';
 import World from './world/World';
-
+import Stats from 'three/examples/jsm/libs/stats.module';
+const stats = Stats();
 export default class GameManager {
     private options: IStartGameOptions;
     private world: World;
@@ -66,9 +67,11 @@ export default class GameManager {
         this.world.create();
         SoundManager.playBackground();
         this.loop();
+        document.body.appendChild(stats.dom);
     }
 
     private loop = () => {
+        stats.update();
         const now = Date.now();
         const delta = (now - this.loops.timestamp) * 0.001;
         this.loops.timestamp = now;

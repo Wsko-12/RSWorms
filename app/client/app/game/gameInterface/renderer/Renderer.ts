@@ -1,4 +1,4 @@
-import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { PerspectiveCamera, Scene, Vector2, WebGLRenderer } from 'three';
 
 export default class Renderer {
     private canvas: HTMLCanvasElement;
@@ -28,7 +28,7 @@ export default class Renderer {
     }
 
     private setSize(): void {
-        const windowPixelRatio = Math.min(window.devicePixelRatio, 2);
+        const windowPixelRatio = 1;
         const windowWidth = +window.innerWidth * windowPixelRatio;
         const windowHeight = +window.innerHeight * windowPixelRatio;
 
