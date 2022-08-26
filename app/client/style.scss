@@ -30,11 +30,16 @@ body{
     width: 350px;
     height: 220px;
     border: 1px solid black;
+    cursor: pointer;
+    transition: transform 0.4s ease;
+    &:hover{
+        transform: scale(1.1);
+    }
 }
 
 .main-screen-title {
     position: absolute;
-    top: 10%;
+    top: 5%;
     width: 500px;
     height: 300px;
     background-image: url(./assets/lobby/main-screen/Logo.png);
@@ -67,10 +72,17 @@ body{
 }
 
 .return-button {
+    cursor: pointer;
     position: absolute;
     top: 5%;
     left: 5%;
-    width: 50px;
-    height: 30px;
-    border: 1px solid black;
+    width: 60px;
+    height: 60px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: transform 0.4s ease;
+    &:hover{
+        transform: scale(1.2);
+    }
 }

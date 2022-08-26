@@ -2,13 +2,10 @@
 import { EMapPacksDecorItems, EMapPacksNames, EWorldSizes } from '../../../ts/enums';
 import { TStartGameCallback } from '../../../ts/types';
 import PageBuilder from '../../utils/pageBuilder';
-import { IGMLoops, IStartGameOptions } from '../../../ts/interfaces';
 import './style.scss';
 import { Context } from 'vm';
-import Loop from '../game/loop/Loop';
 
 export default class Lobby {
-    // private loops: IGMLoops;
     clouds: any[] = [];
     cloud: any;
     mainScreen: any;
@@ -23,39 +20,17 @@ export default class Lobby {
     private startGameCallback: TStartGameCallback;
     constructor(startGameCallback: TStartGameCallback) {
         this.startGameCallback = startGameCallback;
-
-        this.createLobby();
-        this.createMainScreen();
-        this.createCustomGameScreen();
-        this.createSettings();
-        this.mainScreen.scrollIntoView();
-        this.createClouds();
         this.loop();
-
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'KeyL') {
-                this.mainScreen.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start',
-                });
-            }
-            if (e.code === 'KeyC') {
-                this.customGameScreen.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start',
-                });
-            }
-        });
     }
 
-    createSettings() {
+    private createSettings() {
         this.settings = PageBuilder.createElement('div', { classes: 'settings' });
         this.settings.style.width = this.windowWidth + 'px';
         this.settings.style.height = this.windowHeight + 'px';
         this.settings.style.top = this.windowHeight * 2 + 'px';
         this.settings.style.left = this.windowWidth * 2 + 'px';
         const returnBtn = PageBuilder.createElement('div', { classes: 'return-button' });
-        returnBtn.innerText = 'return';
+        returnBtn.style.backgroundImage = 'url(../../assets/lobby/return.png)';
         returnBtn.addEventListener('click', () => {
             this.mainScreen.scrollIntoView({
                 behavior: 'smooth',
@@ -66,13 +41,11 @@ export default class Lobby {
         this.lobbyWrapper.append(this.settings);
     }
 
-    createLobby() {
+    private createLobby() {
         this.lobbyWrapper = PageBuilder.createElement('div', { id: 'lobby-wrapper' });
         document.body.append(this.lobbyWrapper);
         this.windowHeight = document.documentElement.clientHeight;
         this.windowWidth = document.documentElement.clientWidth;
-        // this.windowHeight = window.innerHeight;
-        // this.windowWidth = window.innerWidth;
         this.canvasWidth = this.windowWidth * 3;
         this.canvasHeight = this.windowHeight * 3;
         this.lobbyWrapper.style.width = `${this.windowWidth * 3}px`;
@@ -80,9 +53,13 @@ export default class Lobby {
         this.lobbyWrapper.innerHTML += `<canvas id='canvas-lobby' width='${this.canvasWidth}px' height='${this.canvasHeight}px'></canvas>`;
         const canvas = document.getElementById('canvas-lobby') as HTMLCanvasElement;
         this.ctx = canvas.getContext('2d');
+
+        window.addEventListener('resize', () => {
+            this.resize();
+        });
     }
 
-    createMainScreen() {
+    private createMainScreen() {
         this.mainScreen = PageBuilder.createElement('div', { classes: 'main-screen' });
         this.mainScreen.style.width = this.windowWidth + 'px';
         this.mainScreen.style.height = this.windowHeight + 'px';
@@ -91,6 +68,8 @@ export default class Lobby {
 
         const quickGameBtn = PageBuilder.createElement('div', { classes: 'main-screen-button' });
         quickGameBtn.style.backgroundImage = 'url(./assets/lobby/main-screen/worms-single.jpeg)';
+        quickGameBtn.addEventListener('click', this.startGame.bind(this));
+
         const customGameBtn = PageBuilder.createElement('div', { classes: 'main-screen-button' });
         customGameBtn.style.backgroundImage = 'url(./assets/lobby/main-screen/worms-custom.jpeg)';
         customGameBtn.addEventListener('click', () => {
@@ -118,26 +97,21 @@ export default class Lobby {
         this.lobbyWrapper.append(this.mainScreen);
     }
 
-    createCustomGameScreen() {
+    private createCustomGameScreen() {
         this.customGameScreen = PageBuilder.createElement('div', { classes: 'custom-game-screen' });
         this.customGameScreen.style.width = this.windowWidth + 'px';
         this.customGameScreen.style.height = this.windowHeight + 'px';
         this.customGameScreen.style.top = '0px';
         this.customGameScreen.style.left = this.windowWidth * 2 + 'px';
-
-        const quickGameBtn = PageBuilder.createElement('div', { classes: 'custom-game-screen-button' });
-        const customGameBtn = PageBuilder.createElement('div', { classes: 'custom-game-screen-button' });
-        const networkGameBtn = PageBuilder.createElement('div', { classes: 'custom-game-screen-button' });
-        const settingBtn = PageBuilder.createElement('div', { classes: 'custom-game-screen-button' });
         const returnBtn = PageBuilder.createElement('div', { classes: 'return-button' });
-        returnBtn.innerText = 'return';
+        returnBtn.style.backgroundImage = 'url(../../assets/lobby/return.png)';
         returnBtn.addEventListener('click', () => {
             this.mainScreen.scrollIntoView({
                 behavior: 'smooth',
                 block: 'start',
             });
         });
-        this.customGameScreen.append(quickGameBtn, customGameBtn, networkGameBtn, settingBtn, returnBtn);
+        this.customGameScreen.append(returnBtn);
 
         this.lobbyWrapper.append(this.customGameScreen);
     }
@@ -147,9 +121,31 @@ export default class Lobby {
         setTimeout(this.loop, 40);
     };
 
-    public start() {}
+    private startGame() {
+        document.body.innerHTML = '';
+        const seed = Math.random();
+        // const seed = 0.7135371756374531;
+        // const seed = 0.7972989657842342;
+        // const seed = 0.711119400099296;
+        console.log('Seed: ', seed);
+        this.startGameCallback({
+            mapTexturePackName: EMapPacksNames.candy,
+            worldSize: EWorldSizes.medium,
+            seed,
+            decor: {
+                count: EMapPacksDecorItems[EMapPacksNames.candy],
+                max: 6,
+                min: 2,
+            },
+            // wormsCount: 3,
+            // multiplayer: false,
+            // teamNames: ['team-a', 'team-b', 'team-c'],
+            // playerNames: [],
+        });
+    }
 
-    createClouds() {
+    private createClouds() {
+        if (this.clouds.length > 0) return;
         this.cloud = new Image();
         this.cloud.src = '../../assets/lobby/cloud.png';
         const cloudWidth = 300;
@@ -169,7 +165,7 @@ export default class Lobby {
         }
     }
 
-    drawClouds() {
+    private drawClouds() {
         if (this.ctx) {
             this.ctx.fillStyle = '#7AD7FF';
             this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
@@ -183,8 +179,21 @@ export default class Lobby {
         }
     }
 
-    private startGame(options: IStartGameOptions) {
+    private resize() {
         document.body.innerHTML = '';
-        this.startGameCallback(options);
+        this.start();
+    }
+
+    public start() {
+        this.createLobby();
+        this.createMainScreen();
+        this.createCustomGameScreen();
+        this.createSettings();
+        this.mainScreen.scrollIntoView();
+        this.createClouds();
+        this.mainScreen.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        });
     }
 }
