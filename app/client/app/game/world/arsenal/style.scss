@@ -1,0 +1,26 @@
+.arsenal {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(13);
+  position: absolute;
+  width: 200px;
+  height: 400px;
+  background-color: #000000;
+  transition: transform .5s;
+  z-index: 15;
+  border: 1px solid #ffffff
+}
+
+.item {
+  border: 1px solid #ffffff;
+  cursor: pointer;
+  color: #ffffff;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto;
+}
+
+// .item > img {
+//   width: 1fr;
+//   height: 1fr;
+// }

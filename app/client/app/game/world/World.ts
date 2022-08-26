@@ -6,6 +6,7 @@ import EntityManager from './entity/EntityManager';
 import Water from './water/Water';
 import Wind from './wind/Wind';
 import WorldMap from './worldMap/WorldMap';
+import Arsenal from './arsenal/Arsenal';
 
 export default class World {
     private mainScene = new Scene();
@@ -16,9 +17,16 @@ export default class World {
     private water: Water;
 
     public entityManager = new EntityManager(this.mainScene);
+    public arsenal;
+    public weapons: string[];
     constructor(options: IStartGameOptions) {
         this.options = options;
         this.water = new Water(options.worldSize);
+        this.arsenal = new Arsenal();
+        this.weapons = ['bazooka', 'grenade', 'dynamite', 'mine'];
+        document.addEventListener('contextmenu', (e) => {
+            this.arsenal.renderArs(this.weapons);
+        });
     }
 
     public async init() {
