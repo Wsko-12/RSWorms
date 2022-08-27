@@ -52,7 +52,9 @@ export default class WormAnimation {
         this.texture.needsUpdate = true;
         if (this.dead.plays) {
             this.deadAnimation();
-            return;
+            if (!this.dead.isReady) {
+                return;
+            }
         }
 
         let image = AssetsManager.getWormTexture('breath');
@@ -106,6 +108,9 @@ export default class WormAnimation {
             image = AssetsManager.getWormTexture('slide');
         }
 
+        if (this.dead.isReady) {
+            image = AssetsManager.getWormTexture('grave');
+        }
         this.texture.repeat.x = -wormDirection;
         if (image) {
             this.maxSteps = image.naturalHeight / image.naturalWidth;
