@@ -40,11 +40,11 @@ export default class EntityManager {
         return null;
     }
 
-    public update = (time: number, wind: number) => {
+    public update = (time: number, wind: number, waterLevel: number) => {
         const matrix = this.worldMap?.getMapMatrix();
         if (matrix) {
             this.entities.forEach((entity) => {
-                entity.update(matrix, this.entities, wind);
+                entity.update(matrix, this.entities, wind, waterLevel);
             });
         }
     };

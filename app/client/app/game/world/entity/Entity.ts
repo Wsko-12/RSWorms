@@ -31,9 +31,9 @@ export default abstract class Entity {
         return this.position.clone();
     }
 
-    public update(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
+    public update(mapMatrix: MapMatrix, entities: Entity[], wind: number, waterLevel: number) {
         if (mapMatrix) {
-            this.gravity(mapMatrix, entities, wind);
+            this.gravity(mapMatrix, entities, wind, waterLevel);
         }
 
         this.object3D.position.set(this.position.x, this.position.y, 0);
@@ -102,20 +102,25 @@ export default abstract class Entity {
         return collision ? new Vector2(responseX, responseY) : null;
     }
 
-    protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
+    protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number, waterLevel: number) {
         const vel = this.physics.velocity.clone();
         vel.y -= this.physics.g;
 
         const collision = this.checkCollision(mapMatrix, entities, vel);
 
-        if (!collision) {
-            this.position.x += vel.x;
-            this.position.y += vel.y;
-            this.physics.velocity = vel;
+        if (!collision || this.position.y < waterLevel) {
+            if (this.position.y < waterLevel) {
+                this.position.y -= this.physics.g * 10;
+            } else {
+                this.position.x += vel.x;
+                this.position.y += vel.y;
+                this.physics.velocity = vel;
+            }
+
             return;
         }
 
-        this.handleCollision(mapMatrix, entities);
+        this.handleCollision(mapMatrix, entities, waterLevel);
 
         //normal here isn't mean 'normalize'
         const normalSurface = collision.normalize().scale(1);
@@ -134,7 +139,7 @@ export default abstract class Entity {
         }
     }
 
-    protected abstract handleCollision(mapMatrix: MapMatrix, entities: Entity[]): void;
+    protected abstract handleCollision(mapMatrix: MapMatrix, entities: Entity[], waterLevel: number): void;
 
     public setRemoveFromEntityCallback(cb: TRemoveEntityCallback) {
         this.removeFromEntityCallback = cb;

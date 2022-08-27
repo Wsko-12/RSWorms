@@ -126,7 +126,7 @@ export default class Bullet extends Entity {
         this.explosion.kick = kick;
     }
 
-    protected handleCollision(mapMatrix: MapMatrix, entities: Entity[]): void {
+    protected handleCollision(mapMatrix: MapMatrix, entities: Entity[], waterLevel: number): void {
         return;
     }
 
@@ -152,7 +152,13 @@ export default class Bullet extends Entity {
         });
     }
 
-    public explode(mapMatrix: MapMatrix, entities: Entity[]) {
+    public explode(mapMatrix: MapMatrix, entities: Entity[], waterLevel: number) {
+        if (this.position.y < waterLevel) {
+            this.setExplosionOptions(0, 10, 0);
+            this.playExplosionAnimation().then(() => {
+                this.remove();
+            });
+        }
         this.isRemoved = true;
         SoundManager.playBullet(ESoundsBullet.explosion);
         mapMatrix.destroy(this.position, this.explosion.radius);
@@ -179,10 +185,17 @@ export default class Bullet extends Entity {
         });
     }
 
-    public update(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
+    public update(mapMatrix: MapMatrix, entities: Entity[], wind: number, waterLevel: number) {
         this.updateObjectRotation();
         if (!this.isRemoved) {
-            super.update(mapMatrix, entities, wind);
+            super.update(mapMatrix, entities, wind, waterLevel);
+        }
+        if (
+            this.position.y < 0 ||
+            this.position.x < -mapMatrix.getSizeX() ||
+            this.position.x > mapMatrix.getSizeX() * 2
+        ) {
+            this.remove();
         }
         this.object3D.position.z = ELayersZ.bullets;
     }

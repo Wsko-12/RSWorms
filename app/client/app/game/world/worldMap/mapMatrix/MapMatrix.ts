@@ -24,6 +24,10 @@ export default class MapMatrix {
         this.updateMapMaskTextureCallback();
     }
 
+    public getSizeX() {
+        return this.matrix[0].length;
+    }
+
     public getCanvasElement() {
         return this.canvas.element;
     }

@@ -53,6 +53,7 @@ export default class Worm extends Entity {
         isFall: true,
         isDamaged: false,
         isCelebrated: false,
+        isDrown: false,
     };
 
     public liveStates = {
@@ -211,9 +212,14 @@ export default class Worm extends Entity {
         return false;
     }
 
-    protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
+    protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number, waterLevel: number) {
         const vel = this.physics.velocity.clone();
-        vel.y -= this.physics.g;
+        if (this.position.y + this.radius < waterLevel) {
+            this.moveStates.isDrown = true;
+        } else {
+            vel.y -= this.physics.g;
+        }
+
         if (this.moveStates.isJump && this.moveStates.isFall) {
             this.moveStates.isFall = false;
         }
@@ -226,14 +232,20 @@ export default class Worm extends Entity {
                 this.moveStates.isFall = true;
             }
         }
-        if (!collision) {
+        if (!collision || this.moveStates.isDrown) {
             if (vel.getLength() > this.jumpVectors.backflip.getLength() * this.fallToJumpCoef) {
                 this.moveStates.isFall = true;
                 this.moveStates.isJump = false;
             }
-            this.position.x += vel.x;
-            this.position.y += vel.y;
-            this.physics.velocity = vel;
+            if (this.moveStates.isDrown) {
+                this.moveStates.isDrown = true;
+                this.position.y -= this.physics.g * 5;
+            } else {
+                this.position.x += vel.x;
+                this.position.y += vel.y;
+                this.physics.velocity = vel;
+            }
+
             return;
         }
 
@@ -371,7 +383,13 @@ export default class Worm extends Entity {
 
     protected move(mapMatrix: MapMatrix, entities: Entity[]) {
         this.moveStates.isMove = false;
-        if (this.moveStates.isFall || this.moveStates.isJump || this.moveStates.isSlide || this.moveStates.isDamaged) {
+        if (
+            this.moveStates.isFall ||
+            this.moveStates.isJump ||
+            this.moveStates.isSlide ||
+            this.moveStates.isDamaged ||
+            this.moveStates.isDrown
+        ) {
             return;
         }
 
@@ -425,9 +443,9 @@ export default class Worm extends Entity {
         );
     }
 
-    public update(mapMatrix: MapMatrix, entities: Entity[], wind: number): void {
+    public update(mapMatrix: MapMatrix, entities: Entity[], wind: number, waterLevel: number): void {
         this.move(mapMatrix, entities);
-        super.update(mapMatrix, entities, wind);
+        super.update(mapMatrix, entities, wind, waterLevel);
         this.object3D.position.z = ELayersZ.worms;
 
         this.currentWeapon?.show(this.isSelected && this.isStable());
@@ -436,6 +454,14 @@ export default class Worm extends Entity {
         if (this.liveStates.inDeadProcess && !this.liveStates.isDead) {
             this.liveStates.isDead = true;
             this.liveStates.finalExplosion.explode(mapMatrix, entities);
+        }
+
+        if (this.position.y < 0) {
+            this.liveStates.isDead = true;
+            if (this.endTurnCallback) {
+                this.endTurnCallback(5);
+            }
+            this.remove();
         }
         // temporary
         {

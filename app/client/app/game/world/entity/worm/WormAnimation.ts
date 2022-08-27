@@ -121,6 +121,10 @@ export default class WormAnimation {
             this.lastAnimation = 'celebrate';
             image = AssetsManager.getWormTexture('celebrate');
         }
+
+        if (wormStates.isDrown) {
+            image = AssetsManager.getWormTexture('celebrate');
+        }
         if (this.dead.isReady) {
             image = AssetsManager.getWormTexture('grave');
         }
