@@ -349,41 +349,36 @@ export default class WorldMap {
         return this.getObjectPlace(matrix, width, height, attempt - 1);
     };
 
-    public getWormPlace = (attempt = 5): { x: number; y: number } => {
+    public getWormPlace = (): { x: number; y: number } => {
         const matrix = this.mapMatrix.matrix;
         const width = this.sizes.width;
         const height = this.sizes.height;
-        const rand = this.random.get();
-        const parts = 32;
-        const partSize = width / parts;
-        const part = Math.floor((parts - 8) * rand) + 4;
-        const x = part * partSize;
+        const yRandom: number = Math.round(height * Math.random() * 0.65 + 0.1 * height);
+        const xRandom: number = Math.round(width * Math.random() * 0.75 + 0.15 * width);
 
-        let skips = Math.round(this.random.get());
-        if (attempt <= 0) {
-            skips = 0;
-        }
-        let skipped = 0;
-        let prevSkipped = false;
-
-        for (let y = height - 1; y > 0; y--) {
-            const cell = matrix[y][x];
-            if (cell === 0) {
-                prevSkipped = false;
-            }
-
-            if (cell === 1) {
-                if (skipped === skips && !prevSkipped) {
-                    return { x, y };
-                } else {
-                    if (!prevSkipped) {
-                        prevSkipped = true;
-                        skipped++;
-                    }
+        const checkAround = (x: number, y: number) => {
+            let answer = true;
+            x -= 20;
+            y += 20;
+            for (let i = 0; i < 40; i++) {
+                for (let k = 0; k < 40; k++) {
+                    if (matrix[y - k][x + i] === 1) answer = false;
                 }
             }
-        }
+            return answer;
+        };
 
-        return this.getWormPlace(attempt - 1);
+        const checkHeight = (xRandom: number, yRandom: number) => {
+            const h = 80; //max height with no injury
+            let answer = false;
+            for (let i = 0; i < h; i++) {
+                if (matrix[yRandom - i][xRandom] === 1) answer = true;
+            }
+            return answer;
+        };
+
+        if (checkAround(xRandom, yRandom) && checkHeight(xRandom, yRandom)) {
+            return { x: xRandom, y: yRandom };
+        } else return this.getWormPlace();
     };
 }
