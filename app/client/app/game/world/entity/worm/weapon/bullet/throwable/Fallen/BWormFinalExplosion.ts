@@ -1,5 +1,5 @@
 import { ESoundsBullet } from '../../../../../../../../../../ts/enums';
-import { IBulletOptions, IExplosionOptions } from '../../../../../../../../../../ts/interfaces';
+import { IExplosionOptions } from '../../../../../../../../../../ts/interfaces';
 import { Point2 } from '../../../../../../../../../utils/geometry';
 import SoundManager from '../../../../../../../soundManager/SoundManager';
 import MapMatrix from '../../../../../../worldMap/mapMatrix/MapMatrix';
@@ -9,6 +9,7 @@ import BDynamite from './dynamite/BDynamite';
 
 export default class BWormFinalExplosion extends BDynamite {
     private worm: Worm;
+    private isExplodedState = false;
     constructor(worm: Worm) {
         super({ angle: 1, parentRadius: 1, position: new Point2(0, 0), power: 0 });
         this.worm = worm;
@@ -41,10 +42,14 @@ export default class BWormFinalExplosion extends BDynamite {
 
         this.playExplosionAnimation().then(() => {
             setTimeout(() => {
-                this.worm.liveStates.isExploded = true;
-            }, 2000);
+                this.isExplodedState = true;
+            }, 1000);
             this.remove();
         });
+    }
+
+    public isExploded() {
+        return this.isExplodedState;
     }
 
     public update(): void {

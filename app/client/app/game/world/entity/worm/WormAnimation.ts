@@ -125,7 +125,7 @@ export default class WormAnimation {
         if (wormStates.isDrown) {
             image = AssetsManager.getWormTexture('drown');
         }
-        if (this.dead.isReady) {
+        if (wormStates.isDead) {
             image = AssetsManager.getWormTexture('grave');
         }
         this.texture.repeat.x = -wormDirection;

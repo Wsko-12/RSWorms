@@ -58,6 +58,7 @@ export interface IWormMoveStates {
     isDamaged: boolean;
     isCelebrated: boolean;
     isDrown: boolean;
+    isDead: boolean;
 }
 
 export interface IWormMoveOptions {

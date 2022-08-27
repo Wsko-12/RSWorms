@@ -54,14 +54,10 @@ export default class Worm extends Entity {
         isDamaged: false,
         isCelebrated: false,
         isDrown: false,
+        isDead: false,
     };
 
-    public liveStates = {
-        inDeadProcess: false,
-        isDead: false,
-        isExploded: false,
-        finalExplosion: new BWormFinalExplosion(this),
-    };
+    private finalExplosion = new BWormFinalExplosion(this);
 
     //temporary
     private lastDamageTimestamp = 0;
@@ -96,7 +92,7 @@ export default class Worm extends Entity {
         this.gui = new WormGui(this.name, teamIndex);
         this.gui.setActualHp(hp);
 
-        this.object3D.add(this.wormMesh, this.gui.getObject3D(), this.liveStates.finalExplosion.getObject3D());
+        this.object3D.add(this.wormMesh, this.gui.getObject3D(), this.finalExplosion.getObject3D());
         this.object3D.position.set(x, y, ELayersZ.worms);
         this.hp = hp;
     }
@@ -186,12 +182,10 @@ export default class Worm extends Entity {
 
     public startTurn(nextTurnCallback: TEndTurnCallback) {
         this.endTurnCallback = nextTurnCallback;
-        //hide hp bar
     }
 
     public endTurn() {
         this.endTurnCallback = null;
-        //show hp bar
     }
 
     public betweenTurnsActions(): Promise<boolean> {
@@ -205,8 +199,7 @@ export default class Worm extends Entity {
                 return this.isStable();
             } else {
                 this.animation.playDeadAnimation();
-                this.liveStates.inDeadProcess = this.animation.dead.isReady;
-                return this.liveStates.isExploded;
+                return this.finalExplosion.isExploded();
             }
         }
         return false;
@@ -451,13 +444,13 @@ export default class Worm extends Entity {
         this.currentWeapon?.show(this.isSelected && this.isStable());
         this.currentWeapon?.update(this.movesOptions.direction);
 
-        if (this.liveStates.inDeadProcess && !this.liveStates.isDead) {
-            this.liveStates.isDead = true;
-            this.liveStates.finalExplosion.explode(mapMatrix, entities);
+        if (this.gui.isDead() && this.animation.dead.isReady && !this.moveStates.isDead) {
+            this.moveStates.isDead = true;
+            this.finalExplosion.explode(mapMatrix, entities);
         }
 
         if (this.position.y < 0) {
-            this.liveStates.isDead = true;
+            this.moveStates.isDead = true;
             if (this.endTurnCallback) {
                 this.endTurnCallback(5);
             }
@@ -494,7 +487,7 @@ export default class Worm extends Entity {
     }
 
     public isDead() {
-        return this.liveStates.isDead;
+        return this.moveStates.isDead;
     }
 
     public spriteLoop: TLoopCallback = (time) => {
@@ -504,7 +497,7 @@ export default class Worm extends Entity {
             this.isSelected ? this.currentWeapon?.getRawAngle() : undefined
         );
 
-        if (this.liveStates.isDead) {
+        if (this.moveStates.isDead) {
             this.gui.show(false);
         } else {
             this.gui.spriteLoop();
