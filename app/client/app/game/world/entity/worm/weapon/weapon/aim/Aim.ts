@@ -1,15 +1,16 @@
 import { Group, Mesh, MeshBasicMaterial, NearestFilter, PlaneBufferGeometry, Texture } from 'three';
-import { ELayersZ } from '../../../../../../../ts/enums';
-import { IWormMoveStates } from '../../../../../../../ts/interfaces';
-import AssetsManager from '../../../../assetsManager/AssetsManager';
-import Weapon from '../weapon/Weapon';
+import { ELayersZ, ESizes } from '../../../../../../../../../ts/enums';
+import AssetsManager from '../../../../../../assetsManager/AssetsManager';
+import Weapon from '../Weapon';
 
 export default class Aim {
-    private group = new Group();
-    protected aimMesh: Mesh;
+    private object3D = new Group();
+    private aimMesh: Mesh;
+
     private power = 0;
     private angle = 0;
     private deltaPower = 0.1;
+
     protected shootPowerMesh: Mesh;
     protected shootPowerCanvas = document.createElement('canvas');
     protected shootPowerCtx = this.shootPowerCanvas.getContext('2d');
@@ -17,7 +18,7 @@ export default class Aim {
     constructor() {
         const aimSprite = AssetsManager.getWormTexture('aim');
         if (!aimSprite) {
-            throw new Error("[Worm Aim] can't load aim sprite");
+            throw new Error("[Weapon Aim] can't load aim sprite");
         }
         const aimTexture = new Texture(aimSprite);
         aimTexture.magFilter = NearestFilter;
@@ -29,6 +30,7 @@ export default class Aim {
                 alphaTest: 0.5,
             })
         );
+
         const shootingPowerTexture = new Texture(this.shootPowerCanvas);
         this.shootPowerMesh = new Mesh(
             new PlaneBufferGeometry(1, 1),
@@ -40,48 +42,46 @@ export default class Aim {
 
         this.shootPowerMesh.position.set(0, 0, ELayersZ.aim);
 
-        this.group.add(this.aimMesh, this.shootPowerMesh);
+        this.object3D.add(this.aimMesh, this.shootPowerMesh);
         this.shootPowerCanvas.width = 256;
         this.shootPowerCanvas.height = 256;
-        this.toggle(false);
     }
 
-    public getObject3D() {
-        return this.group;
-    }
-
-    public changeAngle(direction: number, speed: number) {
-        const delta = speed * direction;
-        this.angle += delta;
-        if (this.angle > 90) this.angle = 90;
-        if (this.angle < -45) this.angle = -45;
-    }
-
-    public update(wormStates: IWormMoveStates, weapon: Weapon | null, wormRadius: number, wormDirection: number) {
-        if (!weapon) {
-            this.toggle(false);
-            return;
+    public hide(power: boolean, aim?: boolean) {
+        if (power) {
+            this.shootPowerMesh.visible = false;
         }
-        if (wormStates.isFall || wormStates.isSlide || wormStates.isJump || wormStates.isMove) {
-            this.toggle(false);
-            return;
+        if (aim) {
+            this.aimMesh.visible = false;
         }
+    }
 
-        this.aimMesh.visible = true;
-        this.shootPowerMesh.visible = true;
-
-        const r = weapon.aimRadius;
-        const rad = this.getAngle(wormDirection) * (Math.PI / 180);
+    public update(wormDirection: 1 | -1) {
+        const r = ESizes.worm * 5;
+        const angle = this.getAngle(wormDirection);
+        const rad = angle * (Math.PI / 180);
         const x = Math.cos(rad) * r;
         const y = Math.sin(rad) * r;
+        this.aimMesh.position.set(x, y, ELayersZ.aim);
+
         this.shootPowerMesh.rotation.z = rad;
         this.aimMesh.rotation.z = rad;
-        this.aimMesh.position.set(x, y, ELayersZ.aim);
-        this.shootPowerMesh.scale.set(wormRadius * 2 + r * 1.5, wormRadius * 2 + r * 1.5, 1);
+        this.shootPowerMesh.scale.set(ESizes.worm * 2 + r * 1.5, ESizes.worm * 2 + r * 1.5, 1);
         this.drawShootPower(this.power);
     }
 
-    public drawShootPower(shootPower: number) {
+    public getRawAngle() {
+        return this.angle;
+    }
+
+    private getPower() {
+        const power = this.power;
+        this.power = 0;
+        this.deltaPower = 0.1;
+        return power;
+    }
+
+    private drawShootPower(shootPower: number) {
         const ctx = this.shootPowerCtx;
         if (ctx) {
             if (shootPower) {
@@ -113,6 +113,24 @@ export default class Aim {
         }
     }
 
+    public getAngle(wormDirection: 1 | -1) {
+        return wormDirection === 1 ? this.angle : 180 - this.angle;
+    }
+
+    public changeAngle(direction: 1 | -1 | 0, speed: number) {
+        const delta = speed * direction;
+        this.angle += delta;
+        if (this.angle > 90) this.angle = 90;
+        if (this.angle < -45) this.angle = -45;
+    }
+
+    public getShootDirection(wormDirection: 1 | -1) {
+        return {
+            power: this.getPower(),
+            angle: this.getAngle(wormDirection),
+        };
+    }
+
     public changePower() {
         // y = x**2
         this.deltaPower += 0.25;
@@ -120,29 +138,7 @@ export default class Aim {
         if (this.power > 100) this.power = 100;
     }
 
-    public toggle(flag: boolean) {
-        this.aimMesh.visible = flag;
-        this.shootPowerMesh.visible = flag;
-    }
-
-    public getShootData(wormDirection: number) {
-        return {
-            power: this.getPower(),
-            angle: this.getAngle(wormDirection),
-        };
-    }
-
-    public getRawAngle() {
-        return this.angle;
-    }
-    private getPower() {
-        const power = this.power;
-        this.power = 0;
-        this.deltaPower = 0.1;
-        return power;
-    }
-
-    private getAngle(wormDirection: number) {
-        return wormDirection === 1 ? this.angle : 180 - this.angle;
+    public getObject3D() {
+        return this.object3D;
     }
 }

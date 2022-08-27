@@ -3,17 +3,13 @@ import { IExplosionOptions, IPhysics } from '../../../../../ts/interfaces';
 import { TLoopCallback, TRemoveEntityCallback } from '../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../utils/geometry';
 import MapMatrix from '../worldMap/mapMatrix/MapMatrix';
-import Bullet from './worm/weapon/bullet/Bullet';
-
 export default abstract class Entity {
     protected abstract object3D: Object3D | Mesh;
     public position: Point2;
     public radius: number;
     protected radiusUnitAngle: number;
-    protected stable = false;
-    public id: string;
 
-    protected removeEntityCallback: TRemoveEntityCallback;
+    protected removeFromEntityCallback: TRemoveEntityCallback | null = null;
 
     protected physics: IPhysics = {
         velocity: new Vector2(0, 0),
@@ -21,9 +17,7 @@ export default abstract class Entity {
         friction: 0.1,
     };
 
-    constructor(removeEntityCallback: TRemoveEntityCallback, id: string, radius = 1, x = 0, y = 0) {
-        this.removeEntityCallback = removeEntityCallback;
-        this.id = id;
+    constructor(radius = 1, x = 0, y = 0) {
         this.position = new Point2(x, y);
         this.radius = radius;
         this.radiusUnitAngle = Math.asin(0.5 / this.radius) * 2;
@@ -74,7 +68,6 @@ export default abstract class Entity {
                 if (entity != this) {
                     const dist = point.getDistanceToPoint(entity.position);
                     if (dist <= entity.radius) {
-                        entity.stable = false;
                         collision = true;
                         responseX += x - this.position.x;
                         responseY += y - this.position.y;
@@ -110,17 +103,13 @@ export default abstract class Entity {
     }
 
     protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
-        if (this.stable) {
-            return;
-        }
-
         const vel = this.physics.velocity.clone();
         vel.y -= this.physics.g;
 
         const collision = this.checkCollision(mapMatrix, entities, vel);
 
         if (!collision) {
-            this.position.x += this instanceof Bullet ? vel.x : 0;
+            this.position.x += vel.x;
             this.position.y += vel.y;
             this.physics.velocity = vel;
             return;
@@ -142,14 +131,20 @@ export default abstract class Entity {
 
         if (this.physics.velocity.getLength() < 0.01) {
             this.physics.velocity.scale(0);
-            this.stable = true;
         }
     }
 
     protected abstract handleCollision(mapMatrix: MapMatrix, entities: Entity[]): void;
 
+    public setRemoveFromEntityCallback(cb: TRemoveEntityCallback) {
+        this.removeFromEntityCallback = cb;
+    }
+
     public remove() {
-        this.removeEntityCallback(this);
+        if (this.removeFromEntityCallback) {
+            this.removeFromEntityCallback(this);
+            this.removeFromEntityCallback = null;
+        }
     }
 
     public push(vec: Vector2) {
@@ -162,16 +157,19 @@ export default abstract class Entity {
         //mapMatrix and entities needs for example for barrels we create method explode
         const vec = new Vector2(this.position.x - options.point.x, this.position.y - options.point.y);
         const dist = vec.getLength() - this.radius;
-
         const force = (options.radius - dist) / options.radius;
         if (force <= 0) {
             return;
         }
 
+        if (vec.getLength() === 0) {
+            vec.y = force;
+        }
         vec.normalize().scale(force * options.kickForce);
-
         this.push(vec);
     }
 
-    public spriteLoop: TLoopCallback = (time) => {};
+    public spriteLoop: TLoopCallback = (time) => {
+        return;
+    };
 }

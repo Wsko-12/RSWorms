@@ -1,5 +1,7 @@
 import { ELang, ESoundsWeapon, ESoundsWormAction, ESoundsWormSpeech } from '../../../../../ts/enums';
 import { TLoopCallback } from '../../../../../ts/types';
+import { EWeapons } from '../../../../../ts/enums';
+import { TChooseWeaponCallback, TLoopCallback } from '../../../../../ts/types';
 import SoundManager from '../../soundManager/SoundManager';
 import Worm from '../../world/entity/worm/Worm';
 
@@ -41,6 +43,7 @@ export default class WormManager {
         if (!this.controlledWorm) {
             return;
         }
+
         const worm = this.controlledWorm;
 
         if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') {
@@ -67,6 +70,19 @@ export default class WormManager {
             this.shooting = true;
         }
 
+        if (e.code === 'KeyG') {
+            this.controlledWorm.selectWeapon(EWeapons.grenade);
+        }
+        if (e.code === 'KeyB') {
+            this.controlledWorm.selectWeapon(EWeapons.bazooka);
+        }
+        if (e.code === 'KeyD') {
+            this.controlledWorm.selectWeapon(EWeapons.dynamite);
+        }
+        if (e.code === 'KeyM') {
+            this.controlledWorm.selectWeapon(EWeapons.mine);
+        }
+
         const jumpTimeout = () => {
             const t = setTimeout(() => {
                 worm.jump();
@@ -76,6 +92,9 @@ export default class WormManager {
         };
 
         if (e.code === 'Enter') {
+            if (e.repeat) {
+                return;
+            }
             const now = Date.now();
             const delta = now - this.jumpButtonTimestamp;
             this.jumpButtonTimestamp = now;
@@ -88,6 +107,10 @@ export default class WormManager {
             }
         }
     }
+
+    public chooseWeapon: TChooseWeaponCallback = (weapon) => {
+        this.controlledWorm?.selectWeapon(weapon);
+    };
 
     private handleKeyUp(e: KeyboardEvent) {
         if (!this.controlledWorm) {

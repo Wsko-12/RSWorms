@@ -21,6 +21,8 @@ export const enum EProportions {
 export const enum EConstants {
     bgScale = 4,
     cameraFov = 45,
+
+    throwableExplosionDelay = 5000,
 }
 
 export const enum ELayersZ {
@@ -28,6 +30,32 @@ export const enum ELayersZ {
     map = 0,
     worms = 1,
     aim = 25,
+    weapons = 10,
+    bullets = 10,
+    water = 50,
+}
+
+export const enum ESizes {
+    worm = 20,
+}
+
+export enum EWeapons {
+    bazooka = 'bazooka',
+    grenade = 'grenade',
+    dynamite = 'dynamite',
+    mine = 'mine',
+}
+
+export const enum ELangs {
+    eng = 'english',
+    rus = 'russian',
+}
+
+export enum ETeamColors {
+    '#eb3b3b',
+    '#3b55eb',
+    '#6beb54',
+    '#eb54c8',
 }
 
 export const enum ELang {
@@ -133,3 +161,8 @@ export const enum ESoundsWormSpeech {
     startRound = 'yessir',
     youllRegret = 'youllregretthat',
 }
+
+export const enum ECustomEvents {
+    click = 'custom-click',
+}
+

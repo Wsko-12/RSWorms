@@ -1,7 +1,18 @@
+import { ECustomEvents } from '../../../../../../ts/enums';
+import { ICustomMouseEvent } from '../../../../../../ts/interfaces';
 import { Point2, Vector2 } from '../../../../../utils/geometry';
 import CameraController from './CameraController';
 
 export default class CameraControllerHandler {
+    static createPointerEvent(type: string, cords: [number, number]) {
+        const event = new CustomEvent<ICustomMouseEvent>(type, {
+            detail: {
+                x: (cords[0] / window.innerWidth) * 2 - 1,
+                y: -(cords[1] / window.innerHeight) * 2 + 1,
+            },
+        });
+        return event;
+    }
     private controller: CameraController;
     private handleElement: HTMLElement | null = null;
 
@@ -146,8 +157,11 @@ export default class CameraControllerHandler {
             if (e.button === 0) {
                 if (e.timeStamp - this.mouse.clicked.timestamp < 150 && !this.mouse.clicked.moved) {
                     //click
-                    // const event = CameraEventsHandler.createPointerEvent(ECustomEvents.click, [e.clientX, e.clientY]);
-                    // this._eventHandler?.dispatchEvent(event);
+                    const event = CameraControllerHandler.createPointerEvent(ECustomEvents.click, [
+                        e.clientX,
+                        e.clientY,
+                    ]);
+                    this.handleElement?.dispatchEvent(event);
                 }
                 this.mouse.clicked.flag = false;
                 this.mouse.clicked.moved = false;
@@ -248,8 +262,11 @@ export default class CameraControllerHandler {
             if (e.touches.length === 0) {
                 if (e.timeStamp - this.touch.timestamp < 200 && !this.touch.moved) {
                     if (this.touch.clicked) {
-                        // const event = CameraEventsHandler.createPointerEvent(ECustomEvents.click, [this.touch.x, this.touch.y]);
-                        // this._eventHandler?.dispatchEvent(event);
+                        const event = CameraControllerHandler.createPointerEvent(ECustomEvents.click, [
+                            this.touch.x,
+                            this.touch.y,
+                        ]);
+                        this.handleElement?.dispatchEvent(event);
                     }
                     if (this.touch.double) {
                         //don't use it better

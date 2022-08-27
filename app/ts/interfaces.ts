@@ -11,6 +11,10 @@ export interface IStartGameOptions {
         max: number;
         min: number;
     };
+    wormsCount: number;
+    multiplayer: boolean;
+    teamNames: string[];
+    playerNames: string[];
 }
 
 export interface IGMLoops {
@@ -26,6 +30,12 @@ export interface IPhysics {
 }
 
 export interface IShootOptions {
+    position: Point2;
+    wormDirection: 1 | -1;
+    parentRadius: number;
+}
+
+export interface IBulletOptions {
     angle: number;
     power: number;
     position: Point2;
@@ -46,4 +56,21 @@ export interface IWormMoveStates {
     isDoubleJump: boolean;
     isFall: boolean;
     isDamaged: boolean;
+}
+
+export interface IWormMoveOptions {
+    flags: {
+        left: boolean;
+        right: boolean;
+    };
+    direction: 1 | -1;
+    speed: number;
+    a: Vector2;
+    v: Vector2;
+    maxAngle: number;
+}
+
+export interface ICustomMouseEvent {
+    x: number;
+    y: number;
 }

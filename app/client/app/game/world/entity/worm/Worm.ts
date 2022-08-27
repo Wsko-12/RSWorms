@@ -1,20 +1,39 @@
 import { Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from 'three';
-import { ELayersZ } from '../../../../../../ts/enums';
-import { IExplosionOptions, IShootOptions, IWormMoveStates } from '../../../../../../ts/interfaces';
-import { TLoopCallback, TRemoveEntityCallback } from '../../../../../../ts/types';
-import { Vector2 } from '../../../../../utils/geometry';
+import { ELayersZ, ESizes, EWeapons } from '../../../../../../ts/enums';
+import { IExplosionOptions, IShootOptions, IWormMoveOptions, IWormMoveStates } from '../../../../../../ts/interfaces';
+import { TEndTurnCallback, TLoopCallback, TRemoveEntityCallback } from '../../../../../../ts/types';
+import { Point2, Vector2 } from '../../../../../utils/geometry';
+import SoundManager from '../../../soundManager/SoundManager';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
-import Aim from './aim/Aim';
-import Weapon from './weapon/Weapon';
+import WBazooka from './weapon/weapon/powerable/bazooka/Bazooka';
+import WGrenade from './weapon/weapon/powerable/grenade/Grenade';
+import WDynamite from './weapon/weapon/static/dynamite/Dynamite';
+import WMine from './weapon/weapon/static/mine/Mine';
+import Weapon from './weapon/weapon/Weapon';
 import WormAnimation from './WormAnimation';
+import WormGui from './WormGui';
 
 export default class Worm extends Entity {
     protected object3D: Group;
     private wormMesh: Mesh;
-    private aim = new Aim();
     private fallToJumpCoef = 1.2;
     private animation = new WormAnimation();
+    private gui: WormGui;
+    private index: number;
+    private team: number;
+    private name: string;
+
+    private endTurnCallback: TEndTurnCallback | null = null;
+
+    private currentWeapon: null | Weapon = null;
+
+    private weaponPack: Record<EWeapons, Weapon> = {
+        bazooka: new WBazooka(),
+        grenade: new WGrenade(),
+        dynamite: new WDynamite(),
+        mine: new WMine(),
+    };
 
     public isSelected = false;
     private jumpVectors = {
@@ -35,7 +54,7 @@ export default class Worm extends Entity {
     //temporary
     private lastDamageTimestamp = 0;
 
-    public movesOptions = {
+    public movesOptions: IWormMoveOptions = {
         flags: {
             left: false,
             right: false,
@@ -48,12 +67,12 @@ export default class Worm extends Entity {
     };
 
     private hp: number;
-    private currentWeapon: Weapon;
 
-    constructor(removeEntityCallback: TRemoveEntityCallback, id: string, x = 0, y = 0, hp = 100) {
-        super(removeEntityCallback, id, 20, x, y);
-        this.currentWeapon = new Weapon();
-        this.id = id;
+    constructor(wormIndex: number, teamIndex: number, x = 0, y = 0, hp = 100) {
+        super(ESizes.worm, x, y);
+        this.index = wormIndex;
+        this.team = teamIndex;
+        this.name = 'Worm_' + wormIndex;
         this.physics.friction = 0.1;
         const geometry = new PlaneBufferGeometry(this.radius * 5, this.radius * 5);
         const material = new MeshBasicMaterial({
@@ -62,38 +81,26 @@ export default class Worm extends Entity {
         });
         this.object3D = new Group();
         this.wormMesh = new Mesh(geometry, material);
+        this.gui = new WormGui(this.name, teamIndex);
+        this.gui.setActualHp(hp);
 
-        this.object3D.add(this.wormMesh, this.aim.getObject3D());
+        // TEST LINE
+        this.gui.setActualHp(hp + Math.round((Math.random() - 0.5) * hp));
+
+        this.object3D.add(this.wormMesh, this.gui.getObject3D());
         this.object3D.position.set(x, y, ELayersZ.worms);
         this.hp = hp;
     }
 
     public setAsSelected(flag: boolean) {
         this.isSelected = flag;
+
+        this.movesOptions.flags.left = false;
+        this.movesOptions.flags.right = false;
     }
 
     public setMoveFlags(flags: { left?: boolean; right?: boolean }) {
-        this.stable = false;
         Object.assign(this.movesOptions.flags, flags);
-    }
-
-    public shoot() {
-        const { power, angle } = this.aim.getShootData(this.movesOptions.direction);
-        const options: IShootOptions = {
-            angle,
-            power,
-            position: this.position.clone(),
-            parentRadius: this.radius,
-        };
-
-        return this.currentWeapon.shoot(options, this.removeEntityCallback);
-    }
-
-    public changeAim(direction: number, speed: number, power: boolean) {
-        this.aim.changeAngle(direction, speed);
-        if (power) {
-            this.aim.changePower();
-        }
     }
 
     public getHP() {
@@ -118,8 +125,56 @@ export default class Worm extends Entity {
         this.push(vec);
     }
 
+    public shoot() {
+        if (!this.currentWeapon) return;
+        const options: IShootOptions = {
+            position: this.position.clone(),
+            parentRadius: this.radius,
+            wormDirection: this.movesOptions.direction,
+        };
+        if (this.endTurnCallback) {
+            this.endTurnCallback(5);
+        }
+        return this.currentWeapon.shoot(options);
+    }
+    public selectWeapon(weapon: EWeapons | null) {
+        const before = this.currentWeapon;
+        if (before) {
+            const object = before.getObject3D();
+            before.show(false, 0);
+            this.object3D.remove(object);
+        }
+
+        if (!weapon) {
+            this.currentWeapon = null;
+            return;
+        }
+        this.currentWeapon = this.weaponPack[weapon];
+
+        const after = this.currentWeapon;
+        if (after) {
+            const object = after.getObject3D();
+            this.object3D.add(object);
+            after.show(true);
+        }
+    }
+
+    public changeAim(direction: 1 | -1 | 0, speed: number, power: boolean) {
+        this.currentWeapon?.changeAim(direction, speed, power);
+    }
+
     public isMoves() {
         return this.moveStates.isMove;
+    }
+
+    public startTurn(nextTurnCallback: TEndTurnCallback) {
+        this.endTurnCallback = nextTurnCallback;
+        //hide hp bar
+    }
+
+    public endTurn() {
+        this.endTurnCallback = null;
+        //show hp bar
     }
 
     protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
@@ -155,7 +210,7 @@ export default class Worm extends Entity {
         const slideAngle = Math.PI / 2 - Math.acos(normalSurface.dotProduct(velClone));
         const fallSpeed = vel.getLength();
         const isSlide = slideAngle > Math.PI / 8 && this.moveStates.isFall;
-
+        if (isSlide) SoundManager.playWorm('oof1');
         const fallSpeedWithFriction = fallSpeed * this.physics.friction;
 
         const { flags } = this.movesOptions;
@@ -203,8 +258,77 @@ export default class Worm extends Entity {
         }
     }
 
+    protected checkCollision(
+        mapMatrix: MapMatrix,
+        entities: Entity[],
+        vec: Vector2,
+        radAngleShift = this.radiusUnitAngle
+    ) {
+        const { matrix } = mapMatrix;
+        let responseX = 0;
+        let responseY = 0;
+
+        let collision = false;
+
+        const potentialX = this.position.x + vec.x;
+        const potentialY = this.position.y + vec.y;
+        const vecAngle = Math.atan2(vec.y, vec.x);
+        const PIhalf = Math.PI / 2;
+
+        const startAngle = vecAngle - PIhalf + radAngleShift;
+        const endAngle = vecAngle + PIhalf - radAngleShift;
+
+        for (let ang = startAngle; ang < endAngle; ang += this.radiusUnitAngle) {
+            const x = this.radius * Math.cos(ang) + potentialX;
+            const y = this.radius * Math.sin(ang) + potentialY;
+            const point = new Point2(x, y);
+
+            entities.forEach((entity) => {
+                if (entity != this) {
+                    const dist = point.getDistanceToPoint(entity.position);
+                    if (dist <= entity.radius) {
+                        const dY = y - this.position.y;
+                        if (dY < 0) {
+                            collision = true;
+                            responseX += x - this.position.x;
+                            responseY += y - this.position.y;
+                        }
+                    }
+                }
+            });
+
+            const iX = Math.floor(x);
+            const iY = Math.floor(y);
+
+            if (iX < 0) {
+                return null;
+            }
+            if (iX >= matrix[0].length) {
+                return null;
+            }
+
+            if (iY < 0) {
+                return null;
+            }
+            if (iY >= matrix.length) {
+                return null;
+            }
+
+            if (matrix[iY] && matrix[iY][iX] && matrix[iY][iX] !== 0) {
+                responseX += x - this.position.x;
+                responseY += y - this.position.y;
+                collision = true;
+            }
+        }
+
+        return collision ? new Vector2(responseX, responseY) : null;
+    }
+
     public acceptExplosion(mapMatrix: MapMatrix, entities: Entity[], options: IExplosionOptions) {
         super.acceptExplosion(mapMatrix, entities, options);
+        if (this.endTurnCallback) {
+            this.endTurnCallback(0);
+        }
         this.lastDamageTimestamp = Date.now();
         this.moveStates.isDamaged = true;
     }
@@ -259,16 +383,19 @@ export default class Worm extends Entity {
         v.scale(0);
     }
 
+    public isStable() {
+        return (
+            !this.moveStates.isFall && !this.moveStates.isJump && !this.moveStates.isMove && !this.moveStates.isSlide
+        );
+    }
+
     public update(mapMatrix: MapMatrix, entities: Entity[], wind: number): void {
         this.move(mapMatrix, entities);
         super.update(mapMatrix, entities, wind);
         this.object3D.position.z = ELayersZ.worms;
 
-        if (this.isSelected) {
-            this.aim.update(this.moveStates, this.currentWeapon, this.radius, this.movesOptions.direction);
-        } else {
-            this.aim.toggle(false);
-        }
+        this.currentWeapon?.show(this.isSelected && this.isStable());
+        this.currentWeapon?.update(this.movesOptions.direction);
 
         // temporary
         {
@@ -288,6 +415,9 @@ export default class Worm extends Entity {
         const delta = this.physics.velocity.getLength() - this.jumpVectors.backflip.getLength() * this.fallToJumpCoef;
         if (delta > 0) {
             // console.log(delta);
+            if (this.endTurnCallback) {
+                this.endTurnCallback(0);
+            }
         }
         return;
     }
@@ -301,7 +431,9 @@ export default class Worm extends Entity {
         this.animation.spriteLoop(
             this.moveStates,
             this.movesOptions.direction,
-            this.isSelected ? this.aim.getRawAngle() : undefined
+            this.isSelected ? this.currentWeapon?.getRawAngle() : undefined
         );
+
+        this.gui.spriteLoop();
     };
 }

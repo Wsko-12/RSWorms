@@ -1,4 +1,5 @@
-import { TLoopCallback } from '../../../../ts/types';
+import { ECustomEvents } from '../../../../ts/enums';
+import { TChooseWeaponCallback, TLoopCallback } from '../../../../ts/types';
 import GameInterface from '../gameInterface/GameInterface';
 import Bullet from '../world/entity/worm/weapon/bullet/Bullet';
 import World from '../world/World';
@@ -15,17 +16,14 @@ export default class IOManager {
         this.applyListeners();
     }
 
-    //Delete later. Used in GameManager.start()
-    public DEV__CheckTestWorm() {
-        const worm = this.world.entityManager.getWorm('test');
-        if (worm) {
-            this.wormManager.setWorm(worm);
-        }
-    }
     private applyListeners() {
         document.addEventListener('keydown', (e) => {
             // here will be check isPlayerTurn()
             this.wormManager.handleEvent(e);
+
+            if (e.code === 'KeyI') {
+                this.gameInterface.showInventory(true);
+            }
         });
 
         document.addEventListener('keyup', (e) => {
@@ -37,7 +35,17 @@ export default class IOManager {
                 this.world.entityManager.addEntity(result);
             }
         });
+
+        this.gameInterface.getMainHandler().addEventListener(ECustomEvents.click, (e) => {
+            this.gameInterface.showInventory(true);
+        });
+
+        this.gameInterface.inventoryElement.setChooseWeaponCallback(this.chooseWeapon);
     }
+
+    private chooseWeapon: TChooseWeaponCallback = (weapon) => {
+        this.wormManager.chooseWeapon(weapon);
+    };
 
     public update: TLoopCallback = (time) => {
         this.wormManager.update(time);

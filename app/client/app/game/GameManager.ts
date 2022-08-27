@@ -5,13 +5,16 @@ import GameInterface from './gameInterface/GameInterface';
 import IOManager from './IOManager/IOManager';
 import Loop from './loop/Loop';
 import SoundManager from './soundManager/SoundManager';
+import GameplayManager from './gameplayManager/GameplayManager';
 import World from './world/World';
-
+import Stats from 'three/examples/jsm/libs/stats.module';
+const stats = Stats();
 export default class GameManager {
     private options: IStartGameOptions;
     private world: World;
     private loops: IGMLoops;
     private interface = new GameInterface();
+    private gameplayManager: GameplayManager;
     private soundManager: SoundManager;
     private IOManager: IOManager;
     constructor(options: IStartGameOptions) {
@@ -19,6 +22,8 @@ export default class GameManager {
         this.world = new World(options);
         this.soundManager = new SoundManager();
         this.IOManager = new IOManager(this.interface, this.world);
+
+        this.gameplayManager = new GameplayManager(this.world, this.IOManager, this.interface);
         this.loops = {
             paused: false,
             timestamp: Date.now(),
@@ -36,6 +41,10 @@ export default class GameManager {
                 sprite: new Loop(25, (time) => {
                     this.world.spriteLoop(time);
                 }),
+
+                turnLoop: new Loop(2, () => {
+                    this.gameplayManager.turnLoop();
+                }),
             },
         };
 
@@ -52,16 +61,17 @@ export default class GameManager {
     private async start() {
         await AssetsManager.init(this.options);
         await this.world.init();
-        this.IOManager.DEV__CheckTestWorm();
-        this.world.entityManager.createWorm('test_2');
+        this.gameplayManager.init(this.options);
         Object.values(this.loops.all).forEach((loop) => loop.switcher(true));
         this.interface.buildToDocument();
         this.world.create();
         SoundManager.playBackground(ESoundsBG.outerspace);
         this.loop();
+        document.body.appendChild(stats.dom);
     }
 
     private loop = () => {
+        stats.update();
         const now = Date.now();
         const delta = (now - this.loops.timestamp) * 0.001;
         this.loops.timestamp = now;

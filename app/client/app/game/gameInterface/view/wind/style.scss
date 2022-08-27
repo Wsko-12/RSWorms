@@ -1,0 +1,63 @@
+.wind {
+    width: 200px;
+    height: 20px;
+    background-color: $interface-bg-color;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+}
+
+.wind__bar-container {
+    width: 50%;
+    height: 100%;
+    display: flex;
+
+    &-left{
+        justify-content: flex-end;
+    }
+
+    &-right{
+        justify-content: flex-start;
+    }
+}
+
+@keyframes toRight {
+    from{
+        background-position: 100%;
+
+    }
+    to{
+        background-position: 0%;
+    }
+}
+
+@keyframes toLeft {
+    from{
+        background-position: 0%;
+
+    }
+    to{
+        background-position: 100%;
+    }
+}
+.wind__bar {
+    height: 100%;
+    background-size: cover;
+    &-right{
+        width: 100%;
+        background-image: url('../../../../../assets/interface/wind-right.png');
+        animation: toRight 5s linear infinite;
+    }
+
+    &-left{
+        width: 30%;
+        position: relative;
+        background-image: url('../../../../../assets/interface/wind-left.png');
+        animation: toLeft 5s linear infinite;
+    }
+}
