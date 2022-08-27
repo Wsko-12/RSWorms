@@ -135,7 +135,10 @@ export default class Worm extends Entity {
         if (this.endTurnCallback) {
             this.endTurnCallback(5);
         }
-        return this.currentWeapon.shoot(options);
+        const weapon = this.currentWeapon;
+        this.object3D.remove(this.currentWeapon.getObject3D());
+        this.currentWeapon = null;
+        return weapon.shoot(options);
     }
     public selectWeapon(weapon: EWeapons | null) {
         const before = this.currentWeapon;
