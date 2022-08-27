@@ -1,43 +1,84 @@
+import path = require('path');
+import {
+    ELang,
+    ESoundsBG,
+    ESoundsBullet,
+    ESoundsFX,
+    ESoundsWeapon,
+    ESoundsWormAction,
+    ESoundsWormSpeech,
+} from '../../../../ts/enums';
 import { IWormMoveStates } from '../../../../ts/interfaces';
 
 export default class SoundManager {
-    static lobby = new Audio();
     static background = new Audio();
+    static timer = new Audio();
     static worm = new Audio();
+    static wormSpeech = new Audio();
+    static weapon = new Audio();
+    static bullet = new Audio();
     static sfx = new Audio();
     static pathToAudio = '../../../client/assets/sound';
+    static extention = '.wav';
+    static paths = {
+        background: '/background/',
+        weapon: '/weapon/',
+        worm: '/worm/',
+        bullet: '/bullet/',
+        wormSpeech: '/user/speech/',
+        sfx: '/sfx/',
+    };
     constructor() {
-        document.body.append(SoundManager.lobby, SoundManager.worm, SoundManager.background, SoundManager.sfx);
+        document.body.append(
+            SoundManager.worm,
+            SoundManager.background,
+            SoundManager.sfx,
+            SoundManager.timer,
+            SoundManager.weapon,
+            SoundManager.bullet,
+            SoundManager.wormSpeech
+        );
     }
-    static playBackground() {
-        this.background.src = this.pathToAudio + '/background/outerspace.wav';
+    static playBackground(bg: ESoundsBG) {
+        this.background.src = this.pathToAudio + this.paths.background + bg + this.extention;
         this.background.volume = 0.25;
         this.background.loop = true;
         this.background.play();
         // make autoplay;
     }
 
-    static playSFX(state: string) {
+    static playSFX(state: ESoundsFX) {
         if (!this.sfx.paused) return;
-        if (state === 'explosion') {
-            this.sfx.src = this.pathToAudio + '/soundFX/explosion.wav';
-        }
-        // console.log(t)
+        this.sfx.src = this.pathToAudio + this.paths.sfx + state + this.extention;
         this.sfx.play();
     }
 
-    static playWorm(state: string) {
-        // this.worm.play();
+    static playBullet(action: ESoundsBullet) {
+        if (!this.bullet.paused) return;
+        this.sfx.src = this.pathToAudio + this.paths.bullet + action + this.extention;
+        this.sfx.play();
+    }
+
+    static playWeapon(action: ESoundsWeapon) {
+        if (!this.weapon.paused) return;
+        this.sfx.src = this.pathToAudio + this.paths.weapon + action + this.extention;
+        this.sfx.play();
+    }
+
+    static playTimer(state: ESoundsFX) {
+        if (!this.timer.paused) return;
+        this.sfx.src = this.pathToAudio + this.paths.sfx + state + this.extention;
+        this.sfx.play();
+    }
+
+    static playWormAction(action: ESoundsWormAction) {
         if (!this.worm.paused) return;
-        if (state === 'walk') {
-            this.worm.src = this.pathToAudio + '/soundFX/walk.wav';
-        }
-        if (state === 'jump1' || state === 'jump2') {
-            this.worm.src = this.pathToAudio + '/user/speech/russian/' + state + '.wav';
-        }
-        if (state === 'shoot') {
-            this.worm.src = this.pathToAudio + '/user/speech/russian/' + state + '.wav';
-        }
+        this.worm.src = this.pathToAudio + this.paths.worm + action + this.extention;
+        this.worm.play();
+    }
+    static playWormSpeech(lang: ELang, speech: ESoundsWormSpeech) {
+        if (!this.worm.paused) return;
+        this.worm.src = this.pathToAudio + this.paths.wormSpeech + lang + '/' + speech + this.extention;
         this.worm.play();
     }
 }
