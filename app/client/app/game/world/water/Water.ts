@@ -49,7 +49,7 @@ export default class Water {
     }
 
     public raiseLevel() {
-        this.level += 100;
+        this.level += 10;
         this.object3D.position.y = -this.height / 2 + this.level;
     }
 
