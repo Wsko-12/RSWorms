@@ -13,12 +13,14 @@ export default class WormManager {
     private shooting = false;
     private readonly aimSpeed = 2;
 
-    public setWorm(worm: Worm) {
+    public setWorm(worm: Worm | null) {
         if (this.controlledWorm) {
             this.controlledWorm.setAsSelected(false);
         }
         this.controlledWorm = worm;
-        worm.setAsSelected(true);
+        if (worm) {
+            worm.setAsSelected(true);
+        }
     }
 
     public getWorm() {

@@ -84,9 +84,6 @@ export default class Worm extends Entity {
         this.gui = new WormGui(this.name, teamIndex);
         this.gui.setActualHp(hp);
 
-        // TEST LINE
-        this.gui.setActualHp(hp + Math.round((Math.random() - 0.5) * hp));
-
         this.object3D.add(this.wormMesh, this.gui.getObject3D());
         this.object3D.position.set(x, y, ELayersZ.worms);
         this.hp = hp;
@@ -108,7 +105,10 @@ export default class Worm extends Entity {
     }
 
     public setHP(hp: number) {
-        this.hp += hp;
+        this.hp += Math.round(hp);
+        if (this.hp < 0) {
+            this.hp = 0;
+        }
     }
 
     public jump(double?: boolean) {
@@ -175,6 +175,23 @@ export default class Worm extends Entity {
     public endTurn() {
         this.endTurnCallback = null;
         //show hp bar
+    }
+
+    public betweenTurnsActions(): Promise<boolean> {
+        this.gui.setActualHp(this.getHP());
+        return new Promise((res) => {
+            const check = () => {
+                if (this.gui.isUpdated()) {
+                    res(true);
+                } else {
+                    setTimeout(() => {
+                        check();
+                    }, 10);
+                }
+            };
+
+            check();
+        });
     }
 
     protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
@@ -325,12 +342,16 @@ export default class Worm extends Entity {
     }
 
     public acceptExplosion(mapMatrix: MapMatrix, entities: Entity[], options: IExplosionOptions) {
-        super.acceptExplosion(mapMatrix, entities, options);
+        const force = super.acceptExplosion(mapMatrix, entities, options);
         if (this.endTurnCallback) {
             this.endTurnCallback(0);
         }
         this.lastDamageTimestamp = Date.now();
         this.moveStates.isDamaged = true;
+
+        this.setHP(force * options.damage * -1);
+
+        return force;
     }
 
     protected move(mapMatrix: MapMatrix, entities: Entity[]) {

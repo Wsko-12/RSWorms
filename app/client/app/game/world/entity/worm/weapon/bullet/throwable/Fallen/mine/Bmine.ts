@@ -28,7 +28,12 @@ export default class BMine extends FallenBullet {
     }
 
     protected activate() {
+        return;
+    }
+
+    public betweenTurnsActions(): Promise<boolean> {
         this.isActivated = true;
+        return Promise.resolve(true);
     }
 
     public update(mapMatrix: MapMatrix, entities: Entity[], wind: number): void {

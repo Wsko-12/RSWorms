@@ -153,13 +153,17 @@ export default abstract class Entity {
         velocity.y += vec.y;
     }
 
+    public betweenTurnsActions(): Promise<boolean> {
+        return Promise.resolve(true);
+    }
+
     public acceptExplosion(mapMatrix: MapMatrix, entities: Entity[], options: IExplosionOptions) {
         //mapMatrix and entities needs for example for barrels we create method explode
         const vec = new Vector2(this.position.x - options.point.x, this.position.y - options.point.y);
         const dist = vec.getLength() - this.radius;
         const force = (options.radius - dist) / options.radius;
         if (force <= 0) {
-            return;
+            return 0;
         }
 
         if (vec.getLength() === 0) {
@@ -167,6 +171,7 @@ export default abstract class Entity {
         }
         vec.normalize().scale(force * options.kickForce);
         this.push(vec);
+        return force;
     }
 
     public spriteLoop: TLoopCallback = (time) => {

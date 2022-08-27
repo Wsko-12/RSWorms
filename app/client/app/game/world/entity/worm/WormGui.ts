@@ -104,6 +104,10 @@ export default class WormGui {
         }
     }
 
+    public isUpdated() {
+        return this.hp.actual === this.hp.prev;
+    }
+
     private showDamage(flag: boolean, value?: number) {
         this.damage.mesh.position.y = this.size;
         this.damage.mesh.position.z = ELayersZ.worms + 15;

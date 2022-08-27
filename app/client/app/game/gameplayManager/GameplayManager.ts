@@ -17,6 +17,7 @@ export default class gameplayManager {
     private turnTime = 30;
     private endTurnTime = 5;
     private isEnding = 0;
+    private isBetweenTurns = false;
 
     constructor(world: World, ioManager: IOManager, gameInterface: GameInterface) {
         this.world = world;
@@ -48,6 +49,8 @@ export default class gameplayManager {
     }
 
     nextTurn() {
+        console.log('next turn');
+        this.isBetweenTurns = false;
         this.isEnding = 0;
         this.turnTimestamp = Date.now();
         this.currentTurn++;
@@ -57,10 +60,6 @@ export default class gameplayManager {
         const currentTeam = this.teams[teamIndex];
         const currentWorm = currentTeam.getNextWorm();
 
-        const previousWorm = this.ioManager.wormManager.getWorm();
-        if (previousWorm) {
-            previousWorm.endTurn();
-        }
         this.world.raiseWaterLevel();
         currentWorm.startTurn(this.endTurn);
         this.gameInterface.timerElement.show(true);
@@ -71,17 +70,36 @@ export default class gameplayManager {
         this.isEnding = Date.now() + delaySec * 1000;
     };
 
+    private betweenTurns() {
+        this.gameInterface.timerElement.show(false);
+
+        const previousWorm = this.ioManager.wormManager.getWorm();
+        if (previousWorm) {
+            previousWorm.endTurn();
+        }
+        this.ioManager.wormManager.setWorm(null);
+
+        this.isBetweenTurns = true;
+        const entities = this.entityManager.getEntities();
+        const promises = entities.map((entity) => entity.betweenTurnsActions());
+        Promise.all(promises).then(() => {
+            setTimeout(() => {
+                this.nextTurn();
+            }, 2000);
+        });
+    }
+
     turnLoop() {
         if (this.isEnding) {
             this.gameInterface.timerElement.update(this.isEnding - Date.now() + 1000);
-            if (Date.now() > this.isEnding) {
-                this.nextTurn();
+            if (Date.now() > this.isEnding && !this.isBetweenTurns) {
+                this.betweenTurns();
             }
         } else {
             this.gameInterface.timerElement.update(this.turnTime * 1000 - (Date.now() - this.turnTimestamp) + 1000);
 
-            if (Date.now() - this.turnTimestamp > this.turnTime * 1000) {
-                this.nextTurn();
+            if (Date.now() - this.turnTimestamp > this.turnTime * 1000 && !this.isBetweenTurns) {
+                this.betweenTurns();
             }
         }
     }

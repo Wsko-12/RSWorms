@@ -54,6 +54,10 @@ export default class EntityManager {
         this.entities.push(entity);
     }
 
+    public getEntities() {
+        return this.entities;
+    }
+
     public removeEntity = (entity: Entity) => {
         const object3D = entity.getObject3D();
         this.mainScene.remove(object3D);
