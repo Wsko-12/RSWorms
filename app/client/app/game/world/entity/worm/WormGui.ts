@@ -94,6 +94,10 @@ export default class WormGui {
         this.draw();
     }
 
+    public show(flag: boolean) {
+        this.object3D.visible = flag;
+    }
+
     public setActualHp(value: number) {
         this.showDamage(true, value - this.hp.actual);
         this.hp.actual = value;
@@ -111,6 +115,10 @@ export default class WormGui {
 
     public isUpdated() {
         return this.hp.actual === this.hp.prev;
+    }
+
+    public isDead() {
+        return this.hp.prev === 0;
     }
 
     private showDamage(flag: boolean, value?: number) {

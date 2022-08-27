@@ -15,7 +15,7 @@ export default class Bullet extends Entity {
     private texture: Texture;
     protected windCoefficient = 1;
     public name: EWeapons;
-    private isRemoved = false;
+    protected isRemoved = false;
 
     private explosionAnimation: {
         texture: Texture;
@@ -130,7 +130,7 @@ export default class Bullet extends Entity {
         return;
     }
 
-    private playExplosionAnimation() {
+    protected playExplosionAnimation() {
         this.object3D.add(this.explosionAnimation.mesh);
         return new Promise((res) => {
             const play = () => {
@@ -152,7 +152,7 @@ export default class Bullet extends Entity {
         });
     }
 
-    protected explode(mapMatrix: MapMatrix, entities: Entity[]) {
+    public explode(mapMatrix: MapMatrix, entities: Entity[]) {
         this.isRemoved = true;
         SoundManager.playBullet(ESoundsBullet.explosion);
         mapMatrix.destroy(this.position, this.explosion.radius);

@@ -6,6 +6,9 @@ import { Point2, Vector2 } from '../../../../../utils/geometry';
 import SoundManager from '../../../soundManager/SoundManager';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
+import Bullet from './weapon/bullet/Bullet';
+import BWormFinalExplosion from './weapon/bullet/throwable/Fallen/BWormFinalExplosion';
+import BDynamite from './weapon/bullet/throwable/Fallen/dynamite/BDynamite';
 import WBazooka from './weapon/weapon/powerable/bazooka/Bazooka';
 import WGrenade from './weapon/weapon/powerable/grenade/Grenade';
 import WDynamite from './weapon/weapon/static/dynamite/Dynamite';
@@ -51,6 +54,13 @@ export default class Worm extends Entity {
         isDamaged: false,
     };
 
+    public liveStates = {
+        inDeadProcess: false,
+        isDead: false,
+        isExploded: false,
+        finalExplosion: new BWormFinalExplosion(this),
+    };
+
     //temporary
     private lastDamageTimestamp = 0;
 
@@ -84,7 +94,7 @@ export default class Worm extends Entity {
         this.gui = new WormGui(this.name, teamIndex);
         this.gui.setActualHp(hp);
 
-        this.object3D.add(this.wormMesh, this.gui.getObject3D());
+        this.object3D.add(this.wormMesh, this.gui.getObject3D(), this.liveStates.finalExplosion.getObject3D());
         this.object3D.position.set(x, y, ELayersZ.worms);
         this.hp = hp;
     }
@@ -137,6 +147,7 @@ export default class Worm extends Entity {
         }
         return this.currentWeapon.shoot(options);
     }
+
     public selectWeapon(weapon: EWeapons | null) {
         const before = this.currentWeapon;
         if (before) {
@@ -183,7 +194,16 @@ export default class Worm extends Entity {
     }
 
     public readyToNextTurn() {
-        return this.isStable() && this.gui.isUpdated();
+        if (this.gui.isUpdated()) {
+            if (!this.gui.isDead()) {
+                return this.isStable();
+            } else {
+                this.animation.playDeadAnimation();
+                this.liveStates.inDeadProcess = this.animation.dead.isReady;
+                return this.liveStates.isExploded;
+            }
+        }
+        return false;
     }
 
     protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
@@ -340,9 +360,7 @@ export default class Worm extends Entity {
         }
         this.lastDamageTimestamp = Date.now();
         this.moveStates.isDamaged = true;
-
         this.setHP(force * options.damage * -1);
-
         return force;
     }
 
@@ -410,6 +428,10 @@ export default class Worm extends Entity {
         this.currentWeapon?.show(this.isSelected && this.isStable());
         this.currentWeapon?.update(this.movesOptions.direction);
 
+        if (this.liveStates.inDeadProcess && !this.liveStates.isDead) {
+            this.liveStates.isDead = true;
+            this.liveStates.finalExplosion.explode(mapMatrix, entities);
+        }
         // temporary
         {
             if (this.moveStates.isDamaged) {
@@ -447,6 +469,10 @@ export default class Worm extends Entity {
             this.isSelected ? this.currentWeapon?.getRawAngle() : undefined
         );
 
-        this.gui.spriteLoop();
+        if (this.liveStates.isDead) {
+            this.gui.show(false);
+        } else {
+            this.gui.spriteLoop();
+        }
     };
 }

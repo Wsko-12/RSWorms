@@ -12,6 +12,7 @@ export default class WormTextures extends PackTextureLoader {
         this.textures.slide = await this.loadImage(path + 'slide.png');
         this.textures.aiming = await this.loadImage(path + 'aiming.png');
         this.textures.aim = await this.loadImage(path + 'aim.png');
+        this.textures.die = await this.loadImage(path + 'die.png');
 
         return true;
     }
