@@ -462,6 +462,10 @@ export default class Worm extends Entity {
         super.push(vec);
     }
 
+    public isDead() {
+        return this.liveStates.isDead;
+    }
+
     public spriteLoop: TLoopCallback = (time) => {
         this.animation.spriteLoop(
             this.moveStates,
