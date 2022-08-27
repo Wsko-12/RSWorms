@@ -348,4 +348,42 @@ export default class WorldMap {
 
         return this.getObjectPlace(matrix, width, height, attempt - 1);
     };
+
+    public getWormPlace = (attempt = 5): { x: number; y: number } => {
+        const matrix = this.mapMatrix.matrix;
+        const width = this.sizes.width;
+        const height = this.sizes.height;
+        const rand = this.random.get();
+        const parts = 32;
+        const partSize = width / parts;
+        const part = Math.floor((parts - 8) * rand) + 4;
+        const x = part * partSize;
+
+        let skips = Math.round(this.random.get());
+        if (attempt <= 0) {
+            skips = 0;
+        }
+        let skipped = 0;
+        let prevSkipped = false;
+
+        for (let y = height - 1; y > 0; y--) {
+            const cell = matrix[y][x];
+            if (cell === 0) {
+                prevSkipped = false;
+            }
+
+            if (cell === 1) {
+                if (skipped === skips && !prevSkipped) {
+                    return { x, y };
+                } else {
+                    if (!prevSkipped) {
+                        prevSkipped = true;
+                        skipped++;
+                    }
+                }
+            }
+        }
+
+        return this.getWormPlace(attempt - 1);
+    };
 }

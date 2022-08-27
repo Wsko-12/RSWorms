@@ -5,7 +5,7 @@ import WorldMap from '../worldMap/WorldMap';
 import Entity from './Entity';
 import Worm from './worm/Worm';
 
-let test = -80;
+const test = -80;
 
 export default class EntityManager {
     private readonly mainScene: Scene;
@@ -20,17 +20,15 @@ export default class EntityManager {
     }
 
     private findPlace() {
-        test += 80;
-        if (this.worldMap) {
-            const { width, height } = this.worldMap.getSizes();
-            return { x: width / 4 + test, y: height };
-        }
-        return { x: 0, y: 0 };
+        return this.worldMap?.getWormPlace();
     }
 
     public generateWorm(teamIndex: number, wormIndex: number) {
         if (this.worldMap) {
             const place = this.findPlace();
+            if (!place) {
+                throw new Error("[EntityManager generateWorm] can't find place");
+            }
             place.y += ESizes.worm;
             const worm = new Worm(wormIndex, teamIndex, place.x, place.y);
             this.addEntity(worm);
