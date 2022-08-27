@@ -14,6 +14,10 @@ export default class Team {
         this.worms.push(worm);
     }
 
+    getHP() {
+        return this.worms.reduce((hp, worm) => (hp += worm.getHP()), 0);
+    }
+
     getNextWorm() {
         if (this.currentWormIdx >= this.worms.length) {
             this.currentWormIdx = 0;
