@@ -1,5 +1,5 @@
 import { Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from 'three';
-import { ELayersZ, ESizes, EWeapons } from '../../../../../../ts/enums';
+import { ELang, ELayersZ, ESizes, ESoundsWormAction, ESoundsWormSpeech, EWeapons } from '../../../../../../ts/enums';
 import { IExplosionOptions, IShootOptions, IWormMoveOptions, IWormMoveStates } from '../../../../../../ts/interfaces';
 import { TEndTurnCallback, TLoopCallback, TRemoveEntityCallback } from '../../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../../utils/geometry';
@@ -210,7 +210,7 @@ export default class Worm extends Entity {
         const slideAngle = Math.PI / 2 - Math.acos(normalSurface.dotProduct(velClone));
         const fallSpeed = vel.getLength();
         const isSlide = slideAngle > Math.PI / 8 && this.moveStates.isFall;
-        if (isSlide) SoundManager.playWorm('oof1');
+        if (isSlide) SoundManager.playWormSpeech(ELang.rus, ESoundsWormSpeech.oof1);
         const fallSpeedWithFriction = fallSpeed * this.physics.friction;
 
         const { flags } = this.movesOptions;

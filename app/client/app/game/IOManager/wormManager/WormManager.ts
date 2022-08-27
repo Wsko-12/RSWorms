@@ -1,5 +1,4 @@
 import { ELang, ESoundsWeapon, ESoundsWormAction, ESoundsWormSpeech } from '../../../../../ts/enums';
-import { TLoopCallback } from '../../../../../ts/types';
 import { EWeapons } from '../../../../../ts/enums';
 import { TChooseWeaponCallback, TLoopCallback } from '../../../../../ts/types';
 import SoundManager from '../../soundManager/SoundManager';
