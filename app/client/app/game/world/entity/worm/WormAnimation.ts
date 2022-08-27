@@ -58,7 +58,13 @@ export default class WormAnimation {
         }
 
         let image = AssetsManager.getWormTexture('breath');
-        if (!wormStates.isMove && !wormStates.isJump && !wormStates.isFall && !wormStates.isSlide) {
+        if (
+            !wormStates.isMove &&
+            !wormStates.isJump &&
+            !wormStates.isFall &&
+            !wormStates.isSlide &&
+            !wormStates.isCelebrated
+        ) {
             this.lastAnimation = 'breath';
             if (aim !== undefined) {
                 this.lastAnimation = 'aim';
@@ -108,6 +114,13 @@ export default class WormAnimation {
             image = AssetsManager.getWormTexture('slide');
         }
 
+        if (wormStates.isCelebrated) {
+            if (this.lastAnimation != 'celebrate') {
+                this.currentStep = 0;
+            }
+            this.lastAnimation = 'celebrate';
+            image = AssetsManager.getWormTexture('celebrate');
+        }
         if (this.dead.isReady) {
             image = AssetsManager.getWormTexture('grave');
         }

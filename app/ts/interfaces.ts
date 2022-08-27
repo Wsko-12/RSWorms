@@ -56,6 +56,7 @@ export interface IWormMoveStates {
     isDoubleJump: boolean;
     isFall: boolean;
     isDamaged: boolean;
+    isCelebrated: boolean;
 }
 
 export interface IWormMoveOptions {

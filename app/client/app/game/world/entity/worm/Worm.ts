@@ -52,6 +52,7 @@ export default class Worm extends Entity {
         isDoubleJump: false,
         isFall: true,
         isDamaged: false,
+        isCelebrated: false,
     };
 
     public liveStates = {
@@ -146,6 +147,10 @@ export default class Worm extends Entity {
             this.endTurnCallback(5);
         }
         return this.currentWeapon.shoot(options);
+    }
+
+    public celebrate() {
+        this.moveStates.isCelebrated = true;
     }
 
     public selectWeapon(weapon: EWeapons | null) {

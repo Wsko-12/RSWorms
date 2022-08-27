@@ -27,6 +27,21 @@ export default class gameplayManager {
         this.gameInterface = gameInterface;
     }
 
+    private checkTeams(): boolean {
+        this.teams.forEach((team) => {
+            team.checkWorms();
+        });
+        this.teams = this.teams.filter((team) => team.worms.length > 0);
+        if (this.teams.length > 1) {
+            return true;
+        }
+        if (this.teams.length === 1) {
+            this.teams[0].celebrate();
+        }
+
+        return false;
+    }
+
     private createTeams(options: IStartGameOptions) {
         if (!options.multiplayer) {
             const teamsCount = options.teamNames.length;
@@ -50,6 +65,10 @@ export default class gameplayManager {
     }
 
     nextTurn() {
+        const continueGame = this.checkTeams();
+        if (!continueGame) {
+            return;
+        }
         this.isBetweenTurns = false;
         this.isEnding = 0;
         this.turnTimestamp = Date.now();

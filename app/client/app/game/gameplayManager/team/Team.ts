@@ -14,10 +14,18 @@ export default class Team {
         this.worms.push(worm);
     }
 
+    checkWorms() {
+        this.worms = this.worms.filter((worm) => !worm.isDead());
+    }
+
     getNextWorm() {
         if (this.currentWormIdx >= this.worms.length) {
             this.currentWormIdx = 0;
         }
         return this.worms[this.currentWormIdx++];
+    }
+
+    celebrate() {
+        this.worms.forEach((worm) => worm.celebrate());
     }
 }
