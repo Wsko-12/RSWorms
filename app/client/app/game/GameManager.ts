@@ -1,4 +1,4 @@
-import { EProportions } from '../../../ts/enums';
+import { EProportions, ESoundsBG } from '../../../ts/enums';
 import { IGMLoops, IStartGameOptions } from '../../../ts/interfaces';
 import AssetsManager from './assetsManager/AssetsManager';
 import GameInterface from './gameInterface/GameInterface';
@@ -65,7 +65,7 @@ export default class GameManager {
         Object.values(this.loops.all).forEach((loop) => loop.switcher(true));
         this.interface.buildToDocument();
         this.world.create();
-        SoundManager.playBackground();
+        SoundManager.playBackground(ESoundsBG.outerspace);
         this.loop();
         document.body.appendChild(stats.dom);
     }

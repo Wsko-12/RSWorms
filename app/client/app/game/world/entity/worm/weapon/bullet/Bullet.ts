@@ -1,3 +1,4 @@
+import { ESoundsBullet } from '../../../../../../../../ts/enums';
 import { Group, Mesh, MeshBasicMaterial, NearestFilter, Object3D, PlaneBufferGeometry, Texture } from 'three';
 import { ELayersZ, EWeapons } from '../../../../../../../../ts/enums';
 import { IBulletOptions, IExplosionOptions } from '../../../../../../../../ts/interfaces';
@@ -153,7 +154,7 @@ export default class Bullet extends Entity {
 
     protected explode(mapMatrix: MapMatrix, entities: Entity[]) {
         this.isRemoved = true;
-        SoundManager.playSFX('explosion');
+        SoundManager.playBullet(ESoundsBullet.explosion);
         mapMatrix.destroy(this.position, this.explosion.radius);
         const explosionOptions: IExplosionOptions = {
             damage: this.explosion.damage,

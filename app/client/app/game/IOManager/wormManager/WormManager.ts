@@ -1,3 +1,5 @@
+import { ELang, ESoundsWeapon, ESoundsWormAction, ESoundsWormSpeech } from '../../../../../ts/enums';
+import { TLoopCallback } from '../../../../../ts/types';
 import { EWeapons } from '../../../../../ts/enums';
 import { TChooseWeaponCallback, TLoopCallback } from '../../../../../ts/types';
 import SoundManager from '../../soundManager/SoundManager';
@@ -47,11 +49,11 @@ export default class WormManager {
         if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') {
             if (e.code === 'ArrowLeft') {
                 worm.setMoveFlags({ left: true });
-                SoundManager.playWorm('walk');
+                SoundManager.playWormAction(ESoundsWormAction.walk);
             }
             if (e.code === 'ArrowRight') {
                 worm.setMoveFlags({ right: true });
-                SoundManager.playWorm('walk');
+                SoundManager.playWormAction(ESoundsWormAction.walk);
             }
         }
 
@@ -84,7 +86,7 @@ export default class WormManager {
         const jumpTimeout = () => {
             const t = setTimeout(() => {
                 worm.jump();
-                SoundManager.playWorm('jump1');
+                SoundManager.playWormSpeech(ELang.rus, ESoundsWormSpeech.jump1);
             }, this.jumpButtonDelayMS + 1);
             return Number(t);
         };
@@ -101,7 +103,7 @@ export default class WormManager {
             } else {
                 clearTimeout(this.timer);
                 worm.jump(true);
-                SoundManager.playWorm('jump2');
+                SoundManager.playWormAction(ESoundsWormAction.backflip);
             }
         }
     }
@@ -134,7 +136,7 @@ export default class WormManager {
 
         if (e.code === 'Space') {
             this.shooting = false;
-            SoundManager.playWorm('shoot');
+            SoundManager.playWeapon(ESoundsWeapon.rocketRelease);
             return worm.shoot();
         }
     }
