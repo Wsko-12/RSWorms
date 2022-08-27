@@ -179,19 +179,11 @@ export default class Worm extends Entity {
 
     public betweenTurnsActions(): Promise<boolean> {
         this.gui.setActualHp(this.getHP());
-        return new Promise((res) => {
-            const check = () => {
-                if (this.gui.isUpdated()) {
-                    res(true);
-                } else {
-                    setTimeout(() => {
-                        check();
-                    }, 10);
-                }
-            };
+        return Promise.resolve(true);
+    }
 
-            check();
-        });
+    public readyToNextTurn() {
+        return this.isStable() && this.gui.isUpdated();
     }
 
     protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number) {

@@ -3,6 +3,7 @@ import { TEndTurnCallback } from '../../../../ts/types';
 import GameInterface from '../gameInterface/GameInterface';
 import IOManager from '../IOManager/IOManager';
 import EntityManager from '../world/entity/EntityManager';
+import Bullet from '../world/entity/worm/weapon/bullet/Bullet';
 import World from '../world/World';
 import Team from './team/Team';
 
@@ -49,7 +50,6 @@ export default class gameplayManager {
     }
 
     nextTurn() {
-        console.log('next turn');
         this.isBetweenTurns = false;
         this.isEnding = 0;
         this.turnTimestamp = Date.now();
@@ -84,8 +84,16 @@ export default class gameplayManager {
         const promises = entities.map((entity) => entity.betweenTurnsActions());
         Promise.all(promises).then(() => {
             setTimeout(() => {
-                this.nextTurn();
-            }, 2000);
+                const entities = this.entityManager.getEntities();
+                const allReady = entities.every((entity) => entity.readyToNextTurn());
+                if (allReady) {
+                    setTimeout(() => {
+                        this.nextTurn();
+                    }, 2000);
+                } else {
+                    this.betweenTurns();
+                }
+            }, 1000);
         });
     }
 

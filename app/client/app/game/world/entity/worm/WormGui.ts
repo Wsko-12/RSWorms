@@ -13,6 +13,7 @@ export default class WormGui {
         mesh: Mesh;
         yShift: number;
         maxShift: number;
+        shows: boolean;
     };
 
     private texture = new Texture(this.canvas);
@@ -86,6 +87,7 @@ export default class WormGui {
             mesh: damageMesh,
             yShift: 0,
             maxShift: 50,
+            shows: false,
         };
 
         this.object3D.add(mesh, damageMesh);
@@ -95,6 +97,9 @@ export default class WormGui {
     public setActualHp(value: number) {
         this.showDamage(true, value - this.hp.actual);
         this.hp.actual = value;
+        if (this.hp.actual === this.hp.prev) {
+            this.showDamage(false);
+        }
     }
 
     private moveDamageMesh() {
@@ -109,13 +114,18 @@ export default class WormGui {
     }
 
     private showDamage(flag: boolean, value?: number) {
-        this.damage.mesh.position.y = this.size;
-        this.damage.mesh.position.z = ELayersZ.worms + 15;
-        this.damage.mesh.visible = true;
+        if (!this.damage.shows) {
+            this.damage.mesh.position.y = this.size;
+            this.damage.mesh.position.z = ELayersZ.worms + 15;
+            this.damage.mesh.visible = true;
+        }
+
+        this.damage.shows = true;
 
         if (!flag) {
             this.damage.mesh.visible = false;
             this.damage.yShift = 0;
+            this.damage.shows = false;
         }
 
         if (value) {

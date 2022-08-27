@@ -157,6 +157,10 @@ export default abstract class Entity {
         return Promise.resolve(true);
     }
 
+    public readyToNextTurn() {
+        return true;
+    }
+
     public acceptExplosion(mapMatrix: MapMatrix, entities: Entity[], options: IExplosionOptions) {
         //mapMatrix and entities needs for example for barrels we create method explode
         const vec = new Vector2(this.position.x - options.point.x, this.position.y - options.point.y);

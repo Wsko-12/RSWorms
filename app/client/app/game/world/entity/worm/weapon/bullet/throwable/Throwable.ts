@@ -27,4 +27,8 @@ export default abstract class ThrowableBullet extends Bullet {
         }
         super.update(mapMatrix, entities, wind);
     }
+
+    public readyToNextTurn(): boolean {
+        return this.isActivated;
+    }
 }

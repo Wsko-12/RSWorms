@@ -6,4 +6,9 @@ export default class BBazooka extends ParabolicBullet {
     constructor(options: IBulletOptions) {
         super(options, EWeapons.bazooka);
     }
+
+    public betweenTurnsActions(): Promise<boolean> {
+        this.remove();
+        return Promise.resolve(true);
+    }
 }
