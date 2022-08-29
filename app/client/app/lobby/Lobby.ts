@@ -54,36 +54,65 @@ export default class Lobby {
 
         createTeamContainer.innerHTML = `
             <div class="team-name-container">
-                <h3 class="team-name-title">Team Name</h3>
+                <h3 class="settings-title">Team Name</h3>
                 <div class="team-name-input-container">
                     <input class="input-text team-name" type="text" value="Team">
-                    <button class="random-btn" id="team-random-btn">Random</button>
+                    <button class="random-btn" id="team-random-btn">?</button>
                 </div>
             </div>
             <div class="team-name-container">
-                <h3 class="team-name-title">Team Members</h3>
+                <h3 class="settings-title">Team Members</h3>
                 <div class="team-name-input-container">
                     <input class="input-text worm-name" id="team-name" type="text" value="Worm 1" data-id="worm1">
-                    <button class="random-btn" id="member-random-btn" data-id="worm1">Random</button>
+                    <button class="random-btn" id="member-random-btn" data-id="worm1">?</button>
                 </div>
                 <div class="team-name-input-container">
                     <input class="input-text worm-name" type="text" value="Worm 2" data-id="worm2">
-                    <button class="random-btn" id="member-random-btn" data-id="worm2">Random</button>
+                    <button class="random-btn" id="member-random-btn" data-id="worm2">?</button>
                 </div>
                 <div class="team-name-input-container">
                     <input class="input-text worm-name" type="text" value="Worm 3" data-id="worm3">
-                    <button class="random-btn" id="member-random-btn" data-id="worm3">Random</button>
+                    <button class="random-btn" id="member-random-btn" data-id="worm3">?</button>
                 </div>
                 <div class="team-name-input-container">
                     <input class="input-text worm-name" type="text" value="Worm 4" data-id="worm4">
-                    <button class="random-btn" id="member-random-btn" data-id="worm4">Random</button>
+                    <button class="random-btn" id="member-random-btn" data-id="worm4">?</button>
                 </div>
                 <div class="team-name-input-container">
                     <input class="input-text worm-name" type="text" value="Worm 5" data-id="worm5">
-                    <button class="random-btn" id="member-random-btn" data-id="worm5">Random</button>
+                    <button class="random-btn" id="member-random-btn" data-id="worm5">?</button>
+                </div>
+                <div class="team-name-input-container">
+                    <input class="input-text worm-name" type="text" value="Worm 6" data-id="worm6">
+                    <button class="random-btn" id="member-random-btn" data-id="worm6">?</button>
                 </div>
             </div>
             <button class="create">Create Team</button>
+        `;
+
+        audioOptionsContainer.innerHTML = `
+            <div class="audio-volume-container">
+                <h3 class="settings-title">Sound Options<h3>
+                <input type="range" name="volume" id="volume">
+            </div>
+            <div class="audio-speech-container">
+                <h3 class="settings-title">Worm Speech Options<h3>
+                <div class="__select" data-state="">
+                <div class="__select__title">English</div>
+                <div class="__select__content">
+                  <input id="singleSelect0" class="__select__input" type="radio" name="singleSelect"/>
+                  <label for="singleSelect0" class="__select__label">English</label>
+                  <input id="singleSelect0" class="__select__input" type="radio" name="singleSelect" checked/>
+                  <label for="singleSelect0" class="__select__label">Russian</label>
+                  <input id="singleSelect1" class="__select__input" type="radio" name="singleSelect" />
+                  <label for="singleSelect1" class="__select__label">San Andreas</label>
+                  <input id="singleSelect2" class="__select__input" type="radio" name="singleSelect" />
+                  <label for="singleSelect2" class="__select__label">Some other</label>
+                  <input id="singleSelect3" class="__select__input" type="radio" name="singleSelect" />
+                  <label for="singleSelect3" class="__select__label">Another one</label>
+                </div>
+              </div>
+            </div>
         `;
 
         this.settings.append(returnBtn, createTeamContainer, audioOptionsContainer);
@@ -111,8 +140,45 @@ export default class Lobby {
             });
             this.teamName = (document.querySelector('.team-name') as HTMLInputElement).value;
             console.log(this.teamName, this.memberNames);
-        })
-    }
+        });
+
+        // soundtrack choosing
+
+        const selectSingle = document.querySelector('.__select') as HTMLElement;
+        const selectSingle_title = selectSingle?.querySelector('.__select__title') as HTMLElement;
+        const selectSingle_labels = selectSingle?.querySelectorAll('.__select__label') || [];
+
+        // Toggle menu
+        selectSingle_title?.addEventListener('click', () => {
+            if ('active' === selectSingle?.getAttribute('data-state')) {
+                selectSingle.setAttribute('data-state', '');
+            } else {
+                selectSingle?.setAttribute('data-state', 'active');
+            }
+        });
+
+        // Close when click to option
+        for (let i = 0; i < selectSingle_labels.length; i++) {
+            selectSingle_labels[i].addEventListener('click', (e) => {
+                if (selectSingle_title && selectSingle && e.target)
+                    selectSingle_title.textContent = (e.target as HTMLElement).textContent;
+                selectSingle?.setAttribute('data-state', '');
+            });
+        }
+
+        // Reset title
+        const reset = document.querySelector('.reset') as HTMLElement;
+        reset?.addEventListener('click', () => {
+            if (selectSingle_title) selectSingle_title.textContent = selectSingle_title.getAttribute('data-default');
+        });
+
+        // end
+
+        document.querySelector('#volume')?.addEventListener('change', () => {
+            console.log('hi');
+            // проверка громкости
+        });
+    };
 
     private createLobby() {
         this.lobbyWrapper = PageBuilder.createElement('div', { id: 'lobby-wrapper' });

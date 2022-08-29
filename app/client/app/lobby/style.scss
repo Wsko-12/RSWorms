@@ -97,7 +97,7 @@
   flex-direction: column;
 }
 
-.team-name-title {
+.settings-title {
   margin: 10px;
   font-size: 1.5rem;
   text-align: center;
@@ -113,13 +113,13 @@
 
 .input-text {
   padding-left: 10px;
-  width: 80%;
+  width: 90%;
   height: 30px;
 }
 
 .random-btn {
   height: 30px;
-  width: 20%;
+  width: 10%;
 }
 
 .create {
@@ -136,5 +136,129 @@
 .audio-options-container {
   width: 48%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.audio-volume-container {
+  background-color: antiquewhite;
+  width: 100%;
   border: 1px solid black;
+}
+
+#volume {
+  width: 90%;
+}
+
+
+
+.audio-speech-container {
+  background-color: antiquewhite;
+  width: 100%;
+  border: 1px solid black;
+}
+
+// some sort thing
+
+.__select {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  margin-bottom: 1.25rem;
+  background-color: #fff;
+}
+.__select[data-state="active"] .__select__title::before {
+  transform: translate(-3px, -50%) rotate(-45deg);
+}
+.__select[data-state="active"] .__select__title::after {
+  transform: translate(3px, -50%) rotate(45deg);
+}
+.__select[data-state="active"] .__select__content {
+  opacity: 1;
+}
+.__select[data-state="active"] .__select__label + .__select__input + .__select__label {
+  max-height: 40px;
+  border-top-width: 1px;
+}
+.__select__title {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 8px 16px;
+  border: solid 1px #000;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.__select__title::before, .__select__title::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  display: block;
+  width: 10px;
+  height: 2px;
+  transition: all 0.3s ease-out;
+  background-color: #333333;
+  transform: translate(-3px, -50%) rotate(45deg);
+}
+.__select__title::after {
+  transform: translate(3px, -50%) rotate(-45deg);
+}
+.__select__title:hover {
+  border-color: #000;
+}
+.__select__title:hover::before, .__select__title:hover::after {
+  background-color: #000;
+}
+.__select__content {
+  position: absolute;
+  top: 40px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #000;
+  border-top: none;
+  transition: all 0.3s ease-out;
+  opacity: 0;
+  z-index: 8;
+}
+.__select__input {
+  display: none;
+}
+.__select__input:checked + label {
+  background-color: #dedede;
+}
+.__select__input:disabled + label {
+  opacity: 0.6;
+  pointer-events: none;
+}
+.__select__label {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  max-height: 0;
+  padding: 0 16px;
+  transition: all 0.2s ease-out;
+  cursor: pointer;
+  text-transform: uppercase;
+  overflow: hidden;
+}
+.__select__label + input + .__select__label {
+  border-top: 0 solid #C7CCD160;
+}
+.__select__label:hover {
+  background-color: #000;
+  color: #ffffff;
+}
+
+.sort-title {
+  margin-top: 10px;
+  padding: 10px 0 10px 10px;
+  font-size: 24px;
+  text-transform: uppercase;
+  background-color: #fff;
 }
