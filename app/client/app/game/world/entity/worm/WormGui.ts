@@ -100,6 +100,7 @@ export default class WormGui {
 
     public setActualHp(value: number) {
         this.showDamage(true, value - this.hp.actual);
+
         this.hp.actual = value;
         if (this.hp.actual === this.hp.prev) {
             this.showDamage(false);
@@ -113,8 +114,8 @@ export default class WormGui {
         }
     }
 
-    public isUpdated() {
-        return this.hp.actual === this.hp.prev;
+    public isUpdated(hp: number) {
+        return hp === this.hp.prev;
     }
 
     public isDead() {
@@ -146,10 +147,10 @@ export default class WormGui {
             ctx.fillStyle = value > 0 ? '#5eff45' : '#ff4545';
 
             const text = value > 0 ? '+' + value : value + '';
-
+            ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
             ctx.strokeText(text, this.canvasSize / 2, this.canvasSize / 2 + this.canvasSize / 5, this.canvasSize);
-
             ctx.fillText(text, this.canvasSize / 2, this.canvasSize / 2 + this.canvasSize / 5, this.canvasSize);
+            this.damage.texture.needsUpdate = true;
         }
     }
 
