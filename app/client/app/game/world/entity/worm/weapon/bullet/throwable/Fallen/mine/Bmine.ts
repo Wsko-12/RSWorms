@@ -13,6 +13,7 @@ export default class BMine extends FallenBullet {
     constructor(options: IBulletOptions) {
         super(options, EWeapons.mine);
         this.start = Date.now();
+        this.setExplosionOptions(10, 100, 15);
     }
 
     private isWormClose(mapMatrix: MapMatrix, entities: Entity[]) {
@@ -22,19 +23,28 @@ export default class BMine extends FallenBullet {
         );
     }
 
-    private detonate(mapMatrix: MapMatrix, entities: Entity[]) {
+    private detonate(mapMatrix: MapMatrix, entities: Entity[], waterLevel: number) {
         this.isDetonated = true;
-        setTimeout(() => this.explode(mapMatrix, entities), 5000);
+        setTimeout(() => this.explode(mapMatrix, entities, waterLevel), 5000);
     }
 
     protected activate() {
-        this.isActivated = true;
+        return;
     }
 
-    public update(mapMatrix: MapMatrix, entities: Entity[], wind: number): void {
-        super.update(mapMatrix, entities, wind);
+    public betweenTurnsActions(): Promise<boolean> {
+        this.isActivated = true;
+        return Promise.resolve(true);
+    }
+
+    public readyToNextTurn() {
+        return this.isActivated && !this.isDetonated;
+    }
+
+    public update(mapMatrix: MapMatrix, entities: Entity[], wind: number, waterLevel: number): void {
+        super.update(mapMatrix, entities, wind, waterLevel);
         if (this.isActivated && this.isWormClose(mapMatrix, entities) && !this.isDetonated) {
-            this.detonate(mapMatrix, entities);
+            this.detonate(mapMatrix, entities, waterLevel);
         }
     }
 

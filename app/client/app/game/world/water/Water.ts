@@ -53,6 +53,10 @@ export default class Water {
         this.object3D.position.y = -this.height / 2 + this.level;
     }
 
+    public getLevel() {
+        return this.level;
+    }
+
     public getObject3D() {
         return this.object3D;
     }

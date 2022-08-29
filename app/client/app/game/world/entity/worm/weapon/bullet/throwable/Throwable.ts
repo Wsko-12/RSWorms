@@ -12,19 +12,23 @@ export default abstract class ThrowableBullet extends Bullet {
         this.physics.friction = 0.4;
     }
 
-    protected handleCollision(mapMatrix: MapMatrix, entities: Entity[]): void {
+    protected handleCollision(mapMatrix: MapMatrix, entities: Entity[], waterLevel: number): void {
         return;
     }
 
-    protected activate(mapMatrix: MapMatrix, entities: Entity[]) {
+    protected activate(mapMatrix: MapMatrix, entities: Entity[], waterLevel: number) {
         this.isActivated = true;
-        this.explode(mapMatrix, entities);
+        this.explode(mapMatrix, entities, waterLevel);
     }
 
-    public update(mapMatrix: MapMatrix, entities: Entity[], wind: number): void {
+    public update(mapMatrix: MapMatrix, entities: Entity[], wind: number, waterLevel: number): void {
         if (Date.now() - this.timer > EConstants.throwableExplosionDelay && !this.isActivated) {
-            this.activate(mapMatrix, entities);
+            this.activate(mapMatrix, entities, waterLevel);
         }
-        super.update(mapMatrix, entities, wind);
+        super.update(mapMatrix, entities, wind, waterLevel);
+    }
+
+    public readyToNextTurn(): boolean {
+        return this.isActivated;
     }
 }

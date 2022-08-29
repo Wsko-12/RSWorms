@@ -65,7 +65,7 @@ export default class World {
 
     public update: TLoopCallback = (time) => {
         this.wind.update(time);
-        this.entityManager.update(time, this.wind.getCurrentValue());
+        this.entityManager.update(time, this.wind.getCurrentValue(), this.water.getLevel());
     };
 
     public spriteLoop: TLoopCallback = (time) => {

@@ -3,6 +3,7 @@ import { TEndTurnCallback } from '../../../../ts/types';
 import GameInterface from '../gameInterface/GameInterface';
 import IOManager from '../IOManager/IOManager';
 import EntityManager from '../world/entity/EntityManager';
+import Bullet from '../world/entity/worm/weapon/bullet/Bullet';
 import World from '../world/World';
 import Team from './team/Team';
 
@@ -17,12 +18,28 @@ export default class gameplayManager {
     private turnTime = 30;
     private endTurnTime = 5;
     private isEnding = 0;
+    private isBetweenTurns = false;
 
     constructor(world: World, ioManager: IOManager, gameInterface: GameInterface) {
         this.world = world;
         this.entityManager = world.entityManager;
         this.ioManager = ioManager;
         this.gameInterface = gameInterface;
+    }
+
+    private checkTeams(): boolean {
+        this.teams.forEach((team) => {
+            team.checkWorms();
+        });
+        this.teams = this.teams.filter((team) => team.worms.length > 0);
+        if (this.teams.length > 1) {
+            return true;
+        }
+        if (this.teams.length === 1) {
+            this.teams[0].celebrate();
+        }
+
+        return false;
     }
 
     private createTeams(options: IStartGameOptions) {
@@ -48,6 +65,11 @@ export default class gameplayManager {
     }
 
     nextTurn() {
+        const continueGame = this.checkTeams();
+        if (!continueGame) {
+            return;
+        }
+        this.isBetweenTurns = false;
         this.isEnding = 0;
         this.turnTimestamp = Date.now();
         this.currentTurn++;
@@ -57,10 +79,6 @@ export default class gameplayManager {
         const currentTeam = this.teams[teamIndex];
         const currentWorm = currentTeam.getNextWorm();
 
-        const previousWorm = this.ioManager.wormManager.getWorm();
-        if (previousWorm) {
-            previousWorm.endTurn();
-        }
         this.world.raiseWaterLevel();
         currentWorm.startTurn(this.endTurn);
         this.gameInterface.timerElement.show(true);
@@ -71,17 +89,44 @@ export default class gameplayManager {
         this.isEnding = Date.now() + delaySec * 1000;
     };
 
+    private betweenTurns() {
+        this.gameInterface.timerElement.show(false);
+
+        const previousWorm = this.ioManager.wormManager.getWorm();
+        if (previousWorm) {
+            previousWorm.endTurn();
+        }
+        this.ioManager.wormManager.setWorm(null);
+
+        this.isBetweenTurns = true;
+        const entities = this.entityManager.getEntities();
+        const promises = entities.map((entity) => entity.betweenTurnsActions());
+        Promise.all(promises).then(() => {
+            setTimeout(() => {
+                const entities = this.entityManager.getEntities();
+                const allReady = entities.every((entity) => entity.readyToNextTurn());
+                if (allReady) {
+                    setTimeout(() => {
+                        this.nextTurn();
+                    }, 2000);
+                } else {
+                    this.betweenTurns();
+                }
+            }, 1000);
+        });
+    }
+
     turnLoop() {
         if (this.isEnding) {
             this.gameInterface.timerElement.update(this.isEnding - Date.now() + 1000);
-            if (Date.now() > this.isEnding) {
-                this.nextTurn();
+            if (Date.now() > this.isEnding && !this.isBetweenTurns) {
+                this.betweenTurns();
             }
         } else {
             this.gameInterface.timerElement.update(this.turnTime * 1000 - (Date.now() - this.turnTimestamp) + 1000);
 
-            if (Date.now() - this.turnTimestamp > this.turnTime * 1000) {
-                this.nextTurn();
+            if (Date.now() - this.turnTimestamp > this.turnTime * 1000 && !this.isBetweenTurns) {
+                this.betweenTurns();
             }
         }
     }

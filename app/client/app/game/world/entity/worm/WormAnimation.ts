@@ -12,19 +12,59 @@ export default class WormAnimation {
     private animationDirection = 1;
     private lastAnimation = '';
 
+    public dead = {
+        plays: false,
+        step: -1,
+        isReady: false,
+    };
+
     constructor() {
         this.texture.wrapS = RepeatWrapping;
         this.texture.magFilter = NearestFilter;
     }
+
     getCanvas() {
         return this.canvas;
     }
 
+    public playDeadAnimation() {
+        this.dead.plays = true;
+    }
+
+    private deadAnimation() {
+        const image = AssetsManager.getWormTexture('die');
+        if (!image) {
+            throw new Error("[WormAnimation deadAnimation] can't load die texture");
+        }
+        const maxSteps = image.naturalHeight / image.naturalWidth;
+        const size = image.naturalWidth;
+
+        this.dead.step++;
+        if (this.dead.step > maxSteps) {
+            this.dead.isReady = true;
+        } else {
+            this.ctx?.clearRect(0, 0, size, size);
+            this.ctx?.drawImage(image, 0, -this.dead.step * size);
+        }
+    }
+
     public spriteLoop = (wormStates: IWormMoveStates, wormDirection: number, aim?: number) => {
         this.texture.needsUpdate = true;
+        if (this.dead.plays) {
+            this.deadAnimation();
+            if (!this.dead.isReady) {
+                return;
+            }
+        }
 
         let image = AssetsManager.getWormTexture('breath');
-        if (!wormStates.isMove && !wormStates.isJump && !wormStates.isFall && !wormStates.isSlide) {
+        if (
+            !wormStates.isMove &&
+            !wormStates.isJump &&
+            !wormStates.isFall &&
+            !wormStates.isSlide &&
+            !wormStates.isCelebrated
+        ) {
             this.lastAnimation = 'breath';
             if (aim !== undefined) {
                 this.lastAnimation = 'aim';
@@ -74,6 +114,20 @@ export default class WormAnimation {
             image = AssetsManager.getWormTexture('slide');
         }
 
+        if (wormStates.isCelebrated) {
+            if (this.lastAnimation != 'celebrate') {
+                this.currentStep = 0;
+            }
+            this.lastAnimation = 'celebrate';
+            image = AssetsManager.getWormTexture('celebrate');
+        }
+
+        if (wormStates.isDrown) {
+            image = AssetsManager.getWormTexture('drown');
+        }
+        if (wormStates.isDead) {
+            image = AssetsManager.getWormTexture('grave');
+        }
         this.texture.repeat.x = -wormDirection;
         if (image) {
             this.maxSteps = image.naturalHeight / image.naturalWidth;
