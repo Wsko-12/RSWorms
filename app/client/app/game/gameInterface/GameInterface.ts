@@ -12,8 +12,8 @@ export default class GameInterface {
 
     public timerElement = this.view.timerElement;
     public windElement = this.view.windElement;
-    public inventoryElement = this.view.inventoryElement;
     public teamsHPElement = this.view.teamsHPElement;
+    public arsenalElement = this.view.arsenalElement;
 
     constructor() {
         const eventsHandler = this.view.getMainHandler();
@@ -28,8 +28,8 @@ export default class GameInterface {
         return this.camera;
     }
 
-    public showInventory(flag: boolean) {
-        this.view.showInventory(flag);
+    public renderArsenal(weapons: string[]) {
+        this.view.renderArsenal(weapons);
     }
 
     public setCameraBorders(x: number, y: number, width: number, height: number) {

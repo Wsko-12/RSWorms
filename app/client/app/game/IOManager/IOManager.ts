@@ -9,6 +9,7 @@ export default class IOManager {
     private gameInterface: GameInterface;
     private world: World;
     public wormManager = new WormManager();
+    public weapons = ['bazooka', 'grenade', 'dynamite', 'mine'];
 
     constructor(gameInterface: GameInterface, world: World) {
         this.gameInterface = gameInterface;
@@ -22,7 +23,7 @@ export default class IOManager {
             this.wormManager.handleEvent(e);
 
             if (e.code === 'KeyI') {
-                this.gameInterface.showInventory(true);
+                this.gameInterface.renderArsenal(this.weapons);
             }
         });
 
@@ -36,11 +37,11 @@ export default class IOManager {
             }
         });
 
-        this.gameInterface.getMainHandler().addEventListener(ECustomEvents.click, (e) => {
-            this.gameInterface.showInventory(true);
+        this.gameInterface.getMainHandler().addEventListener('contextmenu', (e) => {
+            this.gameInterface.renderArsenal(this.weapons);
         });
 
-        this.gameInterface.inventoryElement.setChooseWeaponCallback(this.chooseWeapon);
+        this.gameInterface.arsenalElement.setChooseWeaponCallback(this.chooseWeapon);
     }
 
     private chooseWeapon: TChooseWeaponCallback = (weapon) => {

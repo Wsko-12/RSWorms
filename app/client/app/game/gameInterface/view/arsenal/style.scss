@@ -20,7 +20,13 @@
   background-size: auto;
 }
 
-// .item > img {
-//   width: 1fr;
-//   height: 1fr;
-// }
+.arsenal-titles {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  cursor: auto;
+  user-select: none;
+  font-family: "DynaPuff", cursive;
+  font-size: 14px;
+}

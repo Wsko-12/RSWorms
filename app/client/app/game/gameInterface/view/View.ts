@@ -1,4 +1,4 @@
-import Inventory from './inventory/Inventory';
+import Arsenal from './arsenal/Arsenal';
 import './style.scss';
 import TeamsHP from './teamHP/TeamHP';
 import TimerInterface from './timer/Timer';
@@ -10,7 +10,7 @@ export default class View {
     private timer = new TimerInterface();
     private wind = new WindInterface();
     private teamsHP = new TeamsHP();
-    private inventory = new Inventory();
+    private arsenal = new Arsenal();
 
     public timerElement = {
         update: this.timer.update,
@@ -26,8 +26,8 @@ export default class View {
         update: this.wind.update,
     };
 
-    public inventoryElement = {
-        setChooseWeaponCallback: this.inventory.setChooseWeaponCallback,
+    public arsenalElement = {
+        setChooseWeaponCallback: this.arsenal.setChooseWeaponCallback,
     };
 
     public build() {
@@ -44,16 +44,13 @@ export default class View {
         const teamsHPElement = this.teamsHP.getElement();
         this.guiContainer.append(teamsHPElement);
 
-        const inventory = this.inventory.getElement();
-
         document.body.append(this.mainCanvas);
         document.body.append(this.mainHandler);
         document.body.append(this.guiContainer);
-        document.body.append(inventory);
     }
 
-    public showInventory(flag: boolean) {
-        this.inventory.show(flag);
+    public renderArsenal(weapons: string[]) {
+        this.arsenal.renderArs(weapons);
     }
 
     public getMainCanvas() {
