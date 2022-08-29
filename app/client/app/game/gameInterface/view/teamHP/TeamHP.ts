@@ -5,16 +5,43 @@ import './style.scss';
 
 export default class TeamsHP {
     private element: HTMLDivElement;
-    // private teams: {
-    //     [key: string]: HTMLDivElement;
-    // };
+    private barScale = 2;
+    private teams: {
+        [key: string]: HTMLDivElement;
+    } = {};
     constructor() {
         const container = <HTMLDivElement>PageBuilder.createElement('div', { classes: 'teams-hp-container' });
         this.element = container;
     }
 
+    build = (teams: Team[]) => {
+        teams.forEach((team) => {
+            const teamDiv = <HTMLDivElement>this.createTeamBar(team);
+            this.teams[team.name] = teamDiv;
+            this.element.append(teamDiv);
+            // console.log(this.teams);
+        });
+    };
 
-    public update = (teams: Team[]) => {};
+    createTeamBar(team: Team) {
+        const hpContainer = PageBuilder.createElement('div', { classes: 'hp-row-container' });
+        const teamName = PageBuilder.createElement('div', { classes: 'team-name' });
+        teamName.innerHTML = team.name;
+        teamName.id = team.name;
+        const hpBar = PageBuilder.createElement('div', { classes: 'team-hp-bar' });
+        hpBar.style.width = team.getHP() * this.barScale + 'px';
+        hpBar.id = team.name;
+        hpContainer.append(teamName, hpBar);
+        return hpContainer;
+    }
+
+    public update = (teams: Team[]) => {
+        teams.forEach((team) => {
+            const teamEl = this.teams[team.name];
+            const bar = teamEl.querySelector('.team-hp-bar') as HTMLElement;
+            bar.style.width = team.getHP() * this.barScale + 'px';
+        });
+    };
 
     public getElement() {
         return this.element;

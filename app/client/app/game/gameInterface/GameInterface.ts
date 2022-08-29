@@ -13,6 +13,7 @@ export default class GameInterface {
     public timerElement = this.view.timerElement;
     public windElement = this.view.windElement;
     public inventoryElement = this.view.inventoryElement;
+    public teamsHPElement = this.view.teamsHPElement;
 
     constructor() {
         const eventsHandler = this.view.getMainHandler();

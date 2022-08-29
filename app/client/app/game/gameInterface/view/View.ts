@@ -18,6 +18,7 @@ export default class View {
     };
 
     public teamsHPElement = {
+        build: this.teamsHP.build,
         update: this.teamsHP.update,
     };
 
