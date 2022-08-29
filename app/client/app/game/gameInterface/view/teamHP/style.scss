@@ -1,0 +1,33 @@
+.teams-hp-container {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    bottom: 10px;
+    width: 40%;
+    left: 30%;
+}
+
+.hp-row-container {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    align-items: center;
+}
+
+.team-name {
+    font-size: 18px;
+    padding: 3px 6px;
+    text-align: right;
+    background-color: black;
+    color: aliceblue;
+    border-radius: 3px;
+    border: 1px solid white;
+}
+
+.team-hp-bar {
+    height: 25px;
+    background-color: blue;
+    border-radius: 3px;
+    border: 1px solid black;
+}

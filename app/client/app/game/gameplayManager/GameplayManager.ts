@@ -61,6 +61,7 @@ export default class gameplayManager {
 
     init(options: IStartGameOptions) {
         this.createTeams(options);
+        this.gameInterface.teamsHPElement.build(this.teams);
         this.nextTurn();
     }
 
@@ -83,6 +84,8 @@ export default class gameplayManager {
         currentWorm.startTurn(this.endTurn);
         this.gameInterface.timerElement.show(true);
         this.ioManager.wormManager.setWorm(currentWorm);
+
+        this.gameInterface.teamsHPElement.update(this.teams);
     }
 
     endTurn: TEndTurnCallback = (delaySec: number) => {
