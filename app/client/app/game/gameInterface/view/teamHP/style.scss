@@ -9,25 +9,35 @@
 }
 
 .hp-row-container {
+    width: 100%;
     display: flex;
+    margin: 0 auto;
     justify-content: center;
     gap: 5px;
     align-items: center;
 }
 
+.team-name-container{
+    width: 50%;
+}
+
 .team-name {
+    float: right;
     font-size: 18px;
     padding: 3px 6px;
     text-align: right;
     background-color: black;
-    color: aliceblue;
     border-radius: 3px;
     border: 1px solid white;
 }
 
+.team-hp-container {
+    float: left;
+    width: 50%;
+}
+
 .team-hp-bar {
     height: 25px;
-    background-color: blue;
     border-radius: 3px;
     border: 1px solid black;
 }

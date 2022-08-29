@@ -5,7 +5,8 @@ import './style.scss';
 
 export default class TeamsHP {
     private element: HTMLDivElement;
-    private barScale = 2;
+    private barScale = 0.5;
+    private colors = ['red', 'blue', 'green', 'yellow'];
     private teams: {
         [key: string]: HTMLDivElement;
     } = {};
@@ -15,23 +16,29 @@ export default class TeamsHP {
     }
 
     build = (teams: Team[]) => {
-        teams.forEach((team) => {
-            const teamDiv = <HTMLDivElement>this.createTeamBar(team);
+        teams.forEach((team, idx) => {
+            const teamDiv = <HTMLDivElement>this.createTeamBar(team, this.colors[idx]);
             this.teams[team.name] = teamDiv;
             this.element.append(teamDiv);
-            // console.log(this.teams);
         });
     };
 
-    createTeamBar(team: Team) {
+    createTeamBar(team: Team, color: string) {
         const hpContainer = PageBuilder.createElement('div', { classes: 'hp-row-container' });
+        const teamNameContainer = PageBuilder.createElement('div', { classes: 'team-name-container' });
+        const teamHPContainer = PageBuilder.createElement('div', { classes: 'team-hp-container' });
         const teamName = PageBuilder.createElement('div', { classes: 'team-name' });
+        teamName.style.color = color;
         teamName.innerHTML = team.name;
         teamName.id = team.name;
         const hpBar = PageBuilder.createElement('div', { classes: 'team-hp-bar' });
         hpBar.style.width = team.getHP() * this.barScale + 'px';
         hpBar.id = team.name;
-        hpContainer.append(teamName, hpBar);
+        hpBar.style.backgroundColor = color;
+        teamHPContainer.append(hpBar);
+        teamNameContainer.append(teamName);
+
+        hpContainer.append(teamNameContainer, teamHPContainer);
         return hpContainer;
     }
 
@@ -40,6 +47,7 @@ export default class TeamsHP {
             const teamEl = this.teams[team.name];
             const bar = teamEl.querySelector('.team-hp-bar') as HTMLElement;
             bar.style.width = team.getHP() * this.barScale + 'px';
+            if (team.getHP() <= 0) teamEl.innerHTML = '';
         });
     };
 

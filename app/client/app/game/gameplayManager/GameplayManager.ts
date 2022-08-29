@@ -79,13 +79,10 @@ export default class gameplayManager {
         const teamIndex = this.currentTurn % this.teams.length;
         const currentTeam = this.teams[teamIndex];
         const currentWorm = currentTeam.getNextWorm();
-
         this.world.raiseWaterLevel();
         currentWorm.startTurn(this.endTurn);
         this.gameInterface.timerElement.show(true);
         this.ioManager.wormManager.setWorm(currentWorm);
-
-        this.gameInterface.teamsHPElement.update(this.teams);
     }
 
     endTurn: TEndTurnCallback = (delaySec: number) => {
@@ -117,6 +114,7 @@ export default class gameplayManager {
                 }
             }, 1000);
         });
+        this.gameInterface.teamsHPElement.update(this.teams);
     }
 
     turnLoop() {

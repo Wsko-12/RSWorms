@@ -450,6 +450,8 @@ export default class Worm extends Entity {
         }
 
         if (this.position.y < 0) {
+            this.setHP(-this.getHP());
+            SoundManager.playWormAction(ESoundsWormAction.splash)
             this.moveStates.isDead = true;
             if (this.endTurnCallback) {
                 this.endTurnCallback(5);
