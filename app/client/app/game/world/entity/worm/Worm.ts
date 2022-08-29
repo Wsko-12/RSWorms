@@ -189,17 +189,23 @@ export default class Worm extends Entity {
     }
 
     public betweenTurnsActions(): Promise<boolean> {
-        this.gui.setActualHp(this.getHP());
+        if (this.isStable()) {
+            this.gui.setActualHp(this.getHP());
+        }
         return Promise.resolve(true);
     }
 
     public readyToNextTurn() {
-        if (this.gui.isUpdated()) {
+        if (this.gui.isUpdated(this.getHP())) {
             if (!this.gui.isDead()) {
                 return this.isStable();
             } else {
-                this.animation.playDeadAnimation();
-                return this.finalExplosion.isExploded();
+                if (this.isStable()) {
+                    this.animation.playDeadAnimation();
+                    return this.finalExplosion.isExploded();
+                } else {
+                    return false;
+                }
             }
         }
         return false;
@@ -366,11 +372,12 @@ export default class Worm extends Entity {
     public acceptExplosion(mapMatrix: MapMatrix, entities: Entity[], options: IExplosionOptions) {
         const force = super.acceptExplosion(mapMatrix, entities, options);
         if (this.endTurnCallback) {
-            this.endTurnCallback(0);
+            this.endTurnCallback(0.5);
         }
         this.lastDamageTimestamp = Date.now();
         this.moveStates.isDamaged = true;
-        this.setHP(force * options.damage * -1);
+        const damage = force * options.damage;
+        this.setHP(damage * -1);
         return force;
     }
 
@@ -451,7 +458,7 @@ export default class Worm extends Entity {
 
         if (this.position.y < 0) {
             this.setHP(-this.getHP());
-            SoundManager.playWormAction(ESoundsWormAction.splash)
+            SoundManager.playWormAction(ESoundsWormAction.splash);
             this.moveStates.isDead = true;
             if (this.endTurnCallback) {
                 this.endTurnCallback(5);
@@ -475,7 +482,8 @@ export default class Worm extends Entity {
         // here we can remove hp for fall damage
         const delta = this.physics.velocity.getLength() - this.jumpVectors.backflip.getLength() * this.fallToJumpCoef;
         if (delta > 0) {
-            // console.log(delta);
+            const damage = delta ** 2;
+            this.setHP(delta * -1);
             if (this.endTurnCallback) {
                 this.endTurnCallback(0);
             }
