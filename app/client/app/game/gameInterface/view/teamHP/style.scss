@@ -26,9 +26,10 @@
     font-size: 18px;
     padding: 3px 6px;
     text-align: right;
-    background-color: black;
-    border-radius: 3px;
-    border: 1px solid white;
+    font-family: 'DynaPuff', cursive;
+    font-size: 2rem;
+    font-weight: 900;
+    text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black, -2px 2px 0px black;
 }
 
 .team-hp-container {
@@ -37,7 +38,9 @@
 }
 
 .team-hp-bar {
+    transition-duration: 1s;
     height: 25px;
-    border-radius: 3px;
-    border: 1px solid black;
+    border-radius: 10px;
+    border: 2px solid black;
+    box-shadow: -2px 2px 0px black;
 }

@@ -1,3 +1,4 @@
+import { ETeamColors } from '../../../../../../ts/enums';
 import PageBuilder from '../../../../../utils/PageBuilder';
 import gameplayManager from '../../../gameplayManager/GameplayManager';
 import Team from '../../../gameplayManager/team/Team';
@@ -17,7 +18,7 @@ export default class TeamsHP {
 
     build = (teams: Team[]) => {
         teams.forEach((team, idx) => {
-            const teamDiv = <HTMLDivElement>this.createTeamBar(team, this.colors[idx]);
+            const teamDiv = <HTMLDivElement>this.createTeamBar(team, ETeamColors[idx]);
             this.teams[team.name] = teamDiv;
             this.element.append(teamDiv);
         });
@@ -46,8 +47,12 @@ export default class TeamsHP {
         teams.forEach((team) => {
             const teamEl = this.teams[team.name];
             const bar = teamEl.querySelector('.team-hp-bar') as HTMLElement;
-            bar.style.width = team.getHP() * this.barScale + 'px';
-            if (team.getHP() <= 0) teamEl.innerHTML = '';
+            if (bar) {
+                bar.style.width = team.getHPLevel() * 100 + '%';
+                setTimeout(() => {
+                    if (team.getHPLevel() <= 0) teamEl.innerHTML = '';
+                }, 2000);
+            }
         });
     };
 

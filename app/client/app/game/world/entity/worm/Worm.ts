@@ -6,9 +6,7 @@ import { Point2, Vector2 } from '../../../../../utils/geometry';
 import SoundManager from '../../../soundManager/SoundManager';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
-import Bullet from './weapon/bullet/Bullet';
 import BWormFinalExplosion from './weapon/bullet/throwable/Fallen/BWormFinalExplosion';
-import BDynamite from './weapon/bullet/throwable/Fallen/dynamite/BDynamite';
 import WBazooka from './weapon/weapon/powerable/bazooka/Bazooka';
 import WGrenade from './weapon/weapon/powerable/grenade/Grenade';
 import WDynamite from './weapon/weapon/static/dynamite/Dynamite';
@@ -75,6 +73,7 @@ export default class Worm extends Entity {
     };
 
     private hp: number;
+    private maxHp: number;
 
     constructor(wormIndex: number, teamIndex: number, x = 0, y = 0, hp = 100) {
         super(ESizes.worm, x, y);
@@ -95,6 +94,7 @@ export default class Worm extends Entity {
         this.object3D.add(this.wormMesh, this.gui.getObject3D(), this.finalExplosion.getObject3D());
         this.object3D.position.set(x, y, ELayersZ.worms);
         this.hp = hp;
+        this.maxHp = hp;
     }
 
     public setAsSelected(flag: boolean) {
@@ -106,6 +106,10 @@ export default class Worm extends Entity {
 
     public setMoveFlags(flags: { left?: boolean; right?: boolean }) {
         Object.assign(this.movesOptions.flags, flags);
+    }
+
+    public getHPLevel() {
+        return this.hp / this.maxHp;
     }
 
     public getHP() {
