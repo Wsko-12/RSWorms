@@ -1,0 +1,38 @@
+.loading__overlay{
+    width: 100vw;
+    height: 100vh;
+    background-color: #303030;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.loading__container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.loading__title{
+    font-size: 2rem;
+    font-family: 'DynaPuff', cursive;
+    color: white;
+    margin: 0;
+    margin-bottom: 10px;
+    text-shadow: 0px 0px 3px black;
+}
+
+.loading__progress-container{
+    overflow: hidden;
+    border: 3px solid black;
+    border-radius: 20px;
+    height: 20px;
+    width: 200px;
+    background-color: rgba($color: #000000, $alpha: 0.7);
+}
+
+.loading__progress{
+    height: 100%;
+    background-color: rgba($color: #ffffff, $alpha: 1.0);
+}
