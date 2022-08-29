@@ -10,7 +10,7 @@ export default class View {
     private timer = new TimerInterface();
     private wind = new WindInterface();
     private teamsHP = new TeamsHP();
-    private arsenal = new Arsenal();
+    // private arsenal = new Arsenal();
 
     public timerElement = {
         update: this.timer.update,
@@ -26,9 +26,9 @@ export default class View {
         update: this.wind.update,
     };
 
-    public arsenalElement = {
-        setChooseWeaponCallback: this.arsenal.setChooseWeaponCallback,
-    };
+    // public arsenalElement = {
+    //     setChooseWeaponCallback: this.arsenal.setChooseWeaponCallback,
+    // };
 
     public build() {
         this.mainCanvas.classList.add('main-canvas');
@@ -49,9 +49,9 @@ export default class View {
         document.body.append(this.guiContainer);
     }
 
-    public renderArsenal(weapons: string[]) {
-        this.arsenal.renderArs(weapons);
-    }
+    // public renderArsenal(weapons: string[]) {
+    //     this.arsenal.renderArs(weapons);
+    // }
 
     public getMainCanvas() {
         return this.mainCanvas;

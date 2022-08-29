@@ -1,5 +1,6 @@
 import { ELang } from '../../../../../ts/enums';
 import Worm from '../../world/entity/worm/Worm';
+import Arsenal from '../../gameInterface/view/arsenal/Arsenal';
 
 export default class Team {
     worms: Worm[] = [];
@@ -7,9 +8,12 @@ export default class Team {
     index: number;
     name: string;
     maxWorms = 0;
+    arsenal: Arsenal;
+    public weapons = ['bazooka', 'grenade', 'dynamite', 'mine'];
     constructor(index: number, name?: string) {
         this.name = name || 'developers' + index;
         this.index = index;
+        this.arsenal = new Arsenal(this.weapons);
     }
 
     pushWorm(worm: Worm) {

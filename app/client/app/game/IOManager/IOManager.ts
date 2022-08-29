@@ -22,9 +22,9 @@ export default class IOManager {
             // here will be check isPlayerTurn()
             this.wormManager.handleEvent(e);
 
-            if (e.code === 'KeyI') {
-                this.gameInterface.renderArsenal(this.weapons);
-            }
+            // if (e.code === 'KeyI') {
+            //     this.gameInterface.renderArsenal(this.weapons);
+            // }
         });
 
         document.addEventListener('keyup', (e) => {
@@ -37,16 +37,16 @@ export default class IOManager {
             }
         });
 
-        this.gameInterface.getMainHandler().addEventListener('contextmenu', (e) => {
-            this.gameInterface.renderArsenal(this.weapons);
-        });
+        // this.gameInterface.getMainHandler().addEventListener('contextmenu', (e) => {
+        //     this.gameInterface.renderArsenal(this.weapons);
+        // });
 
-        this.gameInterface.arsenalElement.setChooseWeaponCallback(this.chooseWeapon);
+        // this.gameInterface.arsenalElement.setChooseWeaponCallback(this.chooseWeapon);
     }
 
-    private chooseWeapon: TChooseWeaponCallback = (weapon) => {
-        this.wormManager.chooseWeapon(weapon);
-    };
+    // private chooseWeapon: TChooseWeaponCallback = (weapon) => {
+    //     this.wormManager.chooseWeapon(weapon);
+    // };
 
     public update: TLoopCallback = (time) => {
         this.wormManager.update(time);
