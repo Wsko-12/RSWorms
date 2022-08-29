@@ -46,11 +46,6 @@ export enum EWeapons {
     mine = 'mine',
 }
 
-export const enum ELangs {
-    eng = 'english',
-    rus = 'russian',
-}
-
 export enum ETeamColors {
     '#eb3b3b',
     '#3b55eb',
@@ -59,7 +54,8 @@ export enum ETeamColors {
 }
 
 export const enum ELang {
-    rus = 'Russian',
+    rus = 'russian',
+    eng = 'english',
 }
 
 export const enum ESoundsBG {

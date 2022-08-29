@@ -1,4 +1,3 @@
-import path = require('path');
 import {
     ELang,
     ESoundsBG,
@@ -8,7 +7,6 @@ import {
     ESoundsWormAction,
     ESoundsWormSpeech,
 } from '../../../../ts/enums';
-import { IWormMoveStates } from '../../../../ts/interfaces';
 
 export default class SoundManager {
     static background = new Audio();
