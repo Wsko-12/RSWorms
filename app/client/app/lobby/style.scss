@@ -1,63 +1,140 @@
-.header {
-  height: 150px;
-  padding: 20px;
-}
-
-.title {
-  margin: 0 auto;
-  width: 200px;
-  font-size: 30px;
-  font-weight: 600;
-}
-
-.btns-wrapper {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  width: 50%;
-  height: 450px;
-  margin: 0 auto;
-}
-
-.lobby-btn {
-  width: 40%;
-  height: 35%;
-}
-
-.custom-game-set {
-  display: none;
+.main-screen {
   position: absolute;
-  width: 300px;
-  height: 350px;
-  left: calc(50% - 150px);
-  top: calc(50vh - 175px);
-  background-color: #0000008d;
-  padding: 10px;
+  background-color: transparent;
+  z-index: 10;
 }
 
-.custom-game-set.open {
-  display: block;
-}
-
-.custom-title {
-  width: 150px;
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0 auto 10px;
-}
-
-.map-texture-sel-wrapper {
+.main-screen-button-container {
+  width: 70%;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 40%;
-  margin-bottom: 20px;
+  margin: 20% auto;
+  gap: 4%;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-.map-size-sel-wrapper {
-  margin-bottom: 20px;
+.main-screen-button {
+  margin-top: 30px;
+  width: 350px;
+  height: 220px;
+  border: 1px solid black;
+  cursor: pointer;
+  transition: transform 0.4s ease;
+  &:hover{
+      transform: scale(1.1);
+  }
 }
 
-.button {
-  margin-right: 10px;
+.main-screen-title {
+  position: absolute;
+  top: 5%;
+  width: 500px;
+  height: 300px;
+  background-image: url(../../assets/lobby/main-screen/Logo.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.custom-game-screen {
+  position: absolute;
+  background-color: transparent;
+  z-index: 10;
+  display: flex;
+  gap: 10%;
+  padding: 20%;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.custom-game-screen-button {
+  background-color: green;
+  width: 300px;
+  height: 200px;
+  border: 1px solid black;
+}
+
+.return-button {
+  cursor: pointer;
+  position: absolute;
+  top: 2%;
+  left: 2%;
+  width: 60px;
+  height: 60px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: transform 0.4s ease;
+  &:hover{
+      transform: scale(1.2);
+  }
+}
+
+
+// settings
+
+.settings {
+  position: absolute;
+  background-color: transparent;
+  z-index: 10;
+  padding: 10%;
+  display: flex;
+  gap: 4%;
+}
+
+.create-team-container {
+  width: 48%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.team-name-container {
+  background-color: antiquewhite;
+  width: 100%;
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+}
+
+.team-name-title {
+  margin: 10px;
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.team-name-input-container {
+  width: 100%;
+  padding: 2%;
+  display: flex;
+  gap: 5px;
+}
+
+.input-text {
+  padding-left: 10px;
+  width: 80%;
+  height: 30px;
+}
+
+.random-btn {
+  height: 30px;
+  width: 20%;
+}
+
+.create {
+  width: 100%;
+  height: 40px;
+}
+
+
+
+
+
+
+
+.audio-options-container {
+  width: 48%;
+  height: 100%;
+  border: 1px solid black;
 }

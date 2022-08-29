@@ -16,6 +16,10 @@ export default class Lobby {
     canvasWidth = 0;
     windowHeight = 0;
     windowWidth = 0;
+    teamName = 'Team';
+    memberNames = ['Worm1', 'Worm2', 'Worm3', 'Worm4', 'Worm5'];
+    randomTeamNames = ['Developers', 'ProjectCrashers', 'Loosers'];
+    randomMemberNames = ['Aleg3000', 'Wsko', 'Overlord', 'Guy', 'Big One', 'OG Worm', 'Fat Ass'];
     ctx: Context | null = null;
     private startGameCallback: TStartGameCallback;
     constructor(startGameCallback: TStartGameCallback) {
@@ -37,8 +41,77 @@ export default class Lobby {
                 block: 'start',
             });
         });
-        this.settings.append(returnBtn);
+
+        const createTeamContainer = PageBuilder.createElement('div', { classes: 'create-team-container' });
+        const audioOptionsContainer = PageBuilder.createElement('div', { classes: 'audio-options-container' });
+
+        // const teamNameContainer = PageBuilder.createElement('div', { classes: 'team-name-container' });
+        // const teamNameTitle = PageBuilder.createElement('h3', { classes: 'team-name-title' });
+        // teamNameTitle.innerHTML = 'Team Name';
+        // const teamNameInput = PageBuilder.createElement('input', { classes: 'text-input', id: 'team-name' });
+        // teamNameContainer.append(teamNameTitle, teamNameInput);
+        // createTeamContainer.append(teamNameContainer);
+
+        createTeamContainer.innerHTML = `
+            <div class="team-name-container">
+                <h3 class="team-name-title">Team Name</h3>
+                <div class="team-name-input-container">
+                    <input class="input-text team-name" type="text" value="Team">
+                    <button class="random-btn" id="team-random-btn">Random</button>
+                </div>
+            </div>
+            <div class="team-name-container">
+                <h3 class="team-name-title">Team Members</h3>
+                <div class="team-name-input-container">
+                    <input class="input-text worm-name" id="team-name" type="text" value="Worm 1" data-id="worm1">
+                    <button class="random-btn" id="member-random-btn" data-id="worm1">Random</button>
+                </div>
+                <div class="team-name-input-container">
+                    <input class="input-text worm-name" type="text" value="Worm 2" data-id="worm2">
+                    <button class="random-btn" id="member-random-btn" data-id="worm2">Random</button>
+                </div>
+                <div class="team-name-input-container">
+                    <input class="input-text worm-name" type="text" value="Worm 3" data-id="worm3">
+                    <button class="random-btn" id="member-random-btn" data-id="worm3">Random</button>
+                </div>
+                <div class="team-name-input-container">
+                    <input class="input-text worm-name" type="text" value="Worm 4" data-id="worm4">
+                    <button class="random-btn" id="member-random-btn" data-id="worm4">Random</button>
+                </div>
+                <div class="team-name-input-container">
+                    <input class="input-text worm-name" type="text" value="Worm 5" data-id="worm5">
+                    <button class="random-btn" id="member-random-btn" data-id="worm5">Random</button>
+                </div>
+            </div>
+            <button class="create">Create Team</button>
+        `;
+
+        this.settings.append(returnBtn, createTeamContainer, audioOptionsContainer);
         this.lobbyWrapper.append(this.settings);
+    }
+
+    private afterRender = () => {
+        const teamRandomBtn = document.querySelector('#team-random-btn');
+        // const teamNameInput = document.querySelector('#team-name');
+        teamRandomBtn?.addEventListener('click', (e) => {
+            const input = (e.currentTarget as HTMLElement).previousElementSibling as HTMLInputElement;
+            input.value = this.randomTeamNames[Math.floor(Math.random() * this.randomTeamNames.length)];
+        });
+        const membersRandomBtns = document.querySelectorAll('#member-random-btn');
+        membersRandomBtns.forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                const input = (e.currentTarget as HTMLElement).previousElementSibling as HTMLInputElement;
+                input.value = this.randomMemberNames[Math.floor(Math.random() * this.randomMemberNames.length)];
+            });
+        });
+        document.querySelector('.create')?.addEventListener('click', () => {
+            this.memberNames = [];
+            (document.querySelectorAll('.worm-name') as NodeListOf<HTMLInputElement>).forEach((worm) => {
+                this.memberNames.push(worm.value);
+            });
+            this.teamName = (document.querySelector('.team-name') as HTMLInputElement).value;
+            console.log(this.teamName, this.memberNames);
+        })
     }
 
     private createLobby() {
@@ -66,6 +139,8 @@ export default class Lobby {
         this.mainScreen.style.top = this.windowHeight + 'px';
         this.mainScreen.style.left = this.windowWidth + 'px';
 
+        const btnContainer = PageBuilder.createElement('div', { classes: 'main-screen-button-container' });
+
         const quickGameBtn = PageBuilder.createElement('div', { classes: 'main-screen-button' });
         quickGameBtn.style.backgroundImage = 'url(./assets/lobby/main-screen/worms-single.jpeg)';
         quickGameBtn.addEventListener('click', this.startGame.bind(this));
@@ -91,8 +166,8 @@ export default class Lobby {
 
         const title = PageBuilder.createElement('div', { classes: 'main-screen-title' });
 
-
-        this.mainScreen.append(quickGameBtn, customGameBtn, networkGameBtn, settingBtn, title);
+        btnContainer.append(quickGameBtn, customGameBtn, networkGameBtn, settingBtn, title);
+        this.mainScreen.append(btnContainer);
 
         this.lobbyWrapper.append(this.mainScreen);
     }
@@ -195,5 +270,6 @@ export default class Lobby {
             behavior: 'smooth',
             block: 'start',
         });
+        this.afterRender();
     }
 }
