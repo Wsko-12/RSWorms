@@ -46,7 +46,7 @@ export default class gameplayManager {
         if (!options.multiplayer) {
             const teamsCount = options.teamNames.length;
             for (let i = 0; i < teamsCount; i++) {
-                const team = new Team(i);
+                const team = new Team(i, options.teamNames[i]);
                 for (let j = 0; j < options.wormsCount; j++) {
                     const worm = this.entityManager.generateWorm(i, j);
                     if (!worm) {
@@ -62,6 +62,8 @@ export default class gameplayManager {
     init(options: IStartGameOptions) {
         this.createTeams(options);
         this.gameInterface.teamsHPElement.build(this.teams);
+        this.gameInterface.teamsHPElement.update(this.teams);
+
         this.nextTurn();
     }
 
@@ -105,6 +107,7 @@ export default class gameplayManager {
             setTimeout(() => {
                 const entities = this.entityManager.getEntities();
                 const allReady = entities.every((entity) => entity.readyToNextTurn());
+                this.gameInterface.teamsHPElement.update(this.teams);
                 if (allReady) {
                     setTimeout(() => {
                         this.nextTurn();
@@ -114,7 +117,6 @@ export default class gameplayManager {
                 }
             }, 1000);
         });
-        this.gameInterface.teamsHPElement.update(this.teams);
     }
 
     turnLoop() {
