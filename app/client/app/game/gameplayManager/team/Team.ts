@@ -20,10 +20,18 @@ export default class Team {
         return this.worms.reduce((hp, worm) => (hp += worm.getHP()), 0);
     }
 
+    checkWorms() {
+        this.worms = this.worms.filter((worm) => !worm.isDead());
+    }
+
     getNextWorm() {
         if (this.currentWormIdx >= this.worms.length) {
             this.currentWormIdx = 0;
         }
         return this.worms[this.currentWormIdx++];
+    }
+
+    celebrate() {
+        this.worms.forEach((worm) => worm.celebrate());
     }
 }

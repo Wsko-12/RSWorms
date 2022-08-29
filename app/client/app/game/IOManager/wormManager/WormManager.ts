@@ -12,13 +12,18 @@ export default class WormManager {
     private aim: -1 | 0 | 1 = 0;
     private shooting = false;
     private readonly aimSpeed = 2;
+    private blockWeapon = false;
 
-    public setWorm(worm: Worm) {
+    public setWorm(worm: Worm | null) {
+        this.blockWeapon = false;
+
         if (this.controlledWorm) {
             this.controlledWorm.setAsSelected(false);
         }
         this.controlledWorm = worm;
-        worm.setAsSelected(true);
+        if (worm) {
+            worm.setAsSelected(true);
+        }
     }
 
     public getWorm() {
@@ -70,16 +75,24 @@ export default class WormManager {
         }
 
         if (e.code === 'KeyG') {
-            this.controlledWorm.selectWeapon(EWeapons.grenade);
+            if (!this.blockWeapon) {
+                this.controlledWorm.selectWeapon(EWeapons.grenade);
+            }
         }
         if (e.code === 'KeyB') {
-            this.controlledWorm.selectWeapon(EWeapons.bazooka);
+            if (!this.blockWeapon) {
+                this.controlledWorm.selectWeapon(EWeapons.bazooka);
+            }
         }
         if (e.code === 'KeyD') {
-            this.controlledWorm.selectWeapon(EWeapons.dynamite);
+            if (!this.blockWeapon) {
+                this.controlledWorm.selectWeapon(EWeapons.dynamite);
+            }
         }
         if (e.code === 'KeyM') {
-            this.controlledWorm.selectWeapon(EWeapons.mine);
+            if (!this.blockWeapon) {
+                this.controlledWorm.selectWeapon(EWeapons.mine);
+            }
         }
 
         const jumpTimeout = () => {
@@ -108,7 +121,9 @@ export default class WormManager {
     }
 
     public chooseWeapon: TChooseWeaponCallback = (weapon) => {
-        this.controlledWorm?.selectWeapon(weapon);
+        if (!this.blockWeapon) {
+            this.controlledWorm?.selectWeapon(weapon);
+        }
     };
 
     private handleKeyUp(e: KeyboardEvent) {
@@ -136,7 +151,13 @@ export default class WormManager {
         if (e.code === 'Space') {
             this.shooting = false;
             SoundManager.playWeapon(ESoundsWeapon.rocketRelease);
-            return worm.shoot();
+
+            const bullet = worm.shoot();
+            if (bullet) {
+                this.blockWeapon = true;
+                worm.selectWeapon(null);
+            }
+            return bullet;
         }
     }
 

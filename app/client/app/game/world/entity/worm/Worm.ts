@@ -6,6 +6,9 @@ import { Point2, Vector2 } from '../../../../../utils/geometry';
 import SoundManager from '../../../soundManager/SoundManager';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
+import Bullet from './weapon/bullet/Bullet';
+import BWormFinalExplosion from './weapon/bullet/throwable/Fallen/BWormFinalExplosion';
+import BDynamite from './weapon/bullet/throwable/Fallen/dynamite/BDynamite';
 import WBazooka from './weapon/weapon/powerable/bazooka/Bazooka';
 import WGrenade from './weapon/weapon/powerable/grenade/Grenade';
 import WDynamite from './weapon/weapon/static/dynamite/Dynamite';
@@ -49,7 +52,12 @@ export default class Worm extends Entity {
         isDoubleJump: false,
         isFall: true,
         isDamaged: false,
+        isCelebrated: false,
+        isDrown: false,
+        isDead: false,
     };
+
+    private finalExplosion = new BWormFinalExplosion(this);
 
     //temporary
     private lastDamageTimestamp = 0;
@@ -84,10 +92,7 @@ export default class Worm extends Entity {
         this.gui = new WormGui(this.name, teamIndex);
         this.gui.setActualHp(hp);
 
-        // TEST LINE
-        this.gui.setActualHp(hp + Math.round((Math.random() - 0.5) * hp));
-
-        this.object3D.add(this.wormMesh, this.gui.getObject3D());
+        this.object3D.add(this.wormMesh, this.gui.getObject3D(), this.finalExplosion.getObject3D());
         this.object3D.position.set(x, y, ELayersZ.worms);
         this.hp = hp;
     }
@@ -108,7 +113,10 @@ export default class Worm extends Entity {
     }
 
     public setHP(hp: number) {
-        this.hp += hp;
+        this.hp += Math.round(hp);
+        if (this.hp < 0) {
+            this.hp = 0;
+        }
     }
 
     public jump(double?: boolean) {
@@ -137,6 +145,11 @@ export default class Worm extends Entity {
         }
         return this.currentWeapon.shoot(options);
     }
+
+    public celebrate() {
+        this.moveStates.isCelebrated = true;
+    }
+
     public selectWeapon(weapon: EWeapons | null) {
         const before = this.currentWeapon;
         if (before) {
@@ -169,17 +182,37 @@ export default class Worm extends Entity {
 
     public startTurn(nextTurnCallback: TEndTurnCallback) {
         this.endTurnCallback = nextTurnCallback;
-        //hide hp bar
     }
 
     public endTurn() {
         this.endTurnCallback = null;
-        //show hp bar
     }
 
-    protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number) {
+    public betweenTurnsActions(): Promise<boolean> {
+        this.gui.setActualHp(this.getHP());
+        return Promise.resolve(true);
+    }
+
+    public readyToNextTurn() {
+        if (this.gui.isUpdated()) {
+            if (!this.gui.isDead()) {
+                return this.isStable();
+            } else {
+                this.animation.playDeadAnimation();
+                return this.finalExplosion.isExploded();
+            }
+        }
+        return false;
+    }
+
+    protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number, waterLevel: number) {
         const vel = this.physics.velocity.clone();
-        vel.y -= this.physics.g;
+        if (this.position.y + this.radius < waterLevel) {
+            this.moveStates.isDrown = true;
+        } else {
+            vel.y -= this.physics.g;
+        }
+
         if (this.moveStates.isJump && this.moveStates.isFall) {
             this.moveStates.isFall = false;
         }
@@ -192,14 +225,20 @@ export default class Worm extends Entity {
                 this.moveStates.isFall = true;
             }
         }
-        if (!collision) {
+        if (!collision || this.moveStates.isDrown) {
             if (vel.getLength() > this.jumpVectors.backflip.getLength() * this.fallToJumpCoef) {
                 this.moveStates.isFall = true;
                 this.moveStates.isJump = false;
             }
-            this.position.x += vel.x;
-            this.position.y += vel.y;
-            this.physics.velocity = vel;
+            if (this.moveStates.isDrown) {
+                this.moveStates.isDrown = true;
+                this.position.y -= this.physics.g * 5;
+            } else {
+                this.position.x += vel.x;
+                this.position.y += vel.y;
+                this.physics.velocity = vel;
+            }
+
             return;
         }
 
@@ -325,17 +364,25 @@ export default class Worm extends Entity {
     }
 
     public acceptExplosion(mapMatrix: MapMatrix, entities: Entity[], options: IExplosionOptions) {
-        super.acceptExplosion(mapMatrix, entities, options);
+        const force = super.acceptExplosion(mapMatrix, entities, options);
         if (this.endTurnCallback) {
             this.endTurnCallback(0);
         }
         this.lastDamageTimestamp = Date.now();
         this.moveStates.isDamaged = true;
+        this.setHP(force * options.damage * -1);
+        return force;
     }
 
     protected move(mapMatrix: MapMatrix, entities: Entity[]) {
         this.moveStates.isMove = false;
-        if (this.moveStates.isFall || this.moveStates.isJump || this.moveStates.isSlide || this.moveStates.isDamaged) {
+        if (
+            this.moveStates.isFall ||
+            this.moveStates.isJump ||
+            this.moveStates.isSlide ||
+            this.moveStates.isDamaged ||
+            this.moveStates.isDrown
+        ) {
             return;
         }
 
@@ -389,14 +436,26 @@ export default class Worm extends Entity {
         );
     }
 
-    public update(mapMatrix: MapMatrix, entities: Entity[], wind: number): void {
+    public update(mapMatrix: MapMatrix, entities: Entity[], wind: number, waterLevel: number): void {
         this.move(mapMatrix, entities);
-        super.update(mapMatrix, entities, wind);
+        super.update(mapMatrix, entities, wind, waterLevel);
         this.object3D.position.z = ELayersZ.worms;
 
         this.currentWeapon?.show(this.isSelected && this.isStable());
         this.currentWeapon?.update(this.movesOptions.direction);
 
+        if (this.gui.isDead() && this.animation.dead.isReady && !this.moveStates.isDead) {
+            this.moveStates.isDead = true;
+            this.finalExplosion.explode(mapMatrix, entities);
+        }
+
+        if (this.position.y < 0) {
+            this.moveStates.isDead = true;
+            if (this.endTurnCallback) {
+                this.endTurnCallback(5);
+            }
+            this.remove();
+        }
         // temporary
         {
             if (this.moveStates.isDamaged) {
@@ -427,6 +486,10 @@ export default class Worm extends Entity {
         super.push(vec);
     }
 
+    public isDead() {
+        return this.moveStates.isDead;
+    }
+
     public spriteLoop: TLoopCallback = (time) => {
         this.animation.spriteLoop(
             this.moveStates,
@@ -434,6 +497,10 @@ export default class Worm extends Entity {
             this.isSelected ? this.currentWeapon?.getRawAngle() : undefined
         );
 
-        this.gui.spriteLoop();
+        if (this.moveStates.isDead) {
+            this.gui.show(false);
+        } else {
+            this.gui.spriteLoop();
+        }
     };
 }

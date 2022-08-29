@@ -348,4 +348,37 @@ export default class WorldMap {
 
         return this.getObjectPlace(matrix, width, height, attempt - 1);
     };
+
+    public getWormPlace = (): { x: number; y: number } => {
+        const matrix = this.mapMatrix.matrix;
+        const width = this.sizes.width;
+        const height = this.sizes.height;
+        const yRandom: number = Math.round(height * Math.random() * 0.65 + 0.1 * height);
+        const xRandom: number = Math.round(width * Math.random() * 0.75 + 0.15 * width);
+
+        const checkAround = (x: number, y: number) => {
+            let answer = true;
+            x -= 20;
+            y += 20;
+            for (let i = 0; i < 40; i++) {
+                for (let k = 0; k < 40; k++) {
+                    if (matrix[y - k][x + i] === 1) answer = false;
+                }
+            }
+            return answer;
+        };
+
+        const checkHeight = (xRandom: number, yRandom: number) => {
+            const h = 80; //max height with no injury
+            let answer = false;
+            for (let i = 0; i < h; i++) {
+                if (matrix[yRandom - i][xRandom] === 1) answer = true;
+            }
+            return answer;
+        };
+
+        if (checkAround(xRandom, yRandom) && checkHeight(xRandom, yRandom)) {
+            return { x: xRandom, y: yRandom };
+        } else return this.getWormPlace();
+    };
 }
