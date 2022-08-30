@@ -5,9 +5,9 @@
 }
 
 .main-screen-button-container {
-  width: 70%;
+  width: 60%;
   display: flex;
-  margin: 20% auto;
+  margin: 17% auto;
   gap: 4%;
   flex-wrap: wrap;
   justify-content: center;
@@ -147,8 +147,23 @@
   border: 1px solid black;
 }
 
-#volume {
+.volume-container {
+  // background-color: #dedede;
   width: 90%;
+  margin: 15px auto;
+  border: 1px solid black;
+}
+
+.settings-volume-title {
+  margin: 10px;
+  font-size: 1.2rem;
+  text-align: center;
+  font-weight: 400;
+}
+
+.volume {
+  width: 90%;
+  margin: 2% 5%;
 }
 
 
