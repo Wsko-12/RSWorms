@@ -67,7 +67,7 @@ export default class Bullet extends Entity {
         this.object3D = new Group();
         this.bulletMesh = new Mesh(geometry, material);
         this.object3D.add(this.bulletMesh);
-        this.object3D.position.z = (this.position.x, this.position.y, 0);
+        this.object3D.position.z = 0;
 
         this.explosionAnimation = this.createExplosionMesh();
 
@@ -172,7 +172,7 @@ export default class Bullet extends Entity {
         entities.forEach((entity) => {
             if (entity != this) {
                 const dist = this.position.getDistanceToPoint(entity.position);
-                if (explosionOptions.radius >= dist - entity.radius) {
+                if (explosionOptions.radius >= dist + entity.radius) {
                     entity.acceptExplosion(mapMatrix, entities, explosionOptions);
                 }
             }
@@ -189,13 +189,6 @@ export default class Bullet extends Entity {
         this.updateObjectRotation();
         if (!this.isRemoved) {
             super.update(mapMatrix, entities, wind, waterLevel);
-        }
-        if (
-            this.position.y < 0 ||
-            this.position.x < -mapMatrix.getSizeX() ||
-            this.position.x > mapMatrix.getSizeX() * 2
-        ) {
-            this.remove();
         }
         this.object3D.position.z = ELayersZ.bullets;
     }

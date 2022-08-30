@@ -16,7 +16,6 @@ export default class gameplayManager {
     private currentTurn = -1;
     private turnTimestamp = 0;
     private turnTime = 30;
-    private endTurnTime = 5;
     private isEnding = 0;
     private isBetweenTurns = false;
 
@@ -79,6 +78,10 @@ export default class gameplayManager {
         this.isEnding = 0;
         this.turnTimestamp = Date.now();
         this.currentTurn++;
+        if (this.currentTurn % 3 === 0) {
+            this.entityManager.generateFallenItem();
+        }
+
         const wind = this.world.changeWind();
         this.gameInterface.windElement.update(wind);
         const teamIndex = this.currentTurn % this.teams.length;
@@ -88,6 +91,11 @@ export default class gameplayManager {
         currentWorm.startTurn(this.endTurn);
         this.gameInterface.timerElement.show(true);
         this.ioManager.wormManager.setWorm(currentWorm);
+
+        const point = currentWorm.getPositionPoint();
+        point.x = Math.round(point.x);
+        point.y = Math.round(point.y);
+        this.gameInterface.getGameCamera().moveTo(point);
     }
 
     endTurn: TEndTurnCallback = (delaySec: number) => {

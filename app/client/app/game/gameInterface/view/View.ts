@@ -1,4 +1,5 @@
 import Inventory from './inventory/Inventory';
+import MobileInterface from './mobile/MobileInterface';
 import './style.scss';
 import TeamsHP from './teamHP/TeamHP';
 import TimerInterface from './timer/Timer';
@@ -11,6 +12,7 @@ export default class View {
     private wind = new WindInterface();
     private teamsHP = new TeamsHP();
     private inventory = new Inventory();
+    private mobileInterface = new MobileInterface(this.mainHandler);
 
     public timerElement = {
         update: this.timer.update,
@@ -45,6 +47,9 @@ export default class View {
         this.guiContainer.append(teamsHPElement);
 
         const inventory = this.inventory.getElement();
+
+        const mobileInterface = this.mobileInterface.getElement();
+        document.body.append(mobileInterface);
 
         document.body.append(this.mainCanvas);
         document.body.append(this.mainHandler);

@@ -1,8 +1,10 @@
 import { Scene } from 'three';
-import { ELang, ESizes } from '../../../../../ts/enums';
+import { EFallenObjects, ESizes } from '../../../../../ts/enums';
 import { TLoopCallback } from '../../../../../ts/types';
 import WorldMap from '../worldMap/WorldMap';
 import Entity from './Entity';
+import Aidkit from './fallenItem/aidkit/Aidkit';
+import Barrel from './fallenItem/barrel/Barrel';
 import Worm from './worm/Worm';
 
 const test = -80;
@@ -36,6 +38,23 @@ export default class EntityManager {
             return worm;
         }
         return null;
+    }
+
+    public generateFallenItem() {
+        if (!this.worldMap) {
+            throw new Error(`[EntityManager generateFallenItem] can't find worldMap`);
+        }
+        const items = Object.values(EFallenObjects).filter((item) => Number.isNaN(Number(item)));
+        const index = Math.floor(Math.random() * items.length);
+
+        const constructors = [Aidkit, Barrel];
+        const Item = constructors[index];
+
+        const x = this.worldMap.getMapMatrix().matrix[0].length * Math.random();
+        const y = this.worldMap.getMapMatrix().matrix.length;
+        const item = new Item(x, y);
+        this.addEntity(item);
+        this.mainScene.add(item.getObject3D());
     }
 
     public update = (time: number, wind: number, waterLevel: number) => {

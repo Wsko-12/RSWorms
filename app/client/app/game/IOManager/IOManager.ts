@@ -36,7 +36,7 @@ export default class IOManager {
             }
         });
 
-        this.gameInterface.getMainHandler().addEventListener(ECustomEvents.click, (e) => {
+        this.gameInterface.getMainHandler().addEventListener(ECustomEvents.click, () => {
             this.gameInterface.showInventory(true);
         });
 

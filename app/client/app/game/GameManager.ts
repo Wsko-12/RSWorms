@@ -8,6 +8,7 @@ import SoundManager from '../soundManager/SoundManager';
 import GameplayManager from './gameplayManager/GameplayManager';
 import World from './world/World';
 import Stats from 'three/examples/jsm/libs/stats.module';
+import FallenItem from './world/entity/fallenItem/FallenItem';
 const stats = Stats();
 export default class GameManager {
     private options: IStartGameOptions;
@@ -38,6 +39,7 @@ export default class GameManager {
 
                 sprite: new Loop(25, (time) => {
                     this.world.spriteLoop(time);
+                    FallenItem.spriteLoop();
                 }),
 
                 turnLoop: new Loop(2, () => {
@@ -59,6 +61,7 @@ export default class GameManager {
     private async start() {
         await AssetsManager.init(this.options);
         await this.world.init();
+        FallenItem.createTextures();
         this.gameplayManager.init(this.options);
         Object.values(this.loops.all).forEach((loop) => loop.switcher(true));
         this.interface.buildToDocument();
