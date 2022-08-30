@@ -1,4 +1,4 @@
-import PageBuilder from '../../../utils/pageBuilder';
+import PageBuilder from '../../../utils/PageBuilder';
 
 export default function createSettingsPage(w: number, h: number) {
     const settings = PageBuilder.createElement('div', { classes: 'settings' });
@@ -23,7 +23,7 @@ export default function createSettingsPage(w: number, h: number) {
             <div class="team-name-container">
                 <h3 class="settings-title">Team Name</h3>
                 <div class="team-name-input-container">
-                    <input class="input-text team-name" type="text" value="Team">
+                    <input class="input-text team-name-input" type="text" value="Team">
                     <button class="random-btn" id="team-random-btn">?</button>
                 </div>
             </div>

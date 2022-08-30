@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { EMapPacksDecorItems, EMapPacksNames, EWorldSizes } from '../../../ts/enums';
 import { TStartGameCallback } from '../../../ts/types';
-import PageBuilder from '../../utils/pageBuilder';
+import PageBuilder from '../../utils/PageBuilder';
 import './style.scss';
 import { Context } from 'vm';
 import createSettingsPage from './Settings/settings';
@@ -18,7 +18,7 @@ export default class Lobby {
     windowHeight = 0;
     windowWidth = 0;
     teamName = 'Team';
-    memberNames = ['Worm1', 'Worm2', 'Worm3', 'Worm4', 'Worm5'];
+    memberNames = ['Worm1', 'Worm2', 'Worm3', 'Worm4', 'Worm5', 'Worm6'];
     randomTeamNames = ['Developers', 'ProjectCrashers', 'Loosers'];
     randomMemberNames = ['Aleg3000', 'Wsko', 'Overlord', 'Guy', 'Big One', 'OG Worm', 'Fat Ass'];
     ctx: Context | null = null;
@@ -51,7 +51,7 @@ export default class Lobby {
             (document.querySelectorAll('.worm-name') as NodeListOf<HTMLInputElement>).forEach((worm) => {
                 this.memberNames.push(worm.value);
             });
-            this.teamName = (document.querySelector('.team-name') as HTMLInputElement).value;
+            this.teamName = (document.querySelector('.team-name-input') as HTMLInputElement).value;
             console.log(this.teamName, this.memberNames);
         });
 
@@ -92,7 +92,6 @@ export default class Lobby {
             // проверка громкости (уже не так)
         });
 
-
         const returnBtns = document.querySelectorAll('.return-button');
         returnBtns.forEach((btn) => {
             btn.addEventListener('click', () => {
@@ -117,9 +116,7 @@ export default class Lobby {
         const canvas = document.getElementById('canvas-lobby') as HTMLCanvasElement;
         this.ctx = canvas.getContext('2d');
 
-        window.addEventListener('resize', () => {
-            this.resize();
-        });
+        window.addEventListener('resize', this.resize);
     }
 
     private createMainScreen() {
@@ -181,6 +178,7 @@ export default class Lobby {
     };
 
     private startGame() {
+        window.removeEventListener('resize', this.resize);
         document.body.innerHTML = '';
         const seed = Math.random();
         // const seed = 0.7135371756374531;
@@ -201,10 +199,14 @@ export default class Lobby {
                 max: 6,
                 min: 2,
             },
-            wormsCount: 3,
+            wormsCount: 6,
             multiplayer: false,
-            teamNames: ['team-a', 'team-b'],
-            playerNames: [],
+            // teamNames: ['team-a', 'team-b'],
+            // playerNames: [],
+            teams: [
+                { name: this.teamName, worms: this.memberNames },
+                { name: 'team-b', worms: ['a', 'b'] },
+            ],
         });
     }
 
@@ -243,10 +245,10 @@ export default class Lobby {
         }
     }
 
-    private resize() {
+    private resize = () => {
         document.body.innerHTML = '';
         this.start();
-    }
+    };
 
     public start() {
         this.createLobby();

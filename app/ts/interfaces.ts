@@ -14,8 +14,14 @@ export interface IStartGameOptions {
     };
     wormsCount: number;
     multiplayer: boolean;
-    teamNames: string[];
-    playerNames: string[];
+    teams: ITeam[];
+    // teamNames: string[];
+    // playerNames: string[];
+}
+
+interface ITeam {
+    name: string;
+    worms: string[];
 }
 
 export interface IGMLoops {

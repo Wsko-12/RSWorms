@@ -76,11 +76,11 @@ export default class Worm extends Entity {
 
     private hp: number;
 
-    constructor(wormIndex: number, teamIndex: number, x = 0, y = 0, hp = 100) {
+    constructor(wormIndex: number, teamIndex: number, wormName: string, x = 0, y = 0, hp = 100) {
         super(ESizes.worm, x, y);
         this.index = wormIndex;
         this.team = teamIndex;
-        this.name = 'Worm_' + wormIndex;
+        this.name = wormName || 'worm_' + wormIndex;
         this.physics.friction = 0.1;
         const geometry = new PlaneBufferGeometry(this.radius * 5, this.radius * 5);
         const material = new MeshBasicMaterial({

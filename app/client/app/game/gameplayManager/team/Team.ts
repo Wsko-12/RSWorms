@@ -1,4 +1,4 @@
-import { ELangs } from '../../../../../ts/enums';
+import { ELang } from '../../../../../ts/enums';
 import { TRemoveEntityCallback } from '../../../../../ts/types';
 import Worm from '../../world/entity/worm/Worm';
 
