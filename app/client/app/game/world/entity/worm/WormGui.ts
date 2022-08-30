@@ -84,7 +84,9 @@ export default class WormGui {
         };
 
         this.object3D.add(mesh, damageMesh);
-        this.draw();
+        setTimeout(() => {
+            this.draw();
+        }, 500);
     }
 
     public show(flag: boolean) {
