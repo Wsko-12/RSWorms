@@ -246,7 +246,7 @@ export default class Lobby {
                 max: 6,
                 min: 2,
             },
-            wormsCount: 6,
+            wormsCount: 4,
             multiplayer: false,
             teams: [
                 {
