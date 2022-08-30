@@ -161,4 +161,3 @@ export const enum ESoundsWormSpeech {
 export const enum ECustomEvents {
     click = 'custom-click',
 }
-
