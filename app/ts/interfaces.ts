@@ -1,6 +1,6 @@
 import Loop from '../client/app/game/loop/Loop';
 import { Point2, Vector2 } from '../client/utils/geometry';
-import { EMapPacksNames, EWorldSizes } from './enums';
+import { ELang, EMapPacksNames, EWorldSizes } from './enums';
 import { TClassProperty, TAttrProperty, TDatasetProperty, TContentProperty } from './types';
 
 export interface IStartGameOptions {
@@ -22,6 +22,7 @@ export interface IStartGameOptions {
 interface ITeam {
     name: string;
     worms: string[];
+    lang: ELang;
 }
 
 export interface IGMLoops {

@@ -4,7 +4,7 @@ import AssetsManager from './assetsManager/AssetsManager';
 import GameInterface from './gameInterface/GameInterface';
 import IOManager from './IOManager/IOManager';
 import Loop from './loop/Loop';
-import SoundManager from './soundManager/SoundManager';
+import SoundManager from '../soundManager/SoundManager';
 import GameplayManager from './gameplayManager/GameplayManager';
 import World from './world/World';
 import Stats from 'three/examples/jsm/libs/stats.module';
@@ -15,12 +15,10 @@ export default class GameManager {
     private loops: IGMLoops;
     private interface = new GameInterface();
     private gameplayManager: GameplayManager;
-    private soundManager: SoundManager;
     private IOManager: IOManager;
     constructor(options: IStartGameOptions) {
         this.options = options;
         this.world = new World(options);
-        this.soundManager = new SoundManager();
         this.IOManager = new IOManager(this.interface, this.world);
 
         this.gameplayManager = new GameplayManager(this.world, this.IOManager, this.interface);

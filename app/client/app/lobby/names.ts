@@ -1,4 +1,4 @@
-const randomTeamNames = ['Developers', 'ProjectCrashers', 'Loosers'];
+const randomTeamNames = ['Developers', 'ProjectCrashers', 'Loosers', 'Bad Guys', 'Seniors'];
 const randomMemberNames = [
     'Aleg3000',
     'Wsko',

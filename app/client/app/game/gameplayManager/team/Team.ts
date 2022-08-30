@@ -8,9 +8,11 @@ export default class Team {
     index: number;
     name: string;
     maxWorms = 0;
-    constructor(index: number, name?: string) {
+    lang: ELang;
+    constructor(index: number, name?: string, lang = ELang.rus) {
         this.name = name || 'developers' + index;
         this.index = index;
+        this.lang = lang;
     }
 
     pushWorm(worm: Worm) {

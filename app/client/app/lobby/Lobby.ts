@@ -1,17 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { EMapPacksDecorItems, EMapPacksNames, EWorldSizes } from '../../../ts/enums';
+import { ELang, EMapPacksDecorItems, EMapPacksNames, ESoundsBG, ESoundsBullet, ESoundsFX, ESoundsWeapon, ESoundsWormSpeech, EWorldSizes } from '../../../ts/enums';
 import { TStartGameCallback } from '../../../ts/types';
 import PageBuilder from '../../utils/PageBuilder';
 import './style.scss';
 import { Context } from 'vm';
 import createSettingsPage from './Settings/settings';
 import { getRandomMemberName, getRandomTeamName } from './names';
+import createNetworkLobbyPage from './NetworkLobby/networkLobby';
+import SoundManager from '../soundManager/SoundManager';
 
 export default class Lobby {
     clouds: any[] = [];
     cloud: any;
     mainScreen: any;
     settings: any;
+    networkLobby: any;
     customGameScreen: any;
     lobbyWrapper: any;
     canvasHeight = 0;
@@ -34,6 +37,11 @@ export default class Lobby {
                 });
             }, 1500);
         });
+    }
+
+    private createNetworkLobby() {
+        this.networkLobby = createNetworkLobbyPage(this.windowWidth, this.windowHeight);
+        this.lobbyWrapper.append(this.networkLobby);
     }
 
     private createSettings() {
@@ -95,9 +103,28 @@ export default class Lobby {
 
         // end
 
-        document.querySelector('#volume')?.addEventListener('change', () => {
-            console.log('hi');
-            // проверка громкости (уже не так)
+        const soundBG = document.querySelector('#volume-bg');
+        const soundSFX = document.querySelector('#volume-sfx');
+        const soundWorm = document.querySelector('#volume-worm');
+        soundBG?.addEventListener('change', (e) => {
+            const volume = +(e.currentTarget as HTMLInputElement).value / 100;
+            SoundManager.background.volume = volume;
+            SoundManager.playBackground(ESoundsBG.outerspace);
+            setTimeout(() => SoundManager.background.pause(), 1000);
+        });
+        soundSFX?.addEventListener('change', (e) => {
+            const volume = +(e.currentTarget as HTMLInputElement).value / 100;
+            SoundManager.sfx.volume = volume;
+            SoundManager.bullet.volume = volume;
+            SoundManager.weapon.volume = volume;
+            SoundManager.worm.volume = volume;
+            SoundManager.timer.volume = volume;
+            SoundManager.playWeapon(ESoundsWeapon.holyGrenade);
+        });
+        soundWorm?.addEventListener('change', (e) => {
+            const volume = +(e.currentTarget as HTMLInputElement).value / 100;
+            SoundManager.wormSpeech.volume = volume;
+            SoundManager.playWormSpeech(ELang.rus, ESoundsWormSpeech.youllRegret);
         });
 
         const returnBtns = document.querySelectorAll('.return-button');
@@ -150,6 +177,14 @@ export default class Lobby {
         });
         const networkGameBtn = PageBuilder.createElement('div', { classes: 'main-screen-button' });
         networkGameBtn.style.backgroundImage = 'url(./assets/lobby/main-screen/wormsnetwork.jpeg)';
+        networkGameBtn.addEventListener('click', () => {
+            console.log(this.networkLobby);
+            this.networkLobby.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+            });
+        });
+
         const settingBtn = PageBuilder.createElement('div', { classes: 'main-screen-button' });
         settingBtn.style.backgroundImage = 'url(./assets/lobby/main-screen/wormssettings.jpeg)';
         settingBtn.addEventListener('click', () => {
@@ -217,8 +252,13 @@ export default class Lobby {
                         this.memberNames.length !== 0
                             ? this.memberNames
                             : new Array(6).fill(1).map((el) => getRandomMemberName()),
+                    lang: ELang.rus,
                 },
-                { name: getRandomTeamName(), worms: new Array(6).fill(1).map((el) => getRandomMemberName()) },
+                {
+                    name: getRandomTeamName(),
+                    worms: new Array(6).fill(1).map((el) => getRandomMemberName()),
+                    lang: ELang.eng,
+                },
             ],
         });
     }
@@ -268,6 +308,7 @@ export default class Lobby {
         this.createMainScreen();
         this.createCustomGameScreen();
         this.createSettings();
+        this.createNetworkLobby();
         this.mainScreen.scrollIntoView();
         this.createClouds();
         this.afterRender();
