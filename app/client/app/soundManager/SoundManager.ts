@@ -39,7 +39,6 @@ export default class SoundManager {
     }
     static playBackground(bg: ESoundsBG) {
         this.background.src = this.pathToAudio + this.paths.background + bg + this.extention;
-        this.background.volume = 0.25;
         this.background.loop = true;
         this.background.play();
         // make autoplay;
