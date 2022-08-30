@@ -1,6 +1,15 @@
-import { TClassProperty, TAttrProperty, TDatasetProperty, TContentProperty } from '../../ts/types';
+type TClassProperty = string[] | string;
+type TAttrProperty = { [key: string]: string | number | boolean };
+type TDatasetProperty = { [key: string]: string | number };
+type TContentProperty = string | (HTMLElement | string)[] | HTMLElement;
 
-import { ICreateElementProps } from '../../ts/interfaces';
+export interface ICreateElementProps {
+    classes?: TClassProperty;
+    id?: string;
+    attrs?: TAttrProperty;
+    dataset?: TDatasetProperty;
+    content?: TContentProperty;
+}
 
 const prepareClassString = (str: string) => {
     return str
