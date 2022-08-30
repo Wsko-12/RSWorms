@@ -1,5 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ELang, EMapPacksDecorItems, EMapPacksNames, ESoundsBG, ESoundsBullet, ESoundsFX, ESoundsWeapon, ESoundsWormSpeech, EWorldSizes } from '../../../ts/enums';
+import {
+    ELang,
+    EMapPacksDecorItems,
+    EMapPacksNames,
+    ESoundsBG,
+    ESoundsBullet,
+    ESoundsFX,
+    ESoundsWeapon,
+    ESoundsWormSpeech,
+    EWorldSizes,
+} from '../../../ts/enums';
 import { TStartGameCallback } from '../../../ts/types';
 import PageBuilder from '../../utils/PageBuilder';
 import './style.scss';
@@ -236,6 +246,7 @@ export default class Lobby {
         // const seed = 0.8253192090559442;
         // const seed = 0.2921779319246529;
         // const seed = 0.5464200270095712;
+        // const seed = 0.11259509204096174;
         console.log('Seed: ', seed);
         this.startGameCallback({
             mapTexturePackName: EMapPacksNames.moon,

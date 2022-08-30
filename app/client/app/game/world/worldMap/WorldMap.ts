@@ -432,7 +432,7 @@ export default class WorldMap {
         const r = ESizes.worm;
 
         const spawnZone = width / 1.5;
-        const xRandom = Math.round(random.get() * spawnZone + (width - spawnZone) / 2);
+        const xRandom = Math.round(Math.random() * spawnZone + (width - spawnZone) / 2);
 
         const placesY: number[] = [];
 

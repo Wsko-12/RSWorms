@@ -44,13 +44,6 @@ export default class WormGui {
         this.canvas.width = canvasSize;
         this.canvas.height = canvasSize;
 
-        if (this.ctx) {
-            this.ctx.textAlign = 'center';
-            this.ctx.strokeStyle = 'black';
-            this.ctx.lineWidth = 10;
-            this.ctx.font = `${this.canvasSize / 5}px DynaPuff`;
-        }
-
         const geometry = new PlaneBufferGeometry(size, size);
         const material = new MeshBasicMaterial({
             map: this.texture,
@@ -155,6 +148,13 @@ export default class WormGui {
     }
 
     private draw() {
+        if (!this.ctx) {
+            return;
+        }
+        this.ctx.textAlign = 'center';
+        this.ctx.strokeStyle = 'black';
+        this.ctx.lineWidth = 10;
+        this.ctx.font = `${this.canvasSize / 5}px DynaPuff`;
         this.ctx?.clearRect(0, 0, this.canvasSize, this.canvasSize);
         this.drawHp();
         this.drawName();
