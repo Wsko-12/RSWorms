@@ -1,6 +1,7 @@
 import { CanvasTexture, Mesh, MeshBasicMaterial, NearestFilter, Object3D, PlaneBufferGeometry, Texture } from 'three';
-import { ELayersZ, EProportions } from '../../../../../ts/enums';
+import { ELayersZ, EProportions, ESizes } from '../../../../../ts/enums';
 import { IStartGameOptions } from '../../../../../ts/interfaces';
+import { Point2 } from '../../../../utils/geometry';
 import LoadingPage from '../../../../utils/LoadingPage/LoadingPage';
 import Perlin from '../../../../utils/p5/Perlin';
 import Random from '../../../../utils/Random';
@@ -424,36 +425,55 @@ export default class WorldMap {
         return this.getObjectPlace(matrix, width, height, attempt - 1);
     };
 
-    public getWormPlace = (): { x: number; y: number } => {
-        const matrix = this.mapMatrix.matrix;
-        const width = this.sizes.width;
-        const height = this.sizes.height;
-        const yRandom: number = Math.round(height * Math.random() * 0.65 + 0.1 * height);
-        const xRandom: number = Math.round(width * Math.random() * 0.75 + 0.15 * width);
+    public getWormPlace = (attempt = 5): { x: number; y: number } => {
+        const { matrix } = this.mapMatrix;
+        const { width, height } = this.sizes;
+        const { random } = this;
+        const r = ESizes.worm;
 
-        const checkAround = (x: number, y: number) => {
-            let answer = true;
-            x -= 20;
-            y += 20;
-            for (let i = 0; i < 40; i++) {
-                for (let k = 0; k < 40; k++) {
-                    if (matrix[y - k][x + i] === 1) answer = false;
+        const spawnZone = width / 1.5;
+        const xRandom = Math.round(random.get() * spawnZone + (width - spawnZone) / 2);
+
+        const placesY: number[] = [];
+
+        for (let y = height - 4; y > 0; y--) {
+            const prevCell = matrix[y + 1][xRandom];
+            const cell = matrix[y][xRandom];
+            if (cell === 1 && prevCell === 0) {
+                placesY.push(y);
+            }
+        }
+        placesY.reverse();
+
+        const ceilsAroundAreEmpty = (xN: number, yN: number, r: number) => {
+            const iX = Math.floor(xN);
+            const iY = Math.floor(yN);
+            const point = new Point2(xN, yN);
+            const roundedRadius = Math.round(r);
+            for (let y = iY - roundedRadius; y < iY + roundedRadius; y++) {
+                for (let x = iX - roundedRadius; x < iX + roundedRadius; x++) {
+                    const dist = point.getDistanceToPoint(new Point2(x, y));
+                    if (dist <= roundedRadius) {
+                        if (matrix[y] && matrix[y][x] === 1) {
+                            return false;
+                        }
+                    }
                 }
             }
-            return answer;
+
+            return true;
         };
 
-        const checkHeight = (xRandom: number, yRandom: number) => {
-            const h = 80; //max height with no injury
-            let answer = false;
-            for (let i = 0; i < h; i++) {
-                if (matrix[yRandom - i][xRandom] === 1) answer = true;
+        for (let i = 0; i < placesY.length; i++) {
+            const yCord = placesY[i];
+            if (ceilsAroundAreEmpty(xRandom, yCord + r + 5, r)) {
+                return { x: xRandom, y: yCord + r + 5 };
             }
-            return answer;
-        };
+        }
 
-        if (checkAround(xRandom, yRandom) && checkHeight(xRandom, yRandom)) {
-            return { x: xRandom, y: yRandom };
-        } else return this.getWormPlace();
+        if (attempt > 0) {
+            return this.getWormPlace(attempt - 1);
+        }
+        return { x: xRandom, y: height };
     };
 }

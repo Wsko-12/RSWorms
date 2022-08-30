@@ -31,7 +31,6 @@ export default class EntityManager {
             if (!place) {
                 throw new Error("[EntityManager generateWorm] can't find place");
             }
-            place.y += ESizes.worm;
             const worm = new Worm(wormIndex, teamIndex, place.x, place.y);
             this.addEntity(worm);
             this.mainScene.add(worm.getObject3D());

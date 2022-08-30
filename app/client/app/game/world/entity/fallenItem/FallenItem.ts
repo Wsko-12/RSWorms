@@ -8,7 +8,6 @@ export default abstract class FallenItem extends Entity {
     private static sprites: Record<string, { update: () => void; texture: Texture }> = {};
     public static createTextures() {
         const textures = Object.values(EFallenObjects).filter((item) => Number.isNaN(Number(item)));
-        console.log(textures);
         textures.forEach((name) => {
             const image = AssetsManager.getEffectTexture(name as string);
             if (!image) {
