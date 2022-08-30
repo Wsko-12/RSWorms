@@ -5,6 +5,7 @@ import PageBuilder from '../../utils/PageBuilder';
 import './style.scss';
 import { Context } from 'vm';
 import createSettingsPage from './Settings/settings';
+import { getRandomMemberName, getRandomTeamName } from './names';
 
 export default class Lobby {
     clouds: any[] = [];
@@ -17,15 +18,22 @@ export default class Lobby {
     canvasWidth = 0;
     windowHeight = 0;
     windowWidth = 0;
-    teamName = 'Team';
-    memberNames = ['Worm1', 'Worm2', 'Worm3', 'Worm4', 'Worm5', 'Worm6'];
-    randomTeamNames = ['Developers', 'ProjectCrashers', 'Loosers'];
-    randomMemberNames = ['Aleg3000', 'Wsko', 'Overlord', 'Guy', 'Big One', 'OG Worm', 'Fat Ass'];
+    teamName = 'Developers';
+    enemyTeamName = 'Bad Guys';
+    memberNames: string[] = [];
     ctx: Context | null = null;
     private startGameCallback: TStartGameCallback;
     constructor(startGameCallback: TStartGameCallback) {
         this.startGameCallback = startGameCallback;
         this.loop();
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                this.mainScreen.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                });
+            }, 1500);
+        });
     }
 
     private createSettings() {
@@ -37,13 +45,13 @@ export default class Lobby {
         const teamRandomBtn = document.querySelector('#team-random-btn');
         teamRandomBtn?.addEventListener('click', (e) => {
             const input = (e.currentTarget as HTMLElement).previousElementSibling as HTMLInputElement;
-            input.value = this.randomTeamNames[Math.floor(Math.random() * this.randomTeamNames.length)];
+            input.value = getRandomTeamName();
         });
         const membersRandomBtns = document.querySelectorAll('#member-random-btn');
         membersRandomBtns.forEach((btn) => {
             btn.addEventListener('click', (e) => {
                 const input = (e.currentTarget as HTMLElement).previousElementSibling as HTMLInputElement;
-                input.value = this.randomMemberNames[Math.floor(Math.random() * this.randomMemberNames.length)];
+                input.value = getRandomMemberName();
             });
         });
         document.querySelector('.create')?.addEventListener('click', () => {
@@ -202,11 +210,15 @@ export default class Lobby {
             },
             wormsCount: 6,
             multiplayer: false,
-            // teamNames: ['team-a', 'team-b'],
-            // playerNames: [],
             teams: [
-                { name: this.teamName, worms: this.memberNames },
-                { name: 'team-b', worms: ['a', 'b'] },
+                {
+                    name: this.teamName,
+                    worms:
+                        this.memberNames.length !== 0
+                            ? this.memberNames
+                            : new Array(6).fill(1).map((el) => getRandomMemberName()),
+                },
+                { name: getRandomTeamName(), worms: new Array(6).fill(1).map((el) => getRandomMemberName()) },
             ],
         });
     }
@@ -258,10 +270,6 @@ export default class Lobby {
         this.createSettings();
         this.mainScreen.scrollIntoView();
         this.createClouds();
-        this.mainScreen.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
-        });
         this.afterRender();
     }
 }

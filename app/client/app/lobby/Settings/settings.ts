@@ -20,14 +20,14 @@ export default function createSettingsPage(w: number, h: number) {
     // createTeamContainer.append(teamNameContainer);
 
     createTeamContainer.innerHTML = `
-            <div class="team-name-container">
+            <div class="teamname-container">
                 <h3 class="settings-title">Team Name</h3>
                 <div class="team-name-input-container">
                     <input class="input-text team-name-input" type="text" value="Team">
                     <button class="random-btn" id="team-random-btn">?</button>
                 </div>
             </div>
-            <div class="team-name-container">
+            <div class="teamname-container">
                 <h3 class="settings-title">Team Members</h3>
                 <div class="team-name-input-container">
                     <input class="input-text worm-name" id="team-name" type="text" value="Worm 1" data-id="worm1">
