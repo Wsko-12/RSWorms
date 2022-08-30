@@ -460,14 +460,13 @@ export default class Worm extends Entity {
             this.finalExplosion.explode(mapMatrix, entities);
         }
 
-        if (this.position.y < 0) {
+        if (this.position.y <= 0) {
             this.setHP(-this.getHP());
             SoundManager.playWormAction(ESoundsWormAction.splash);
             this.moveStates.isDead = true;
             if (this.endTurnCallback) {
                 this.endTurnCallback(5);
             }
-            this.remove();
         }
         // temporary
         {

@@ -3,6 +3,7 @@ import { ESizes } from '../../../../../ts/enums';
 import { TLoopCallback } from '../../../../../ts/types';
 import WorldMap from '../worldMap/WorldMap';
 import Entity from './Entity';
+import Barrel from './fallenItem/barrel/Barrel';
 import Worm from './worm/Worm';
 
 const test = -80;
@@ -36,6 +37,17 @@ export default class EntityManager {
             return worm;
         }
         return null;
+    }
+
+    public generateFallenItem() {
+        if (!this.worldMap) {
+            throw new Error(`[EntityManager generateFallenItem] can't find worldMap`);
+        }
+        const x = this.worldMap.getMapMatrix().matrix[0].length * Math.random();
+        const y = this.worldMap.getMapMatrix().matrix.length;
+        const item = new Barrel(x, y);
+        this.addEntity(item);
+        this.mainScene.add(item.getObject3D());
     }
 
     public update = (time: number, wind: number, waterLevel: number) => {

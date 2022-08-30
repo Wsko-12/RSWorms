@@ -6,7 +6,7 @@ export default class EffectTextures extends PackTextureLoader {
         const mapTexturesFolder = './client/assets/effects/';
         const path = mapTexturesFolder;
 
-        const textures = ['explosion'];
+        const textures = ['explosion', 'barrel'];
         const loading = LoadingPage.start('Loading Effects textures', textures.length);
         await this.loadPngArray(textures, path, loading);
         loading.done();
