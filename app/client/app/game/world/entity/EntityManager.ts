@@ -1,5 +1,5 @@
 import { Scene } from 'three';
-import { EFallenObjects, ESizes } from '../../../../../ts/enums';
+import { EFallenObjects, ELang, ESizes } from '../../../../../ts/enums';
 import { TLoopCallback } from '../../../../../ts/types';
 import WorldMap from '../worldMap/WorldMap';
 import Entity from './Entity';

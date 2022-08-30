@@ -1,7 +1,7 @@
 import { ESoundsBullet } from '../../../../../../../../../../ts/enums';
 import { IExplosionOptions } from '../../../../../../../../../../ts/interfaces';
 import { Point2 } from '../../../../../../../../../utils/geometry';
-import SoundManager from '../../../../../../../soundManager/SoundManager';
+import SoundManager from '../../../../../../../../soundManager/SoundManager';
 import MapMatrix from '../../../../../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../../../../../Entity';
 import Barrel from '../../../../../fallenItem/barrel/Barrel';
