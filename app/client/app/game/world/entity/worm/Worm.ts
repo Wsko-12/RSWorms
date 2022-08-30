@@ -6,6 +6,7 @@ import { Point2, Vector2 } from '../../../../../utils/geometry';
 import SoundManager from '../../../soundManager/SoundManager';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
+import Aidkit from '../fallenItem/aidkit/Aidkit';
 import BWormFinalExplosion from './weapon/bullet/throwable/Fallen/BWormFinalExplosion';
 import WBazooka from './weapon/weapon/powerable/bazooka/Bazooka';
 import WGrenade from './weapon/weapon/powerable/grenade/Grenade';
@@ -337,6 +338,7 @@ export default class Worm extends Entity {
                     const dist = point.getDistanceToPoint(entity.position);
                     if (dist <= entity.radius) {
                         const dY = y - this.position.y;
+                        this.handleEntityCollision(entity);
                         if (dY < 0) {
                             collision = true;
                             responseX += x - this.position.x;
@@ -371,6 +373,13 @@ export default class Worm extends Entity {
         }
 
         return collision ? new Vector2(responseX, responseY) : null;
+    }
+
+    private handleEntityCollision(entity: Entity) {
+        if (entity instanceof Aidkit) {
+            this.setHP(entity.acceptHelp());
+            this.gui.setActualHp(this.getHP());
+        }
     }
 
     public acceptExplosion(mapMatrix: MapMatrix, entities: Entity[], options: IExplosionOptions) {

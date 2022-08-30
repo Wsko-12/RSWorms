@@ -3,6 +3,7 @@ import { ESizes } from '../../../../../ts/enums';
 import { TLoopCallback } from '../../../../../ts/types';
 import WorldMap from '../worldMap/WorldMap';
 import Entity from './Entity';
+import Aidkit from './fallenItem/aidkit/Aidkit';
 import Barrel from './fallenItem/barrel/Barrel';
 import Worm from './worm/Worm';
 
@@ -45,7 +46,7 @@ export default class EntityManager {
         }
         const x = this.worldMap.getMapMatrix().matrix[0].length * Math.random();
         const y = this.worldMap.getMapMatrix().matrix.length;
-        const item = new Barrel(x, y);
+        const item = new Aidkit(x, y);
         this.addEntity(item);
         this.mainScene.add(item.getObject3D());
     }

@@ -6,7 +6,7 @@ export default abstract class FallenItem extends Entity {
     private static texturesPack = ['barrel'];
     private static sprites: Record<string, { update: () => void; texture: Texture }> = {};
     public static createTextures() {
-        const textures = ['barrel'];
+        const textures = ['barrel', 'aidkit'];
         textures.forEach((name) => {
             const image = AssetsManager.getEffectTexture(name);
             if (!image) {
