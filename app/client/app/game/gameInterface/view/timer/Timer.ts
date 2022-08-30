@@ -21,7 +21,11 @@ export default class TimerInterface {
 
     public update = (ms: number) => {
         const value = Math.floor(ms / 1000);
-        this.timer.innerHTML = value.toString();
+        if (value >= 0) {
+            this.timer.innerHTML = value.toString();
+        } else {
+            this.timer.innerHTML = '';
+        }
     };
 
     public show = (flag: boolean) => {

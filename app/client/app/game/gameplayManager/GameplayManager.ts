@@ -88,6 +88,11 @@ export default class gameplayManager {
         currentWorm.startTurn(this.endTurn);
         this.gameInterface.timerElement.show(true);
         this.ioManager.wormManager.setWorm(currentWorm);
+
+        const point = currentWorm.getPositionPoint();
+        point.x = Math.round(point.x);
+        point.y = Math.round(point.y);
+        this.gameInterface.getGameCamera().moveTo(point);
     }
 
     endTurn: TEndTurnCallback = (delaySec: number) => {
