@@ -166,3 +166,4 @@ export enum EFallenObjects {
     aidkit,
     barrel,
 }
+

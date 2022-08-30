@@ -5,7 +5,7 @@ import { IBulletOptions, IExplosionOptions } from '../../../../../../../../ts/in
 import { TRemoveEntityCallback } from '../../../../../../../../ts/types';
 import { Vector2 } from '../../../../../../../utils/geometry';
 import AssetsManager from '../../../../../assetsManager/AssetsManager';
-import SoundManager from '../../../../../soundManager/SoundManager';
+import SoundManager from '../../../../../../soundManager/SoundManager';
 import MapMatrix from '../../../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../../../Entity';
 

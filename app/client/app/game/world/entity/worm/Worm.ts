@@ -3,7 +3,7 @@ import { ELang, ELayersZ, ESizes, ESoundsWormAction, ESoundsWormSpeech, EWeapons
 import { IExplosionOptions, IShootOptions, IWormMoveOptions, IWormMoveStates } from '../../../../../../ts/interfaces';
 import { TEndTurnCallback, TLoopCallback, TRemoveEntityCallback } from '../../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../../utils/geometry';
-import SoundManager from '../../../soundManager/SoundManager';
+import SoundManager from '../../../../soundManager/SoundManager';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
 import Aidkit from '../fallenItem/aidkit/Aidkit';
@@ -25,6 +25,7 @@ export default class Worm extends Entity {
     private index: number;
     private team: number;
     private name: string;
+    public wormLang: ELang;
 
     private endTurnCallback: TEndTurnCallback | null = null;
 
@@ -76,11 +77,12 @@ export default class Worm extends Entity {
     private hp: number;
     private maxHp: number;
 
-    constructor(wormIndex: number, teamIndex: number, x = 0, y = 0, hp = 100) {
+    constructor(wormIndex: number, teamIndex: number, wormName: string, wormLang: ELang, x = 0, y = 0, hp = 100) {
         super(ESizes.worm, x, y);
         this.index = wormIndex;
         this.team = teamIndex;
-        this.name = 'Worm_' + wormIndex;
+        this.wormLang = wormLang;
+        this.name = wormName || 'worm_' + wormIndex;
         this.physics.friction = 0.1;
         const geometry = new PlaneBufferGeometry(this.radius * 5, this.radius * 5);
         const material = new MeshBasicMaterial({
@@ -260,7 +262,7 @@ export default class Worm extends Entity {
         const slideAngle = Math.PI / 2 - Math.acos(normalSurface.dotProduct(velClone));
         const fallSpeed = vel.getLength();
         const isSlide = slideAngle > Math.PI / 8 && this.moveStates.isFall;
-        if (isSlide) SoundManager.playWormSpeech(ELang.rus, ESoundsWormSpeech.oof1);
+        if (isSlide) SoundManager.playWormSpeech(this.wormLang, ESoundsWormSpeech.oof1);
         const fallSpeedWithFriction = fallSpeed * this.physics.friction;
 
         const { flags } = this.movesOptions;

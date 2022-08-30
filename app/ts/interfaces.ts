@@ -1,6 +1,7 @@
 import Loop from '../client/app/game/loop/Loop';
 import { Point2, Vector2 } from '../client/utils/geometry';
-import { EMapPacksNames, EWorldSizes } from './enums';
+import { ELang, EMapPacksNames, EWorldSizes } from './enums';
+import { TClassProperty, TAttrProperty, TDatasetProperty, TContentProperty } from './types';
 
 export interface IStartGameOptions {
     mapTexturePackName: EMapPacksNames;
@@ -13,8 +14,15 @@ export interface IStartGameOptions {
     };
     wormsCount: number;
     multiplayer: boolean;
-    teamNames: string[];
-    playerNames: string[];
+    teams: ITeam[];
+    // teamNames: string[];
+    // playerNames: string[];
+}
+
+interface ITeam {
+    name: string;
+    worms: string[];
+    lang: ELang;
 }
 
 export interface IGMLoops {
@@ -76,4 +84,12 @@ export interface IWormMoveOptions {
 export interface ICustomMouseEvent {
     x: number;
     y: number;
+}
+
+export interface ICreateElementProps {
+    classes?: TClassProperty;
+    id?: string;
+    attrs?: TAttrProperty;
+    dataset?: TDatasetProperty;
+    content?: TContentProperty;
 }

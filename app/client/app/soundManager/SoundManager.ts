@@ -6,7 +6,7 @@ import {
     ESoundsWeapon,
     ESoundsWormAction,
     ESoundsWormSpeech,
-} from '../../../../ts/enums';
+} from '../../../ts/enums';
 
 export default class SoundManager {
     static background = new Audio();

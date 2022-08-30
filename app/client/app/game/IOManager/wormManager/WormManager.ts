@@ -1,7 +1,7 @@
 import { ELang, ESoundsWeapon, ESoundsWormAction, ESoundsWormSpeech } from '../../../../../ts/enums';
 import { EWeapons } from '../../../../../ts/enums';
 import { TChooseWeaponCallback, TLoopCallback } from '../../../../../ts/types';
-import SoundManager from '../../soundManager/SoundManager';
+import SoundManager from '../../../soundManager/SoundManager';
 import Worm from '../../world/entity/worm/Worm';
 
 export default class WormManager {
@@ -98,7 +98,7 @@ export default class WormManager {
         const jumpTimeout = () => {
             const t = setTimeout(() => {
                 worm.jump();
-                SoundManager.playWormSpeech(ELang.rus, ESoundsWormSpeech.jump1);
+                SoundManager.playWormSpeech(this.controlledWorm?.wormLang || ELang.rus, ESoundsWormSpeech.jump1);
             }, this.jumpButtonDelayMS + 1);
             return Number(t);
         };

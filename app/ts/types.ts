@@ -11,3 +11,11 @@ export type TRemoveEntityCallback = (entity: Entity) => void;
 export type TEndTurnCallback = (delaySec: number) => void;
 
 export type TChooseWeaponCallback = (weapon: EWeapons) => void;
+
+export type TClassProperty = string[] | string;
+
+export type TAttrProperty = { [key: string]: string | number | boolean };
+
+export type TDatasetProperty = { [key: string]: string | number };
+
+export type TContentProperty = string | (HTMLElement | string)[] | HTMLElement;

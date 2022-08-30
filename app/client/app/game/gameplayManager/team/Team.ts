@@ -1,4 +1,5 @@
 import { ELang } from '../../../../../ts/enums';
+import { TRemoveEntityCallback } from '../../../../../ts/types';
 import Worm from '../../world/entity/worm/Worm';
 
 export default class Team {
@@ -7,9 +8,11 @@ export default class Team {
     index: number;
     name: string;
     maxWorms = 0;
-    constructor(index: number, name?: string) {
+    lang: ELang;
+    constructor(index: number, name?: string, lang = ELang.rus) {
         this.name = name || 'developers' + index;
         this.index = index;
+        this.lang = lang;
     }
 
     pushWorm(worm: Worm) {

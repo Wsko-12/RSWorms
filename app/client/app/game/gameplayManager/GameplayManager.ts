@@ -43,11 +43,13 @@ export default class gameplayManager {
 
     private createTeams(options: IStartGameOptions) {
         if (!options.multiplayer) {
-            const teamsCount = options.teamNames.length;
+            const teamsCount = options.teams.length;
             for (let i = 0; i < teamsCount; i++) {
-                const team = new Team(i, options.teamNames[i]);
+                const teamOptions = options.teams[i];
+                const team = new Team(i, teamOptions.name, teamOptions.lang);
                 for (let j = 0; j < options.wormsCount; j++) {
-                    const worm = this.entityManager.generateWorm(i, j);
+                    const wormName = teamOptions.worms[j];
+                    const worm = this.entityManager.generateWorm(i, j, wormName, teamOptions.lang);
                     if (!worm) {
                         throw new Error(`[GameplayManager] can't create worm`);
                     }
@@ -59,6 +61,7 @@ export default class gameplayManager {
     }
 
     init(options: IStartGameOptions) {
+        console.log(options);
         this.createTeams(options);
         this.gameInterface.teamsHPElement.build(this.teams);
         this.gameInterface.teamsHPElement.update(this.teams);

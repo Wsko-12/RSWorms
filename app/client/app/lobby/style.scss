@@ -1,0 +1,279 @@
+.main-screen {
+  position: absolute;
+  background-color: transparent;
+  z-index: 10;
+}
+
+.main-screen-button-container {
+  width: 60%;
+  display: flex;
+  margin: 17% auto;
+  gap: 4%;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.main-screen-button {
+  margin-top: 30px;
+  width: 350px;
+  height: 220px;
+  border: 1px solid black;
+  cursor: pointer;
+  transition: transform 0.4s ease;
+  &:hover{
+      transform: scale(1.1);
+  }
+}
+
+.main-screen-title {
+  position: absolute;
+  top: 5%;
+  width: 500px;
+  height: 300px;
+  background-image: url(../../assets/lobby/main-screen/Logo.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.custom-game-screen {
+  position: absolute;
+  background-color: transparent;
+  z-index: 10;
+  display: flex;
+  gap: 10%;
+  padding: 20%;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.custom-game-screen-button {
+  background-color: green;
+  width: 300px;
+  height: 200px;
+  border: 1px solid black;
+}
+
+.return-button {
+  cursor: pointer;
+  position: absolute;
+  top: 2%;
+  left: 2%;
+  width: 60px;
+  height: 60px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: transform 0.4s ease;
+  &:hover{
+      transform: scale(1.2);
+  }
+}
+
+
+// settings
+
+.settings {
+  position: absolute;
+  background-color: transparent;
+  z-index: 10;
+  padding: 10%;
+  display: flex;
+  gap: 4%;
+}
+
+.create-team-container {
+  width: 48%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.teamname-container {
+  background-color: antiquewhite;
+  width: 100%;
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-title {
+  margin: 10px;
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.team-name-input-container {
+  width: 100%;
+  padding: 2%;
+  display: flex;
+  gap: 5px;
+}
+
+.input-text {
+  padding-left: 10px;
+  width: 90%;
+  height: 30px;
+}
+
+.random-btn {
+  height: 30px;
+  width: 10%;
+}
+
+.create {
+  width: 100%;
+  height: 40px;
+}
+
+
+
+
+
+
+
+.audio-options-container {
+  width: 48%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.audio-volume-container {
+  background-color: antiquewhite;
+  width: 100%;
+  border: 1px solid black;
+}
+
+.volume-container {
+  // background-color: #dedede;
+  width: 90%;
+  margin: 15px auto;
+  border: 1px solid black;
+}
+
+.settings-volume-title {
+  margin: 10px;
+  font-size: 1.2rem;
+  text-align: center;
+  font-weight: 400;
+}
+
+.volume {
+  width: 90%;
+  margin: 2% 5%;
+}
+
+
+
+.audio-speech-container {
+  background-color: antiquewhite;
+  width: 100%;
+  border: 1px solid black;
+}
+
+// some sort thing
+
+.__select {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  margin-bottom: 1.25rem;
+  background-color: #fff;
+}
+.__select[data-state="active"] .__select__title::before {
+  transform: translate(-3px, -50%) rotate(-45deg);
+}
+.__select[data-state="active"] .__select__title::after {
+  transform: translate(3px, -50%) rotate(45deg);
+}
+.__select[data-state="active"] .__select__content {
+  opacity: 1;
+}
+.__select[data-state="active"] .__select__label + .__select__input + .__select__label {
+  max-height: 40px;
+  border-top-width: 1px;
+}
+.__select__title {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 8px 16px;
+  border: solid 1px #000;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.__select__title::before, .__select__title::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  display: block;
+  width: 10px;
+  height: 2px;
+  transition: all 0.3s ease-out;
+  background-color: #333333;
+  transform: translate(-3px, -50%) rotate(45deg);
+}
+.__select__title::after {
+  transform: translate(3px, -50%) rotate(-45deg);
+}
+.__select__title:hover {
+  border-color: #000;
+}
+.__select__title:hover::before, .__select__title:hover::after {
+  background-color: #000;
+}
+.__select__content {
+  position: absolute;
+  top: 40px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #000;
+  border-top: none;
+  transition: all 0.3s ease-out;
+  opacity: 0;
+  z-index: 8;
+}
+.__select__input {
+  display: none;
+}
+.__select__input:checked + label {
+  background-color: #dedede;
+}
+.__select__input:disabled + label {
+  opacity: 0.6;
+  pointer-events: none;
+}
+.__select__label {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  max-height: 0;
+  padding: 0 16px;
+  transition: all 0.2s ease-out;
+  cursor: pointer;
+  text-transform: uppercase;
+  overflow: hidden;
+}
+.__select__label + input + .__select__label {
+  border-top: 0 solid #C7CCD160;
+}
+.__select__label:hover {
+  background-color: #000;
+  color: #ffffff;
+}
+
+.sort-title {
+  margin-top: 10px;
+  padding: 10px 0 10px 10px;
+  font-size: 24px;
+  text-transform: uppercase;
+  background-color: #fff;
+}
