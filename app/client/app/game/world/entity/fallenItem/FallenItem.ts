@@ -1,4 +1,5 @@
 import { NearestFilter, Texture } from 'three';
+import { EFallenObjects } from '../../../../../../ts/enums';
 import AssetsManager from '../../../assetsManager/AssetsManager';
 import Entity from '../Entity';
 
@@ -6,9 +7,10 @@ export default abstract class FallenItem extends Entity {
     private static texturesPack = ['barrel'];
     private static sprites: Record<string, { update: () => void; texture: Texture }> = {};
     public static createTextures() {
-        const textures = ['barrel', 'aidkit'];
+        const textures = Object.values(EFallenObjects).filter((item) => Number.isNaN(Number(item)));
+        console.log(textures);
         textures.forEach((name) => {
-            const image = AssetsManager.getEffectTexture(name);
+            const image = AssetsManager.getEffectTexture(name as string);
             if (!image) {
                 throw new Error(`[FallenItem createTextures] can't receive image ${name}`);
             }

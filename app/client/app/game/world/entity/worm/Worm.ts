@@ -466,6 +466,7 @@ export default class Worm extends Entity {
 
         if (this.gui.isDead() && this.animation.dead.isReady && !this.moveStates.isDead) {
             this.moveStates.isDead = true;
+            this.physics.friction = 0.4;
             this.finalExplosion.explode(mapMatrix, entities);
         }
 
@@ -495,7 +496,7 @@ export default class Worm extends Entity {
         const delta = this.physics.velocity.getLength() - this.jumpVectors.backflip.getLength() * this.fallToJumpCoef;
         if (delta > 0) {
             const damage = delta ** 2;
-            this.setHP(delta * -1);
+            this.setHP(damage * -1);
             if (this.endTurnCallback) {
                 this.endTurnCallback(0);
             }

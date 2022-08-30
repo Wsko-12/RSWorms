@@ -172,7 +172,7 @@ export default class Bullet extends Entity {
         entities.forEach((entity) => {
             if (entity != this) {
                 const dist = this.position.getDistanceToPoint(entity.position);
-                if (explosionOptions.radius >= dist - entity.radius) {
+                if (explosionOptions.radius >= dist + entity.radius) {
                     entity.acceptExplosion(mapMatrix, entities, explosionOptions);
                 }
             }
