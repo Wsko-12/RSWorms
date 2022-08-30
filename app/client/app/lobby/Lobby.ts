@@ -27,7 +27,7 @@ export default class Lobby {
         console.log('Seed: ', seed);
         this.startGameCallback({
             mapTexturePackName: EMapPacksNames.moon,
-            worldSize: EWorldSizes.medium,
+            worldSize: EWorldSizes.small,
             seed,
             decor: {
                 count: EMapPacksDecorItems[EMapPacksNames.moon],
