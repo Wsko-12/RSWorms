@@ -1,8 +1,5 @@
 import { ELang } from '../../../../../ts/enums';
-<<<<<<< HEAD
 import { TRemoveEntityCallback } from '../../../../../ts/types';
-=======
->>>>>>> develop
 import Worm from '../../world/entity/worm/Worm';
 
 export default class Team {
