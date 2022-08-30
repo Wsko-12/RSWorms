@@ -1,4 +1,5 @@
 import { EMapPacksDecorItems, EMapPacksNames } from '../../../../../ts/enums';
+import LoadingPage from '../../../../utils/LoadingPage/LoadingPage';
 import PackTextureLoader from '../PackTextureLoader';
 
 export default class MapTexturePack extends PackTextureLoader {
@@ -15,12 +16,12 @@ export default class MapTexturePack extends PackTextureLoader {
     }
 
     public async load() {
+        const loading = LoadingPage.start('Loading Map Pack', 4 + this.decorItems);
         const mapTexturesFolder = './client/assets/mapPacks/';
         const path = mapTexturesFolder + this.packName + '/';
-        this.textures.bg = await this.loadImage(path + 'bg.png');
-        this.textures.ground = await this.loadImage(path + 'ground.png');
-        this.textures.grass = await this.loadImage(path + 'grass.png');
-        this.textures.particle = await this.loadImage(path + 'particle.png');
+
+        const textures = ['bg', 'ground', 'grass', 'particle'];
+        await this.loadPngArray(textures, path, loading);
 
         const loadDecors = (): Promise<boolean> => {
             return new Promise((allDecorsLoaded) => {
@@ -33,6 +34,7 @@ export default class MapTexturePack extends PackTextureLoader {
                     index++;
 
                     if (index <= this.decorItems) {
+                        loading.setCurrent(4 + index);
                         load();
                     } else {
                         this.loaded = true;
@@ -44,6 +46,7 @@ export default class MapTexturePack extends PackTextureLoader {
         };
 
         await loadDecors();
+        loading.done();
         return true;
     }
 }

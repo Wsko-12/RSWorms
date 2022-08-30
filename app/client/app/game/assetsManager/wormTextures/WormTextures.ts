@@ -1,21 +1,30 @@
+import LoadingPage from '../../../../utils/LoadingPage/LoadingPage';
 import PackTextureLoader from '../PackTextureLoader';
 
 export default class WormTextures extends PackTextureLoader {
     public async load() {
         const mapTexturesFolder = './client/assets/worm/';
         const path = mapTexturesFolder;
-        this.textures.walk = await this.loadImage(path + 'walk.png');
-        this.textures.breath = await this.loadImage(path + 'breath.png');
-        this.textures.backflip = await this.loadImage(path + 'backflip.png');
-        this.textures.jump = await this.loadImage(path + 'jump.png');
-        this.textures.fall = await this.loadImage(path + 'fall.png');
-        this.textures.slide = await this.loadImage(path + 'slide.png');
-        this.textures.aiming = await this.loadImage(path + 'aiming.png');
-        this.textures.aim = await this.loadImage(path + 'aim.png');
-        this.textures.die = await this.loadImage(path + 'die.png');
-        this.textures.grave = await this.loadImage(path + 'grave.png');
-        this.textures.celebrate = await this.loadImage(path + 'celebrate.png');
-        this.textures.drown = await this.loadImage(path + 'drown.png');
+
+        const textures = [
+            'walk',
+            'breath',
+            'backflip',
+            'jump',
+            'fall',
+            'slide',
+            'aiming',
+            'aim',
+            'die',
+            'grave',
+            'celebrate',
+            'drown',
+        ];
+
+        const loading = LoadingPage.start('Loading Worm textures', textures.length);
+
+        await this.loadPngArray(textures, path, loading);
+        loading.done();
 
         return true;
     }

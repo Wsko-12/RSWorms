@@ -180,7 +180,7 @@ export default class Lobby {
     private startGame() {
         window.removeEventListener('resize', this.resize);
         document.body.innerHTML = '';
-        const seed = Math.random();
+        // const seed = Math.random();
         // const seed = 0.7135371756374531;
         // const seed = 0.7972989657842342;
         // const seed = 0.7190317696597344;
@@ -189,6 +189,7 @@ export default class Lobby {
         //worms bug
         //const seed = 0.6469262503466888;
         // const seed = 0.711119400099296;
+        const seed = 0.4743319884630075;
         console.log('Seed: ', seed);
         this.startGameCallback({
             mapTexturePackName: EMapPacksNames.moon,

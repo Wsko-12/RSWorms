@@ -25,21 +25,21 @@ export default class AssetsManager {
             } else {
                 this.mapTexturePack = new MapTexturePack(options.mapTexturePackName);
                 await this.mapTexturePack.load();
-
-                this.wormTextures = new WormTextures();
-                await this.wormTextures.load();
-
-                this.weaponTextures = new WeaponTextures();
-                await this.weaponTextures.load();
-
-                this.bulletTextures = new BulletTextures();
-                await this.bulletTextures.load();
-
-                this.effectTextures = new EffectTextures();
-                await this.effectTextures.load();
-
-                res(true);
             }
+
+            this.wormTextures = new WormTextures();
+            await this.wormTextures.load();
+
+            this.weaponTextures = new WeaponTextures();
+            await this.weaponTextures.load();
+
+            this.bulletTextures = new BulletTextures();
+            await this.bulletTextures.load();
+
+            this.effectTextures = new EffectTextures();
+            await this.effectTextures.load();
+
+            res(true);
         });
     }
 

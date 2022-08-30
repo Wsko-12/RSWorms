@@ -1,6 +1,7 @@
 import { CanvasTexture, Mesh, MeshBasicMaterial, NearestFilter, Object3D, PlaneBufferGeometry, Texture } from 'three';
 import { ELayersZ, EProportions } from '../../../../../ts/enums';
 import { IStartGameOptions } from '../../../../../ts/interfaces';
+import LoadingPage from '../../../../utils/LoadingPage/LoadingPage';
 import Perlin from '../../../../utils/p5/Perlin';
 import Random from '../../../../utils/Random';
 import AssetsManager from '../../assetsManager/AssetsManager';
@@ -113,31 +114,32 @@ export default class WorldMap {
     }
 
     private createWorld(options: IStartGameOptions) {
-        return new Promise((mapCreated) => {
+        // eslint-disable-next-line no-async-promise-executor
+        return new Promise(async (mapCreated) => {
             const { ctx, element } = this.canvas;
             const width = options.worldSize * EProportions.mapWidthToHeight;
             const height = options.worldSize;
             this.clearCanvas();
-            this.drawBaseMaskMatrix(ctx, width, height);
+            await this.drawBaseMaskMatrix(ctx, width, height);
 
             const maskData = ctx.getImageData(0, 0, width, height).data;
             const maskMatrix = this.imageDataToMatrix(maskData, width, height);
 
             this.clearCanvas();
 
-            this.drawGroundPattern(ctx, width, height);
-            this.clipGroundPatternByMatrix(ctx, maskMatrix);
+            await this.drawGroundPattern(ctx, width, height);
+            await this.clipGroundPatternByMatrix(ctx, maskMatrix);
 
             const groundImageUrl = element.toDataURL();
             const groundImage = new Image();
             groundImage.src = groundImageUrl;
 
-            groundImage.onload = () => {
+            groundImage.onload = async () => {
                 this.clearCanvas();
                 this.drawDecorObjects(ctx, maskMatrix, options, width, height);
                 ctx.drawImage(groundImage, 0, 0, width, height);
 
-                this.drawGrass(ctx, maskMatrix);
+                await this.drawGrass(ctx, maskMatrix);
 
                 const mapData = ctx.getImageData(0, 0, width, height).data;
                 const mapMatrix = this.imageDataToMatrix(mapData, width, height).reverse();
@@ -155,114 +157,187 @@ export default class WorldMap {
     }
 
     private drawBaseMaskMatrix(ctx: CanvasRenderingContext2D, width: number, height: number) {
-        //return matrix with 0 and 1 only like black and transparent mask
-        ctx.fillStyle = 'black';
+        const stepMax = 32;
+        const loading = LoadingPage.start('Generating Map. Matrix', stepMax);
 
-        const d = 512;
-
-        for (let y = 0; y < height; y++) {
-            for (let x = 0; x < width; x++) {
-                let shift = 1;
-                const main = Perlin.noise((x * shift) / d, (y * shift) / d) > 0.5 ? 1 : 0;
-                if (main) {
-                    ctx.fillRect(x, y, 1, 1);
-                }
-
-                shift++;
-
-                //add bottom
-                // in bottom third
-                if (y > height - height / 3) {
-                    const bottom = Perlin.noise((x * shift) / (d * 2));
-                    const yBottomThird = (y - (height - height / 3)) / (height / 3);
-                    if (yBottomThird > bottom) {
-                        ctx.fillRect(x, y, 1, 1);
+        const partsInStep = height / stepMax;
+        let step = 0;
+        return new Promise((res) => {
+            ctx.fillStyle = 'black';
+            const d = 512;
+            function generatePart() {
+                for (let i = 0; i < partsInStep; i++) {
+                    const y = i + partsInStep * step;
+                    for (let x = 0; x < width; x++) {
+                        let shift = 1;
+                        const main = Perlin.noise((x * shift) / d, (y * shift) / d) > 0.5 ? 1 : 0;
+                        if (main) {
+                            ctx.fillRect(x, y, 1, 1);
+                        }
+                        shift++;
+                        //add bottom
+                        // in bottom third
+                        if (y > height - height / 3) {
+                            const bottom = Perlin.noise((x * shift) / (d * 2));
+                            const yBottomThird = (y - (height - height / 3)) / (height / 3);
+                            if (yBottomThird > bottom) {
+                                ctx.fillRect(x, y, 1, 1);
+                            }
+                        }
+                        shift++;
+                        //remove top
+                        if (y < height / 2) {
+                            const top = Perlin.noise((x * shift) / (d * 3));
+                            const yTopThird = y / (height / 2);
+                            if (yTopThird < top) {
+                                ctx.clearRect(x, y, 1, 1);
+                            }
+                        }
+                        shift++;
+                        //remove left
+                        if (x < width / 4) {
+                            const left = Perlin.noise((y * shift) / (d * 3));
+                            const xLeft = x / (width / 4);
+                            if (xLeft < left) {
+                                ctx.clearRect(x, y, 1, 1);
+                            }
+                        }
+                        shift++;
+                        // remove right
+                        if (x > width - width / 4) {
+                            const right = Perlin.noise((y * shift) / (d * 3));
+                            const xRight = (x - (width - width / 8)) / (width / 8);
+                            if (xRight > right) {
+                                ctx.clearRect(x, y, 1, 1);
+                            }
+                        }
+                        // if(y === 200){
+                        //     ctx.fillRect(x, y, 1, 1);
+                        // }
                     }
                 }
-                shift++;
 
-                //remove top
-                if (y < height / 2) {
-                    const top = Perlin.noise((x * shift) / (d * 3));
-
-                    const yTopThird = y / (height / 2);
-                    if (yTopThird < top) {
-                        ctx.clearRect(x, y, 1, 1);
-                    }
+                if (step < stepMax - 1) {
+                    step++;
+                    loading.setCurrent(step);
+                    setTimeout(() => {
+                        generatePart();
+                    });
+                } else {
+                    loading.done();
+                    res(true);
                 }
-                shift++;
-                //remove left
-                if (x < width / 4) {
-                    const left = Perlin.noise((y * shift) / (d * 3));
-
-                    const xLeft = x / (width / 4);
-                    if (xLeft < left) {
-                        ctx.clearRect(x, y, 1, 1);
-                    }
-                }
-                shift++;
-                // remove right
-                if (x > width - width / 4) {
-                    const right = Perlin.noise((y * shift) / (d * 3));
-
-                    const xRight = (x - (width - width / 8)) / (width / 8);
-                    if (xRight > right) {
-                        ctx.clearRect(x, y, 1, 1);
-                    }
-                }
-
-                // if(y === 200){
-                //     ctx.fillRect(x, y, 1, 1);
-                // }
             }
-        }
+
+            generatePart();
+        });
     }
 
     private drawGroundPattern(ctx: CanvasRenderingContext2D, width: number, height: number) {
-        const image = AssetsManager.getMapTexture('ground');
-        if (!image) {
-            throw new Error("[WorldMap drawGroundPattern] can't receive ground texture");
-        }
-        const iWidth = image.width;
-        const iHeight = image.width;
+        return new Promise((res) => {
+            const loading = LoadingPage.start('Generating Map. Draw ground', height);
 
-        for (let y = 0; y < height; y += iHeight) {
-            for (let x = 0; x < width; x += iWidth) {
-                ctx.drawImage(image, x, y, iWidth, iHeight);
+            const image = AssetsManager.getMapTexture('ground');
+            if (!image) {
+                throw new Error("[WorldMap drawGroundPattern] can't receive ground texture");
             }
-        }
+            const iWidth = image.width;
+            const iHeight = image.width;
+
+            let y = 0;
+
+            const draw = () => {
+                for (let x = 0; x < width; x += iWidth) {
+                    ctx.drawImage(image, x, y, iWidth, iHeight);
+                }
+
+                if (y < height) {
+                    y += iHeight;
+                    loading.setCurrent(y);
+                    setTimeout(() => {
+                        draw();
+                    });
+                } else {
+                    loading.done();
+                    res(true);
+                }
+            };
+            draw();
+        });
     }
 
     private drawGrass(ctx: CanvasRenderingContext2D, matrix: number[][]) {
-        const image = AssetsManager.getMapTexture('grass');
-        if (!image) {
-            throw new Error(`[WorldMap drawGrass] can't receive grass texture`);
-        }
+        return new Promise((res) => {
+            const image = AssetsManager.getMapTexture('grass');
+            if (!image) {
+                throw new Error(`[WorldMap drawGrass] can't receive grass texture`);
+            }
 
-        const size = image.width;
+            const size = image.width;
 
-        for (let y = 0; y < matrix.length; y++) {
-            for (let x = 0; x < matrix[y].length; x++) {
-                const current = matrix[y][x];
-                if (current) {
-                    const top = matrix[y - 1][x];
+            const loading = LoadingPage.start('Generating Map. Draw grass', matrix.length);
 
-                    if (top === 0) {
-                        ctx.drawImage(image, x - size / 2, y - size / 2, size, size);
+            let y = 0;
+            const draw = () => {
+                for (let x = 0; x < matrix[y].length; x++) {
+                    const current = matrix[y][x];
+                    if (current) {
+                        const top = matrix[y - 1][x];
+
+                        if (top === 0) {
+                            ctx.drawImage(image, x - size / 2, y - size / 2, size, size);
+                        }
                     }
                 }
-            }
-        }
+
+                if (y < matrix.length - 1) {
+                    y++;
+                    loading.setCurrent(y);
+                    setTimeout(() => {
+                        draw();
+                    });
+                } else {
+                    loading.done();
+                    res(true);
+                }
+            };
+
+            draw();
+        });
     }
 
     private clipGroundPatternByMatrix(ctx: CanvasRenderingContext2D, matrix: number[][]) {
-        for (let y = 0; y < matrix.length; y++) {
-            for (let x = 0; x < matrix[y].length; x++) {
-                if (matrix[y][x] === 0) {
-                    ctx.clearRect(x, y, 1, 1);
+        const stepMax = 32;
+        const loading = LoadingPage.start('Generating Map. Clip matrix', stepMax);
+
+        const partsInStep = matrix.length / stepMax;
+        let step = 0;
+
+        return new Promise((res) => {
+            const clip = () => {
+                for (let i = 0; i < partsInStep; i++) {
+                    const y = i + partsInStep * step;
+                    for (let x = 0; x < matrix[y].length; x++) {
+                        if (matrix[y][x] === 0) {
+                            ctx.clearRect(x, y, 1, 1);
+                        }
+                    }
                 }
-            }
-        }
+
+                if (step < stepMax - 1) {
+                    step++;
+                    loading.setCurrent(step);
+                    setTimeout(() => {
+                        clip();
+                    });
+                } else {
+                    loading.done();
+                    res(true);
+                }
+            };
+
+            clip();
+        });
     }
 
     private drawDecorObjects(

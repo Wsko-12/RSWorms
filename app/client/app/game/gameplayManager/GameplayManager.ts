@@ -65,6 +65,8 @@ export default class gameplayManager {
         console.log(options)
         this.createTeams(options);
         this.gameInterface.teamsHPElement.build(this.teams);
+        this.gameInterface.teamsHPElement.update(this.teams);
+
         this.nextTurn();
     }
 
@@ -108,6 +110,7 @@ export default class gameplayManager {
             setTimeout(() => {
                 const entities = this.entityManager.getEntities();
                 const allReady = entities.every((entity) => entity.readyToNextTurn());
+                this.gameInterface.teamsHPElement.update(this.teams);
                 if (allReady) {
                     setTimeout(() => {
                         this.nextTurn();
@@ -117,7 +120,6 @@ export default class gameplayManager {
                 }
             }, 1000);
         });
-        this.gameInterface.teamsHPElement.update(this.teams);
     }
 
     turnLoop() {
