@@ -1,0 +1,14 @@
+.mobile__interface{
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    z-index: 3;
+    display: none;
+    pointer-events: none;
+    & > * {
+        pointer-events: all;
+    }
+    @include media-mobile-big{
+        display: block;
+    };
+}
