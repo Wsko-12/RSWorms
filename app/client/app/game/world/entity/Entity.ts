@@ -34,6 +34,14 @@ export default abstract class Entity {
     public update(mapMatrix: MapMatrix, entities: Entity[], wind: number, waterLevel: number) {
         if (mapMatrix) {
             this.gravity(mapMatrix, entities, wind, waterLevel);
+
+            if (
+                this.position.y < 0 ||
+                this.position.x < -mapMatrix.getSizeX() ||
+                this.position.x > mapMatrix.getSizeX() * 2
+            ) {
+                this.remove();
+            }
         }
 
         this.object3D.position.set(this.position.x, this.position.y, 0);

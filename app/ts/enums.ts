@@ -162,3 +162,7 @@ export const enum ECustomEvents {
     click = 'custom-click',
 }
 
+export enum EFallenObjects {
+    aidkit,
+    barrel,
+}
