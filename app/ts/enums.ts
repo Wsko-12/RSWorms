@@ -44,6 +44,7 @@ export enum EWeapons {
     grenade = 'grenade',
     dynamite = 'dynamite',
     mine = 'mine',
+    holygrenade = 'holygrenade',
 }
 
 export enum ETeamColors {

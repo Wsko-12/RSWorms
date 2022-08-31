@@ -1,3 +1,4 @@
+import { EWeapons } from '../../../../../ts/enums';
 import LoadingPage from '../../../../utils/LoadingPage/LoadingPage';
 import PackTextureLoader from '../PackTextureLoader';
 
@@ -7,7 +8,7 @@ export default class WeaponTextures extends PackTextureLoader {
         const mapTexturesFolder = prePath + '/assets/weapons/';
         const path = mapTexturesFolder;
 
-        const textures = ['bazooka', 'grenade', 'dynamite', 'mine'];
+        const textures = Object.keys(EWeapons);
 
         const loading = LoadingPage.start('Loading Weapons textures', textures.length);
 
