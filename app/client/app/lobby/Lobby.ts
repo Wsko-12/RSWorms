@@ -257,7 +257,7 @@ export default class Lobby {
                 max: 6,
                 min: 2,
             },
-            wormsCount: 8,
+            wormsCount: 6,
             multiplayer: false,
             teams: [
                 {
@@ -265,12 +265,12 @@ export default class Lobby {
                     worms:
                         this.memberNames.length !== 0
                             ? this.memberNames
-                            : new Array(8).fill(1).map((el) => getRandomMemberName()),
+                            : new Array(6).fill(1).map((el) => getRandomMemberName()),
                     lang: ELang.rus,
                 },
                 {
                     name: getRandomTeamName(),
-                    worms: new Array(8).fill(1).map((el) => getRandomMemberName()),
+                    worms: new Array(6).fill(1).map((el) => getRandomMemberName()),
                     lang: ELang.eng,
                 },
             ],

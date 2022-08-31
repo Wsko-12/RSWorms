@@ -449,7 +449,7 @@ export default class WorldMap {
         const isNoWormHere = (entities: Entity[], newPos: Point2) => {
             let answer = true;
             entities.forEach((entity) => {
-                if (newPos.x > entity.position.x - 40 && newPos.x < entity.position.x + 40) answer = false;
+                if (newPos.getDistanceToPoint(entity.position) < 70 /* c запасом */) answer = false;
             });
             return answer;
         };
