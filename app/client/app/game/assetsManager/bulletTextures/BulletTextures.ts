@@ -3,7 +3,8 @@ import PackTextureLoader from '../PackTextureLoader';
 
 export default class BulletTextures extends PackTextureLoader {
     public async load() {
-        const mapTexturesFolder = './client/assets/bullets/';
+        const prePath = process.env.NODE_ENV === 'development' ? './client' : '.';
+        const mapTexturesFolder = prePath + '/assets/bullets/';
         const path = mapTexturesFolder;
 
         const textures = ['bazooka', 'grenade', 'dynamite', 'mine'];

@@ -8,6 +8,8 @@ import {
     ESoundsWormSpeech,
 } from '../../../ts/enums';
 
+const prePath = process.env.NODE_ENV === 'development' ? '../../../client' : '.';
+
 export default class SoundManager {
     static background = new Audio();
     static timer = new Audio();
@@ -16,7 +18,8 @@ export default class SoundManager {
     static weapon = new Audio();
     static bullet = new Audio();
     static sfx = new Audio();
-    static pathToAudio = '../../../client/assets/sound';
+
+    static pathToAudio = prePath + '/assets/sound';
     static extention = '.wav';
     static paths = {
         background: '/background/',

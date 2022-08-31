@@ -3,7 +3,8 @@ import PackTextureLoader from '../PackTextureLoader';
 
 export default class WeaponTextures extends PackTextureLoader {
     public async load() {
-        const mapTexturesFolder = './client/assets/weapons/';
+        const prePath = process.env.NODE_ENV === 'development' ? './client' : '.';
+        const mapTexturesFolder = prePath + '/assets/weapons/';
         const path = mapTexturesFolder;
 
         const textures = ['bazooka', 'grenade', 'dynamite', 'mine'];

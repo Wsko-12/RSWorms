@@ -21,6 +21,7 @@
         "no-debugger": "off",
         "no-console": 1,
         "class-methods-use-this": "off",
-        "@typescript-eslint/no-explicit-any": 2
+        "@typescript-eslint/no-explicit-any": 2,
+        "@typescript-eslint/no-var-requires": 0
     }
 }
