@@ -56,7 +56,7 @@ export default class SoundManager {
         this.sfx.play();
     }
 
-    static playWeapon(action: ESoundsWeapon) {
+    static playWeapon(action: ESoundsWeapon | ESoundsWormSpeech) {
         if (!this.weapon.paused) return;
         this.sfx.src = this.pathToAudio + this.paths.weapon + action + this.extention;
         this.sfx.play();
