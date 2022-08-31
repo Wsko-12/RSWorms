@@ -1,4 +1,4 @@
-const randomTeamNames = ['Developers', 'ProjectCrashers', 'Loosers', 'Bad Guys', 'Seniors'];
+const randomTeamNames = ['Developers', 'ProjectCrashers', 'Loosers', 'Bad Guys', 'Seniors', 'Brotherhood'];
 const randomMemberNames = [
     'Aleg3000',
     'Wsko',
@@ -26,6 +26,8 @@ const randomMemberNames = [
     'Helmut',
     'Buddy',
     'Obama',
+    'Bilbo',
+    'Frodo',
 ];
 
 export function getRandomMemberName() {
