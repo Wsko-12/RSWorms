@@ -155,7 +155,7 @@ export default class WormManager {
 
         if (e.code === 'Space') {
             this.shooting = false;
-            SoundManager.playWeapon(ESoundsWeapon.rocketRelease);
+            // SoundManager.playWeapon(ESoundsWeapon.rocketRelease);
 
             const bullet = worm.shoot();
             if (bullet) {
