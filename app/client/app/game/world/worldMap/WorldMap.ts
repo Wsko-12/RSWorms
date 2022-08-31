@@ -6,6 +6,7 @@ import LoadingPage from '../../../../utils/LoadingPage/LoadingPage';
 import Perlin from '../../../../utils/p5/Perlin';
 import Random from '../../../../utils/Random';
 import AssetsManager from '../../assetsManager/AssetsManager';
+import Entity from '../entity/Entity';
 import MapMatrix from './mapMatrix/MapMatrix';
 
 export default class WorldMap {
@@ -425,7 +426,7 @@ export default class WorldMap {
         return this.getObjectPlace(matrix, width, height, attempt - 1);
     };
 
-    public getWormPlace = (attempt = 5): { x: number; y: number } => {
+    public getWormPlace = (entities: Entity[], attempt = 5): { x: number; y: number } => {
         const { matrix } = this.mapMatrix;
         const { width, height } = this.sizes;
         const { random } = this;
@@ -444,6 +445,14 @@ export default class WorldMap {
             }
         }
         placesY.reverse();
+
+        const isNoWormHere = (entities: Entity[], newPos: Point2) => {
+            let answer = true;
+            entities.forEach((entity) => {
+                if (newPos.x > entity.position.x - 40 && newPos.x < entity.position.x + 40) answer = false;
+            });
+            return answer;
+        };
 
         const ceilsAroundAreEmpty = (xN: number, yN: number, r: number) => {
             const iX = Math.floor(xN);
@@ -466,13 +475,13 @@ export default class WorldMap {
 
         for (let i = 0; i < placesY.length; i++) {
             const yCord = placesY[i];
-            if (ceilsAroundAreEmpty(xRandom, yCord + r + 5, r)) {
+            if (ceilsAroundAreEmpty(xRandom, yCord + r + 5, r) && isNoWormHere(entities, new Point2(xRandom, yCord))) {
                 return { x: xRandom, y: yCord + r + 5 };
             }
         }
 
         if (attempt > 0) {
-            return this.getWormPlace(attempt - 1);
+            return this.getWormPlace(entities, attempt - 1);
         }
         return { x: xRandom, y: height };
     };
