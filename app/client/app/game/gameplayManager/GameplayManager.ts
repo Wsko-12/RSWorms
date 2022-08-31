@@ -1,4 +1,4 @@
-import { IStartGameOptions } from '../../../../ts/interfaces';
+import { IStartGameOptions, ITeamOptions } from '../../../../ts/interfaces';
 import { TEndTurnCallback } from '../../../../ts/types';
 import GameInterface from '../gameInterface/GameInterface';
 import IOManager from '../IOManager/IOManager';
@@ -19,11 +19,12 @@ export default class gameplayManager {
     private isEnding = 0;
     private isBetweenTurns = false;
 
-    constructor(world: World, ioManager: IOManager, gameInterface: GameInterface) {
+    constructor(options: IStartGameOptions, world: World, ioManager: IOManager, gameInterface: GameInterface) {
         this.world = world;
         this.entityManager = world.entityManager;
         this.ioManager = ioManager;
         this.gameInterface = gameInterface;
+        this.turnTime = options.time;
     }
 
     private checkTeams(): boolean {
@@ -43,13 +44,13 @@ export default class gameplayManager {
 
     private createTeams(options: IStartGameOptions) {
         if (!options.multiplayer) {
-            const teamsCount = options.teams.length;
+            const teamsCount = (options.teams as ITeamOptions[]).length;
             for (let i = 0; i < teamsCount; i++) {
-                const teamOptions = options.teams[i];
+                const teamOptions = (options.teams as ITeamOptions[])[i];
                 const team = new Team(i, teamOptions.name, teamOptions.lang);
                 for (let j = 0; j < options.wormsCount; j++) {
                     const wormName = teamOptions.worms[j];
-                    const worm = this.entityManager.generateWorm(i, j, wormName, teamOptions.lang);
+                    const worm = this.entityManager.generateWorm(i, j, wormName, teamOptions.lang, options.hp);
                     if (!worm) {
                         throw new Error(`[GameplayManager] can't create worm`);
                     }

@@ -91,7 +91,7 @@ export default class Worm extends Entity {
         });
         this.object3D = new Group();
         this.wormMesh = new Mesh(geometry, material);
-        this.gui = new WormGui(this.name, teamIndex);
+        this.gui = new WormGui(this.name, teamIndex, hp);
         this.gui.setActualHp(hp);
 
         this.object3D.add(this.wormMesh, this.gui.getObject3D(), this.finalExplosion.getObject3D());

@@ -22,7 +22,7 @@ export default class GameManager {
         this.world = new World(options);
         this.IOManager = new IOManager(this.interface, this.world);
 
-        this.gameplayManager = new GameplayManager(this.world, this.IOManager, this.interface);
+        this.gameplayManager = new GameplayManager(options, this.world, this.IOManager, this.interface);
         this.loops = {
             paused: false,
             timestamp: Date.now(),

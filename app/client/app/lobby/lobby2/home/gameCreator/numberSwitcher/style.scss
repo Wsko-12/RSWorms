@@ -1,0 +1,43 @@
+.number-switcher{
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+.number-switcher__title{
+    text-transform: capitalize;
+    margin-bottom: 5px;
+    font-size: 1.8rem;
+}
+
+.number-switcher__container{
+    font-size: 2rem;
+    font-weight: bold;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.number-switcher__button{
+    width: 25px;
+    font-size: 2rem !important;
+    background-color: #ff6f6f !important;
+    color: white !important;
+    &_disabled{
+        background-color: #a3a3a3 !important;
+    }
+}
+
+.number-switcher__value{
+    font-size: 3.5rem;
+    min-width: 35px;
+    text-align: center;
+
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none;
+}

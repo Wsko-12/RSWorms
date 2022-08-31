@@ -19,7 +19,7 @@ export default class TeamsHP {
     build = (teams: Team[]) => {
         teams.forEach((team, idx) => {
             const teamDiv = <HTMLDivElement>this.createTeamBar(team, ETeamColors[idx]);
-            this.teams[team.name] = teamDiv;
+            this.teams[team.name + team.index] = teamDiv;
             this.element.append(teamDiv);
         });
     };
@@ -31,7 +31,7 @@ export default class TeamsHP {
         const teamName = PageBuilder.createElement('div', { classes: 'team-name' });
         teamName.style.color = color;
         teamName.innerHTML = team.name;
-        teamName.id = team.name;
+        teamName.id = team.name + team.index;
         const hpBar = PageBuilder.createElement('div', { classes: 'team-hp-bar' });
         hpBar.style.width = team.getHP() * this.barScale + 'px';
         hpBar.id = team.name;
@@ -45,7 +45,7 @@ export default class TeamsHP {
 
     public update = (teams: Team[]) => {
         teams.forEach((team) => {
-            const teamEl = this.teams[team.name];
+            const teamEl = this.teams[team.name + team.index];
             const bar = teamEl.querySelector('.team-hp-bar') as HTMLElement;
             if (bar) {
                 bar.style.width = team.getHPLevel() * 100 + '%';

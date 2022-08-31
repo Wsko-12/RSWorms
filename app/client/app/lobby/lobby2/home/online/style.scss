@@ -1,0 +1,36 @@
+.online{
+    width: 300px;
+    min-height: 100px;
+    max-height: 400px;
+
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #b3dafa;
+    box-shadow: 4px 4px 0px #000, 10px 10px 8px rgba(46, 61, 30, 0.5) !important;
+}
+
+.online__overlay{
+    background-color: #aae771 !important;
+}
+
+.online__input{
+    border: 1px solid black;
+    border-radius: 150px;
+    font-family: 'DynaPuff', cursive;
+    padding: 5px 10px;
+    text-align: center;
+    width: 100px;
+    text-transform: uppercase;
+    box-shadow: inset 2px 2px 0px black;
+
+
+    &::placeholder{
+        color: gray;
+    }
+}
+
+.online__message{
+    color: black;
+}

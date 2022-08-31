@@ -14,12 +14,14 @@ export interface IStartGameOptions {
     };
     wormsCount: number;
     multiplayer: boolean;
-    teams: ITeam[];
+    teams: ITeamOptions[] | number;
+    hp: number;
+    time: number;
     // teamNames: string[];
     // playerNames: string[];
 }
 
-interface ITeam {
+export interface ITeamOptions {
     name: string;
     worms: string[];
     lang: ELang;
