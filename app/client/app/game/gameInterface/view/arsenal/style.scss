@@ -12,12 +12,21 @@
 }
 
 .item {
-  border: 1px solid #ffffff;
+  // border: 1px solid #ffffff;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
   color: #ffffff;
   background-repeat: no-repeat;
   background-position: center;
   background-size: auto;
+}
+
+.item-wrapper {
+  border: 1px solid #ffffff;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto;  
 }
 
 .arsenal-titles {

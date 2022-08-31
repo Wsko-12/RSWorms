@@ -1,12 +1,23 @@
 import './style.scss';
 import { TChooseWeaponCallback } from '../../../../../../ts/types';
+import { IWeapon } from '../../../../../../ts/interfaces';
 import { isWeapon } from '../../../../../../ts/typeguards';
 
 export default class Arsenal {
     private isShown = false;
     public isAvalible = false;
     public chooseWeaponCallback: TChooseWeaponCallback | null = null;
-    static allWeapons: string[] = ['1', '1', '1', '1', '1', 'bazooka', 'grenade', 'dynamite', 'mine'];
+    static allWeapons: IWeapon[] = [
+        { name: '1', turnsToAvaliable: 0 },
+        { name: '1', turnsToAvaliable: 0 },
+        { name: '1', turnsToAvaliable: 0 },
+        { name: '1', turnsToAvaliable: 0 },
+        { name: '1', turnsToAvaliable: 0 },
+        { name: 'bazooka', turnsToAvaliable: 0 },
+        { name: 'grenade', turnsToAvaliable: 0 },
+        { name: 'dynamite', turnsToAvaliable: 2 },
+        { name: 'mine', turnsToAvaliable: 3 },
+    ];
     weapons: string[];
 
     constructor(weapons?: string[]) {
@@ -34,13 +45,18 @@ export default class Arsenal {
                         item.id = `w${i - Math.trunc(i / 6)}`;
                     }
                     items.push(item);
-                    arsenal.append(item);
+                    const itemWrapper = document.createElement('div');
+                    itemWrapper.classList.add('item-wrapper');
+                    itemWrapper.append(item);
+                    // arsenal.append(item);
+                    arsenal.append(itemWrapper);
                 }
 
                 Arsenal.allWeapons.forEach((el, index) => {
-                    if (this.weapons.includes(el)) {
+                    if (this.weapons.includes(el.name)) {
                         const item = document.getElementById(`w${index + 1}`) as HTMLElement;
-                        item.style.backgroundImage = `url(../../../../assets/interface/${el}.png)`;
+                        item.style.backgroundImage = `url(../../../../assets/interface/${el.name}.png)`;
+                        console.log(item);
                     }
                 });
 
@@ -48,7 +64,7 @@ export default class Arsenal {
                     if (e.target != arsenal) {
                         const target = <HTMLElement>e.target;
                         if (target && target.id.slice(0, 1) === 'w') {
-                            const weapon = Arsenal.allWeapons[Number(target.id.slice(1)) - 1];
+                            const weapon = Arsenal.allWeapons[Number(target.id.slice(1)) - 1].name;
                             if (weapon && isWeapon(weapon)) {
                                 this.chooseWeaponCallback && this.chooseWeaponCallback(weapon);
                             }

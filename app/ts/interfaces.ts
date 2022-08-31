@@ -77,3 +77,8 @@ export interface ICustomMouseEvent {
     x: number;
     y: number;
 }
+
+export interface IWeapon {
+    name: string;
+    turnsToAvaliable: number;
+}
