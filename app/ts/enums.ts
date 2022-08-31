@@ -81,6 +81,7 @@ export const enum ESoundsBullet {
     shotgun = 'ShotGunFire',
     teleport = 'Teleport',
     axe = 'VikingAxeImpact',
+    dinamyte = 'FUSE'
 }
 
 export const enum ESoundsFX {
