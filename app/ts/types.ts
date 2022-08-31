@@ -1,4 +1,5 @@
 import Entity from '../client/app/game/world/entity/Entity';
+import CustomSocket from '../server/app/customSocket/CustomSocket';
 import { EWeapons } from './enums';
 import { IStartGameOptions } from './interfaces';
 
@@ -19,3 +20,5 @@ export type TAttrProperty = { [key: string]: string | number | boolean };
 export type TDatasetProperty = { [key: string]: string | number };
 
 export type TContentProperty = string | (HTMLElement | string)[] | HTMLElement;
+
+export type TRemoveFromSocketManagerCb = (socket: CustomSocket) => void;
