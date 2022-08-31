@@ -15,7 +15,7 @@ import PageBuilder from '../../utils/PageBuilder';
 import './style.scss';
 import { Context } from 'vm';
 import createSettingsPage from './Settings/settings';
-import { getRandomMemberName, getRandomTeamName } from './names';
+import { getRandomMemberName, getRandomTeamName } from '../../utils/names';
 import createNetworkLobbyPage from './NetworkLobby/networkLobby';
 import SoundManager from '../soundManager/SoundManager';
 

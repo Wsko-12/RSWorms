@@ -24,6 +24,8 @@ const randomMemberNames = [
     'Snake',
     'Harry Potter',
     'Helmut',
+    'Buddy',
+    'Obama',
 ];
 
 export function getRandomMemberName() {

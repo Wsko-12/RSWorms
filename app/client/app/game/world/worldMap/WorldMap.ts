@@ -433,7 +433,7 @@ export default class WorldMap {
         const r = ESizes.worm;
 
         const spawnZone = width / 1.5;
-        const xRandom = Math.round(Math.random() * spawnZone + (width - spawnZone) / 2);
+        const xRandom = Math.round(random.get() * spawnZone + (width - spawnZone) / 2);
 
         const placesY: number[] = [];
 
@@ -449,7 +449,7 @@ export default class WorldMap {
         const isNoWormHere = (entities: Entity[], newPos: Point2) => {
             let answer = true;
             entities.forEach((entity) => {
-                if (newPos.getDistanceToPoint(entity.position) < 70 /* c запасом */) answer = false;
+                if (newPos.getDistanceToPoint(entity.position) < ESizes.worm * 3.5) answer = false;
             });
             return answer;
         };
