@@ -15,7 +15,7 @@ import PageBuilder from '../../utils/PageBuilder';
 import './style.scss';
 import { Context } from 'vm';
 import createSettingsPage from './Settings/settings';
-import { getRandomMemberName, getRandomTeamName } from './names';
+import { getRandomMemberName, getRandomTeamName } from '../../utils/names';
 import createNetworkLobbyPage from './NetworkLobby/networkLobby';
 import SoundManager from '../soundManager/SoundManager';
 
@@ -257,7 +257,7 @@ export default class Lobby {
                 max: 6,
                 min: 2,
             },
-            wormsCount: 4,
+            wormsCount: 6,
             multiplayer: false,
             teams: [
                 {

@@ -22,7 +22,7 @@ export default class EntityManager {
     }
 
     private findPlace() {
-        return this.worldMap?.getWormPlace();
+        return this.worldMap?.getWormPlace(this.entities);
     }
 
     public generateWorm(teamIndex: number, wormIndex: number, wormName: string, wormLang: ELang) {
