@@ -94,6 +94,11 @@ export default class WormManager {
                 this.controlledWorm.selectWeapon(EWeapons.mine);
             }
         }
+        if (e.code === 'KeyH') {
+            if (!this.blockWeapon) {
+                this.controlledWorm.selectWeapon(EWeapons.holygrenade);
+            }
+        }
 
         const jumpTimeout = () => {
             const t = setTimeout(() => {

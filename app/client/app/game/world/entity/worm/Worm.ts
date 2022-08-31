@@ -10,6 +10,7 @@ import Aidkit from '../fallenItem/aidkit/Aidkit';
 import BWormFinalExplosion from './weapon/bullet/throwable/Fallen/BWormFinalExplosion';
 import WBazooka from './weapon/weapon/powerable/bazooka/Bazooka';
 import WGrenade from './weapon/weapon/powerable/grenade/Grenade';
+import WHolyGrenade from './weapon/weapon/powerable/holygrenade/HolyGrenade';
 import WDynamite from './weapon/weapon/static/dynamite/Dynamite';
 import WMine from './weapon/weapon/static/mine/Mine';
 import Weapon from './weapon/weapon/Weapon';
@@ -36,6 +37,7 @@ export default class Worm extends Entity {
         grenade: new WGrenade(),
         dynamite: new WDynamite(),
         mine: new WMine(),
+        holygrenade: new WHolyGrenade(),
     };
 
     public isSelected = false;
