@@ -191,7 +191,7 @@ export default abstract class Entity {
         return force;
     }
 
-    public spriteLoop: TLoopCallback = (time) => {
+    public spriteLoop: TLoopCallback = (/* time */) => {
         return;
     };
 }

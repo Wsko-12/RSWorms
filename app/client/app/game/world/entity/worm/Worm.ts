@@ -1,7 +1,7 @@
 import { Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from 'three';
 import { ELang, ELayersZ, ESizes, ESoundsWormAction, ESoundsWormSpeech, EWeapons } from '../../../../../../ts/enums';
 import { IExplosionOptions, IShootOptions, IWormMoveOptions, IWormMoveStates } from '../../../../../../ts/interfaces';
-import { TEndTurnCallback, TLoopCallback, TRemoveEntityCallback } from '../../../../../../ts/types';
+import { TEndTurnCallback, TLoopCallback } from '../../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../../utils/geometry';
 import SoundManager from '../../../../soundManager/SoundManager';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
@@ -257,7 +257,7 @@ export default class Worm extends Entity {
             return;
         }
 
-        this.handleCollision(mapMatrix, entities);
+        this.handleCollision(/* mapMatrix, entities */);
 
         const normalSurface = collision.normalize().scale(-1);
         const velClone = vel.clone().normalize().scale(-1);
@@ -495,7 +495,7 @@ export default class Worm extends Entity {
         }
     }
 
-    protected handleCollision(mapMatrix: MapMatrix, entities: Entity[]): void {
+    protected handleCollision(/* mapMatrix: MapMatrix, entities: Entity[] */): void {
         // here we can remove hp for fall damage
         const delta = this.physics.velocity.getLength() - this.jumpVectors.backflip.getLength() * this.fallToJumpCoef;
         if (delta > 0) {
@@ -517,7 +517,7 @@ export default class Worm extends Entity {
         return this.moveStates.isDead;
     }
 
-    public spriteLoop: TLoopCallback = (time) => {
+    public spriteLoop: TLoopCallback = (/*time*/) => {
         this.animation.spriteLoop(
             this.moveStates,
             this.movesOptions.direction,
