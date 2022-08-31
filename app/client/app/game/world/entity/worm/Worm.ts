@@ -121,8 +121,8 @@ export default class Worm extends Entity {
         return this.hp;
     }
 
-    public setHP(hp: number) {
-        this.hp += Math.round(hp);
+    public setHP(damage: number) {
+        this.hp += Math.round(damage);
         if (this.hp < 0) {
             this.hp = 0;
         }
@@ -530,4 +530,10 @@ export default class Worm extends Entity {
             this.gui.spriteLoop();
         }
     };
+
+    public remove(): void {
+        this.setHP(-this.getHP());
+        this.moveStates.isDead = true;
+        super.remove();
+    }
 }
