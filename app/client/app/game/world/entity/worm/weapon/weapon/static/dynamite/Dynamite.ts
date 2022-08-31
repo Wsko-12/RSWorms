@@ -5,7 +5,7 @@ import StaticWeapon from '../Static';
 
 export default class WDynamite extends StaticWeapon {
     protected name = EWeapons.dynamite;
-    protected shootSound = ESoundsWormSpeech.bye;
+    protected shootSound = ESoundsWormSpeech.dinamyteArm;
     protected bullet = BDynamite;
 
     constructor() {
