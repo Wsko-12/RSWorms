@@ -1,9 +1,11 @@
 import { ELang, EMapPacksDecorItems, EMapPacksNames, EWorldSizes } from '../../../../../../ts/enums';
 import { IStartGameOptions, ITeamOptions } from '../../../../../../ts/interfaces';
+import { isMapTexturePack, isWorldSizesKey } from '../../../../../../ts/typeguards';
 import { generateId, getRandomMemberName, getRandomTeamName } from '../../../../../utils/names';
 import PageBuilder from '../../../../../utils/PageBuilder';
 import PageElement from '../../../../../utils/PageElement';
 import NumberSwitcher from './numberSwitcher/NumberSwitcher';
+import StringSwitcher from './stringSwitcher/StringSwitcher';
 import './style.scss';
 export default class GameCreator extends PageElement {
     protected element: HTMLDivElement;
@@ -17,6 +19,12 @@ export default class GameCreator extends PageElement {
         teams: new NumberSwitcher('Teams', 2, 4, 1, 2),
         worms: new NumberSwitcher('Worms', 1, 6, 1, 3),
         hp: new NumberSwitcher('Start HP', 20, 300, 20, 100),
+        mapSize: new StringSwitcher(
+            'Map size',
+            Object.keys(EWorldSizes).filter((value) => isNaN(Number(value))),
+            1
+        ),
+        texture: new StringSwitcher('Texture pack', Object.keys(EMapPacksNames)),
     };
     private counters = {
         teams: 2,
@@ -75,6 +83,18 @@ export default class GameCreator extends PageElement {
         this.counters.teams = this.elements.teams.getValue();
         this.counters.worms = this.elements.worms.getValue();
         this.counters.wormsHealth = this.elements.hp.getValue();
+
+        const size = this.elements.mapSize.getValue();
+
+        if (isWorldSizesKey(size)) {
+            const mapSize = EWorldSizes[size];
+            this.counters.mapSize = mapSize;
+        }
+
+        const texture = this.elements.texture.getValue();
+        if (isMapTexturePack(texture)) {
+            this.counters.texture = EMapPacksNames[texture];
+        }
     }
 
     private applyEvents() {
@@ -92,7 +112,7 @@ export default class GameCreator extends PageElement {
                 for (let i = 0; i < this.counters.teams; i++) {
                     const team = {
                         name: getRandomTeamName(),
-                        worms: new Array(this.counters.worms).fill(1).map((el) => getRandomMemberName()),
+                        worms: new Array(this.counters.worms).fill(1).map(() => getRandomMemberName()),
                         lang: ELang.eng,
                     };
                     teams.push(team);
@@ -102,14 +122,14 @@ export default class GameCreator extends PageElement {
 
             const options: IStartGameOptions = {
                 seed: Math.random(),
-                mapTexturePackName: EMapPacksNames.moon,
+                mapTexturePackName: this.counters.texture,
                 decor: {
-                    count: EMapPacksDecorItems[EMapPacksNames.moon],
+                    count: EMapPacksDecorItems[this.counters.texture],
                     max: 6,
                     min: 2,
                 },
                 time: this.counters.time,
-                worldSize: EWorldSizes.medium,
+                worldSize: this.counters.mapSize,
                 multiplayer: this.isOnline,
                 wormsCount: this.counters.worms,
                 hp: this.counters.wormsHealth,

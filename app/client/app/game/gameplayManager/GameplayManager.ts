@@ -62,7 +62,6 @@ export default class gameplayManager {
     }
 
     init(options: IStartGameOptions) {
-        console.log(options);
         this.createTeams(options);
         this.gameInterface.teamsHPElement.build(this.teams);
         this.gameInterface.teamsHPElement.update(this.teams);
