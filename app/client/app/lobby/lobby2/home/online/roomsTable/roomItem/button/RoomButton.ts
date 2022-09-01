@@ -1,5 +1,7 @@
+import { ESocketLobbyMessages, ISocketRoomToggleData } from '../../../../../../../../../ts/socketInterfaces';
 import PageBuilder from '../../../../../../../../utils/PageBuilder';
 import PageElement from '../../../../../../../../utils/PageElement';
+import ClientSocket from '../../../../../../../clientSocket/ClientSocket';
 import User from '../../../../../../../User';
 
 export default class RoomButton extends PageElement {
@@ -13,6 +15,7 @@ export default class RoomButton extends PageElement {
 
         this.roomId = roomId;
         this.update();
+        this.applyListeners();
     }
 
     public update() {
@@ -27,5 +30,29 @@ export default class RoomButton extends PageElement {
         if (User.inRoom === null) {
             this.element.disabled = false;
         }
+    }
+
+    private applyListeners() {
+        this.element.addEventListener('click', () => {
+            if (User.inRoom && User.inRoom != this.roomId) {
+                return;
+            }
+
+            if (!User.nickname) {
+                return;
+            }
+
+            const request: ISocketRoomToggleData = {
+                user: User.nickname,
+                room: this.roomId,
+                status: 'join',
+            };
+
+            if (User.inRoom && User.inRoom === this.roomId) {
+                request.status = 'leave';
+            }
+
+            ClientSocket.emit(ESocketLobbyMessages.roomToggle, request);
+        });
     }
 }

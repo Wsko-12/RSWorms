@@ -6,6 +6,7 @@ export const enum ESocketLobbyMessages {
     roomsTableReq = 'rooms-table-request',
     roomCreateReq = 'room-create-request',
     roomsTableUpdate = 'rooms-table-update',
+    roomToggle = 'room-toggle',
 }
 
 export interface ISocketLogUserReq {
@@ -41,4 +42,10 @@ export interface ISocketRoomsTableDataItem {
 
 export interface ISocketRoomsTableData {
     rooms: ISocketRoomsTableDataItem[];
+}
+
+export interface ISocketRoomToggleData {
+    user: string;
+    room: string;
+    status: 'join' | 'leave';
 }
