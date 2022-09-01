@@ -1,6 +1,6 @@
 import {
     ESocketLogUserResStatuses,
-    ESocketMessages,
+    ESocketLobbyMessages,
     ISocketLogUserReq,
     ISocketLogUserRes,
 } from '../../../../ts/socketInterfaces';
@@ -33,7 +33,7 @@ export default class NetworkLobby {
     }
 
     private applyListeners() {
-        ClientSocket.on<ISocketLogUserRes>(ESocketMessages.logUserRes, (data) => {
+        ClientSocket.on<ISocketLogUserRes>(ESocketLobbyMessages.logUserRes, (data) => {
             console.log(data);
             // if (data) {
             //     if(data.status === ESocketLogUserResStatuses.success){
@@ -47,7 +47,7 @@ export default class NetworkLobby {
                 nickname: this.nickInput.value,
             };
 
-            ClientSocket.emit(ESocketMessages.logUserReq, data);
+            ClientSocket.emit(ESocketLobbyMessages.logUserReq, data);
         });
     }
 

@@ -1,13 +1,16 @@
+import DEV from '../../../../../../server/DEV';
 import { IStartGameOptions } from '../../../../../../ts/interfaces';
 import {
     ESocketLogUserResStatuses,
-    ESocketMessages,
+    ESocketLobbyMessages,
     ISocketLogUserReq,
     ISocketLogUserRes,
+    ISocketRoomsTableDataItem,
 } from '../../../../../../ts/socketInterfaces';
 import PageBuilder from '../../../../../utils/PageBuilder';
 import PageElement from '../../../../../utils/PageElement';
 import ClientSocket from '../../../../clientSocket/ClientSocket';
+import User from '../../../../User';
 import GameCreator from '../gameCreator/GameCreator';
 import RoomsTable from './roomsTable/RoomsTable';
 import './style.scss';
@@ -19,7 +22,19 @@ export default class LobbyOnlinePopUp extends PageElement {
     private roomsTable = new RoomsTable();
     private addRoomButton: HTMLDivElement;
     private gameCreator = new GameCreator(true, (options: IStartGameOptions) => {
-        return;
+        const request: ISocketRoomsTableDataItem = {
+            owner: User.nickname,
+            id: options.id,
+            hp: options.hp,
+            players: [],
+            size: options.worldSize,
+            teams: options.teams as number,
+            time: options.time,
+            worms: options.wormsCount,
+            texture: options.mapTexturePackName,
+        };
+
+        ClientSocket.emit(ESocketLobbyMessages.roomCreateReq, request);
     });
 
     constructor() {
@@ -71,7 +86,10 @@ export default class LobbyOnlinePopUp extends PageElement {
 
         let oldName = '';
         let newName = '';
-        ClientSocket.on<ISocketLogUserRes>(ESocketMessages.logUserRes, (data) => {
+        ClientSocket.on<ISocketLogUserRes>(ESocketLobbyMessages.logUserRes, (data) => {
+            if (DEV.showSocketResponseAndRequest) {
+                console.log(`Response: ${ESocketLobbyMessages.logUserRes}`, data);
+            }
             if (!data) {
                 return;
             }
@@ -81,8 +99,9 @@ export default class LobbyOnlinePopUp extends PageElement {
                 if (data.name) {
                     oldName = data.name;
                     this.nick.value = data.name;
+                    User.setNickName(data.name);
+                    this.initTable();
                 }
-                this.fillTable();
             } else {
                 this.nick.style.color = '#7ee069';
                 if (data.name) {
@@ -105,7 +124,7 @@ export default class LobbyOnlinePopUp extends PageElement {
                     nickname: validated,
                 };
 
-                ClientSocket.emit(ESocketMessages.logUserReq, data);
+                ClientSocket.emit(ESocketLobbyMessages.logUserReq, data);
             } else {
                 this.nick.value = oldName;
                 this.showInputMsg(true, ESocketLogUserResStatuses.isIncorrect, newName);
@@ -147,12 +166,11 @@ export default class LobbyOnlinePopUp extends PageElement {
         }
     }
 
-    private fillTable() {
-        this.roomsTable.setReady(true);
+    private initTable() {
         this.body.append(this.addRoomButton);
         this.body.append(this.roomsTable.getElement());
         this.body.append(this.gameCreator.getElement());
-        this.roomsTable.fill();
+        this.roomsTable.init();
     }
 
     public show(flag: boolean) {

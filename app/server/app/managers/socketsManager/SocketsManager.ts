@@ -29,4 +29,10 @@ export default class SocketsManager extends Manager<CustomSocket> {
             this.addItem(customSocket);
         });
     }
+
+    public sendAll<T>(message: string, data?: T) {
+        this.items.forEach((socket) => {
+            socket.emit(message, data);
+        });
+    }
 }

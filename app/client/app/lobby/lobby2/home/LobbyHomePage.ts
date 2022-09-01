@@ -112,6 +112,7 @@ export default class LobbyHomePage extends PageElement {
             ],
             time: 45,
             hp: 100,
+            id: '',
         });
     }
 

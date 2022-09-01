@@ -8,12 +8,12 @@ export default abstract class Manager<T extends ManagerItem> {
         if (index != -1) {
             this.items.splice(index, 1);
         }
-        console.log(this.managerType, this.items.length);
+        // console.log(this.managerType, this.items.length);
     };
 
     protected addItem(item: T) {
         item.setRemoveFromManagerCb(this.removeItem);
         this.items.push(item);
-        console.log(this.managerType, this.items.length);
+        // console.log(this.managerType, this.items.length);
     }
 }

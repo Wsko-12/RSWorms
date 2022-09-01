@@ -1,5 +1,12 @@
+import DEV from '../../../../../../../server/DEV';
+import {
+    ESocketLobbyMessages,
+    ISocketRoomsTableData,
+    ISocketRoomsTableDataItem,
+} from '../../../../../../../ts/socketInterfaces';
 import PageBuilder from '../../../../../../utils/PageBuilder';
 import PageElement from '../../../../../../utils/PageElement';
+import ClientSocket from '../../../../../clientSocket/ClientSocket';
 import './style.scss';
 
 export default class RoomsTable extends PageElement {
@@ -18,13 +25,19 @@ export default class RoomsTable extends PageElement {
         return;
     }
 
-    public setReady(flag: boolean) {
-        this.isReady = flag;
+    private update(rooms: ISocketRoomsTableDataItem[]) {
+        console.log(rooms);
     }
 
-    public fill() {
-        if (!this.isReady) {
-            return;
-        }
+    public init() {
+        ClientSocket.on<ISocketRoomsTableData>(ESocketLobbyMessages.roomsTableUpdate, (data) => {
+            if (DEV.showSocketResponseAndRequest) {
+                console.log(`Response: ${ESocketLobbyMessages.roomsTableUpdate}`, data);
+            }
+            if (data) {
+                this.update(data.rooms);
+            }
+        });
+        ClientSocket.emit(ESocketLobbyMessages.roomsTableReq);
     }
 }

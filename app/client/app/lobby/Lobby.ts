@@ -275,6 +275,7 @@ export default class Lobby {
             ],
             hp: 100,
             time: 45,
+            id: '',
         });
     }
 

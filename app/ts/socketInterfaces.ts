@@ -1,11 +1,19 @@
-export const enum ESocketMessages {
+import { EWorldSizes } from './enums';
+
+export const enum ESocketLobbyMessages {
     logUserReq = 'log-user-request',
     logUserRes = 'log-user-response',
+    roomsTableReq = 'rooms-table-request',
+    roomCreateReq = 'room-create-request',
+    roomsTableUpdate = 'rooms-table-update',
 }
 
 export interface ISocketLogUserReq {
     nickname: string;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type TSocketListenerTuple = [string, (data?: any) => void];
 
 export const enum ESocketLogUserResStatuses {
     success = 'success',
@@ -17,4 +25,20 @@ export interface ISocketLogUserRes {
     status: ESocketLogUserResStatuses;
     rename: boolean;
     name: null | string;
+}
+
+export interface ISocketRoomsTableDataItem {
+    id: string;
+    owner: string;
+    teams: number;
+    time: number;
+    players: string[];
+    worms: number;
+    hp: number;
+    size: EWorldSizes;
+    texture: string;
+}
+
+export interface ISocketRoomsTableData {
+    rooms: ISocketRoomsTableDataItem[];
 }

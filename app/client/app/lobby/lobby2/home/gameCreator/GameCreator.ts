@@ -134,8 +134,10 @@ export default class GameCreator extends PageElement {
                 wormsCount: this.counters.worms,
                 hp: this.counters.wormsHealth,
                 teams: this.isOnline ? this.counters.teams : generateTeams(),
+                id: this.currentId,
             };
 
+            this.show(false);
             this.submitCb(options);
         });
     }

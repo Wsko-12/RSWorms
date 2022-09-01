@@ -1,9 +1,11 @@
 import ManagerItem from '../ManagerItem';
+import Room from '../roomsManager/Room';
 import CustomSocket from '../socketsManager/customSocket/CustomSocket';
 
 export default class User extends ManagerItem {
     public name: string;
     private customSocket: CustomSocket;
+    private inRoom: Room | null = null;
 
     constructor(name: string, customSocket: CustomSocket) {
         super();
@@ -13,5 +15,9 @@ export default class User extends ManagerItem {
 
     public rename(name: string) {
         this.name = name;
+    }
+
+    public setRoom(room: Room) {
+        this.inRoom = room;
     }
 }

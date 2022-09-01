@@ -17,6 +17,7 @@ export interface IStartGameOptions {
     teams: ITeamOptions[] | number;
     hp: number;
     time: number;
+    id: string;
     // teamNames: string[];
     // playerNames: string[];
 }
