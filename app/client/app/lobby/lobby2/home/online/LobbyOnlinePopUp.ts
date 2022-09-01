@@ -117,6 +117,14 @@ export default class LobbyOnlinePopUp extends PageElement {
 
         this.nick.addEventListener('input', (e) => {
             newName = this.nick.value;
+            if (User.inRoom) {
+                const request: ISocketRoomToggleData = {
+                    user: User.nickname,
+                    room: User.inRoom,
+                    status: 'leave',
+                };
+                ClientSocket.emit(ESocketLobbyMessages.roomToggle, request);
+            }
         });
 
         this.nick.addEventListener('change', (e) => {
