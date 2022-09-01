@@ -7,8 +7,6 @@ import Aidkit from './fallenItem/aidkit/Aidkit';
 import Barrel from './fallenItem/barrel/Barrel';
 import Worm from './worm/Worm';
 
-const test = -80;
-
 export default class EntityManager {
     private readonly mainScene: Scene;
     private worldMap: WorldMap | null = null;

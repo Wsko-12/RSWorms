@@ -1,6 +1,7 @@
-import { EWeapons } from '../../../../../../../../../../../ts/enums';
+import { ESoundsBullet, EWeapons } from '../../../../../../../../../../../ts/enums';
 import { IBulletOptions } from '../../../../../../../../../../../ts/interfaces';
 import { TRemoveEntityCallback } from '../../../../../../../../../../../ts/types';
+import SoundManager from '../../../../../../../../../soundManager/SoundManager';
 import MapMatrix from '../../../../../../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../../../../../../Entity';
 import Worm from '../../../../../Worm';
@@ -25,6 +26,7 @@ export default class BMine extends FallenBullet {
 
     private detonate(mapMatrix: MapMatrix, entities: Entity[], waterLevel: number) {
         this.isDetonated = true;
+        SoundManager.playBullet(ESoundsBullet.mineArm);
         setTimeout(() => this.explode(mapMatrix, entities, waterLevel), 5000);
     }
 

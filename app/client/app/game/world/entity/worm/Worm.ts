@@ -1,7 +1,7 @@
 import { Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from 'three';
 import { ELang, ELayersZ, ESizes, ESoundsWormAction, ESoundsWormSpeech, EWeapons } from '../../../../../../ts/enums';
 import { IExplosionOptions, IShootOptions, IWormMoveOptions, IWormMoveStates } from '../../../../../../ts/interfaces';
-import { TEndTurnCallback, TLoopCallback, TRemoveEntityCallback } from '../../../../../../ts/types';
+import { TEndTurnCallback, TLoopCallback } from '../../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../../utils/geometry';
 import SoundManager from '../../../../soundManager/SoundManager';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
@@ -10,6 +10,7 @@ import Aidkit from '../fallenItem/aidkit/Aidkit';
 import BWormFinalExplosion from './weapon/bullet/throwable/Fallen/BWormFinalExplosion';
 import WBazooka from './weapon/weapon/powerable/bazooka/Bazooka';
 import WGrenade from './weapon/weapon/powerable/grenade/Grenade';
+import WHolyGrenade from './weapon/weapon/powerable/holygrenade/HolyGrenade';
 import WDynamite from './weapon/weapon/static/dynamite/Dynamite';
 import WMine from './weapon/weapon/static/mine/Mine';
 import Weapon from './weapon/weapon/Weapon';
@@ -36,6 +37,7 @@ export default class Worm extends Entity {
         grenade: new WGrenade(),
         dynamite: new WDynamite(),
         mine: new WMine(),
+        holygrenade: new WHolyGrenade(),
     };
 
     public isSelected = false;
@@ -119,8 +121,8 @@ export default class Worm extends Entity {
         return this.hp;
     }
 
-    public setHP(hp: number) {
-        this.hp += Math.round(hp);
+    public setHP(damage: number) {
+        this.hp += Math.round(damage);
         if (this.hp < 0) {
             this.hp = 0;
         }
@@ -255,7 +257,7 @@ export default class Worm extends Entity {
             return;
         }
 
-        this.handleCollision(mapMatrix, entities);
+        this.handleCollision(/* mapMatrix, entities */);
 
         const normalSurface = collision.normalize().scale(-1);
         const velClone = vel.clone().normalize().scale(-1);
@@ -493,7 +495,7 @@ export default class Worm extends Entity {
         }
     }
 
-    protected handleCollision(mapMatrix: MapMatrix, entities: Entity[]): void {
+    protected handleCollision(/* mapMatrix: MapMatrix, entities: Entity[] */): void {
         // here we can remove hp for fall damage
         const delta = this.physics.velocity.getLength() - this.jumpVectors.backflip.getLength() * this.fallToJumpCoef;
         if (delta > 0) {
@@ -515,7 +517,7 @@ export default class Worm extends Entity {
         return this.moveStates.isDead;
     }
 
-    public spriteLoop: TLoopCallback = (time) => {
+    public spriteLoop: TLoopCallback = (/*time*/) => {
         this.animation.spriteLoop(
             this.moveStates,
             this.movesOptions.direction,
@@ -528,4 +530,10 @@ export default class Worm extends Entity {
             this.gui.spriteLoop();
         }
     };
+
+    public remove(): void {
+        this.setHP(-this.getHP());
+        this.moveStates.isDead = true;
+        super.remove();
+    }
 }
