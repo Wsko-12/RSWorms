@@ -6,6 +6,7 @@ import {
     ISocketLogUserReq,
     ISocketLogUserRes,
     ISocketRoomsTableDataItem,
+    ISocketRoomToggleData,
 } from '../../../../../../ts/socketInterfaces';
 import PageBuilder from '../../../../../utils/PageBuilder';
 import PageElement from '../../../../../utils/PageElement';
@@ -177,5 +178,16 @@ export default class LobbyOnlinePopUp extends PageElement {
     public show(flag: boolean) {
         this.element.style.display = flag ? 'flex' : 'none';
         this.gameCreator.show(false);
+
+        if (!flag) {
+            if (User.inRoom) {
+                const request: ISocketRoomToggleData = {
+                    user: User.nickname,
+                    room: User.inRoom,
+                    status: 'leave',
+                };
+                ClientSocket.emit(ESocketLobbyMessages.roomToggle, request);
+            }
+        }
     }
 }
