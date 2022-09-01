@@ -20,7 +20,7 @@ export default class LobbyOnlinePopUp extends PageElement {
     private nick: HTMLInputElement;
     private nickMessage: HTMLParagraphElement;
     private roomsTable = new RoomsTable();
-    private addRoomButton: HTMLDivElement;
+    private addRoomButton: HTMLButtonElement;
     private gameCreator = new GameCreator(true, (options: IStartGameOptions) => {
         const request: ISocketRoomsTableDataItem = {
             owner: User.nickname,
@@ -62,9 +62,10 @@ export default class LobbyOnlinePopUp extends PageElement {
             content: 'Enter your nickname to play online',
         });
 
-        this.addRoomButton = <HTMLDivElement>PageBuilder.createElement('div', {
+        this.addRoomButton = <HTMLButtonElement>PageBuilder.createElement('button', {
             classes: 'lobby__button rooms-table__button',
             content: 'create',
+            id: 'createRoomBtn',
         });
 
         this.element.append(body);
@@ -139,7 +140,7 @@ export default class LobbyOnlinePopUp extends PageElement {
     private validateName(name: string): string | false {
         const string = name.toUpperCase().trim();
         if (/^[A-Z0-9]+$/.test(string)) {
-            return string.length >= 3 ? string : false;
+            return string.length >= 3 && string.length <= 8 ? string : false;
         } else {
             return false;
         }

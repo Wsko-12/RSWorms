@@ -29,8 +29,29 @@ export default class Room extends ManagerItem {
         }
 
         if (userInstance) {
-            userInstance.setRoom(this);
+            userInstance.setRoom(this.data.id);
             this.data.players.push(userInstance.name);
         }
+    }
+
+    public removeUser(user: string) {
+        const index = this.data.players.indexOf(user);
+        if (index != -1) {
+            this.data.players.splice(index, 1);
+            const userInstance = new UserManager().getUserByName(user) || null;
+            if (userInstance) {
+                if (userInstance.inRoom === this.data.id) {
+                    userInstance.removeFromRoom(false);
+                }
+            }
+        }
+    }
+
+    public removeFromManager() {
+        const players = [...this.data.players];
+        players.forEach((player) => {
+            this.removeUser(player);
+        });
+        super.removeFromManager();
     }
 }

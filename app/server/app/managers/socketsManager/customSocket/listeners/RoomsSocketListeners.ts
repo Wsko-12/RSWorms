@@ -17,7 +17,7 @@ export default class RoomsSocketListeners {
             }
 
             const response: ISocketRoomsTableData = {
-                rooms: [],
+                rooms: new RoomsManager().getRoomsData(),
             };
 
             socket.emit<ISocketRoomsTableData>(ESocketLobbyMessages.roomsTableUpdate, response);

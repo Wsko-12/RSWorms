@@ -39,6 +39,18 @@ export default class RoomsManager extends Manager<Room> {
         this.update();
     }
 
+    public removeUserFromRoom(userName: string, room: string) {
+        const roomInstance = this.getRoomById(room);
+        if (roomInstance) {
+            if (roomInstance.data.owner === userName) {
+                roomInstance.removeFromManager();
+            } else {
+                roomInstance.removeUser(userName);
+            }
+        }
+        this.update();
+    }
+
     public getRoomById(id: string) {
         return this.items.find((room) => room.id === id);
     }
