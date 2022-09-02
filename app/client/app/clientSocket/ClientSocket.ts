@@ -3,7 +3,27 @@ import DEV from '../../../server/DEV';
 export default class ClientSocket {
     static handler: Socket | null = null;
     static init() {
-        this.handler = io();
+        return new Promise((res, rej) => {
+            const handler = io();
+            const timestamp = Date.now();
+
+            const checkConnection = () => {
+                if (handler.connected) {
+                    this.handler = handler;
+                    res(true);
+                } else {
+                    if (Date.now() - timestamp > 3000) {
+                        rej();
+                    } else {
+                        setTimeout(() => {
+                            checkConnection();
+                        }, 100);
+                    }
+                }
+            };
+
+            checkConnection();
+        });
     }
 
     static emit<T>(msg: string, ...data: T[]) {

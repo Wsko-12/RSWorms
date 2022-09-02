@@ -1,4 +1,5 @@
-import { EWorldSizes } from './enums';
+import { EMapPacksNames, EWorldSizes } from './enums';
+import { IStartGameOptions } from './interfaces';
 
 export const enum ESocketLobbyMessages {
     logUserReq = 'log-user-request',
@@ -7,6 +8,7 @@ export const enum ESocketLobbyMessages {
     roomCreateReq = 'room-create-request',
     roomsTableUpdate = 'rooms-table-update',
     roomToggle = 'room-toggle',
+    roomReady = 'room-ready',
 }
 
 export interface ISocketLogUserReq {
@@ -37,7 +39,7 @@ export interface ISocketRoomsTableDataItem {
     worms: number;
     hp: number;
     size: EWorldSizes;
-    texture: string;
+    texture: EMapPacksNames;
 }
 
 export interface ISocketRoomsTableData {
@@ -48,4 +50,17 @@ export interface ISocketRoomToggleData {
     user: string;
     room: string;
     status: 'join' | 'leave';
+}
+
+export interface ISocketRoomReady {
+    id: string;
+}
+
+export const enum ESocketGameMessages {
+    startLoading = 'game-loading',
+    startGame = 'game-start',
+}
+
+export interface ILoadingMultiplayerGameData extends IStartGameOptions {
+    multiplayer: true;
 }

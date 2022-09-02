@@ -22,17 +22,13 @@ export default class LobbyOnlinePopUp extends PageElement {
     private nickMessage: HTMLParagraphElement;
     private roomsTable = new RoomsTable();
     private addRoomButton: HTMLButtonElement;
+    private backBtn: HTMLButtonElement;
     private gameCreator = new GameCreator(true, (options: IStartGameOptions) => {
         const request: ISocketRoomsTableDataItem = {
+            ...options,
             owner: User.nickname,
-            id: options.id,
-            hp: options.hp,
             players: [],
-            size: options.worldSize,
             teams: options.teams as number,
-            time: options.time,
-            worms: options.wormsCount,
-            texture: options.mapTexturePackName,
         };
 
         ClientSocket.emit(ESocketLobbyMessages.roomCreateReq, request);
@@ -49,6 +45,13 @@ export default class LobbyOnlinePopUp extends PageElement {
         });
 
         this.body = body;
+
+        this.backBtn = <HTMLButtonElement>PageBuilder.createElement('button', {
+            classes: 'lobby__button_back online__back',
+            content: '< Back',
+        });
+
+        const container = <HTMLDivElement>PageBuilder.createElement('div', {});
 
         this.nick = <HTMLInputElement>PageBuilder.createElement('input', {
             classes: 'online__input',
@@ -69,17 +72,16 @@ export default class LobbyOnlinePopUp extends PageElement {
             id: 'createRoomBtn',
         });
 
-        this.element.append(body);
+        container.append(this.backBtn, body);
+        this.element.append(container);
         body.append(this.nick, this.nickMessage);
         this.show(false);
         this.applyListeners();
     }
 
     private applyListeners() {
-        this.element.addEventListener('click', (e) => {
-            if (e.target === this.element) {
-                this.show(false);
-            }
+        this.backBtn.addEventListener('click', (e) => {
+            this.show(false);
         });
 
         this.addRoomButton.addEventListener('click', (e) => {

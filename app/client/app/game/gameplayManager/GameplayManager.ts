@@ -48,7 +48,7 @@ export default class gameplayManager {
             for (let i = 0; i < teamsCount; i++) {
                 const teamOptions = (options.teams as ITeamOptions[])[i];
                 const team = new Team(i, teamOptions.name, teamOptions.lang);
-                for (let j = 0; j < options.wormsCount; j++) {
+                for (let j = 0; j < options.worms; j++) {
                     const wormName = teamOptions.worms[j];
                     const worm = this.entityManager.generateWorm(i, j, wormName, teamOptions.lang, options.hp);
                     if (!worm) {

@@ -3,6 +3,7 @@ import {
     ISocketRoomsTableData,
     ISocketRoomsTableDataItem,
 } from '../../../../ts/socketInterfaces';
+import GamesManager from '../gamesManager/GamesManager';
 import Manager from '../Manager';
 import SocketsManager from '../socketsManager/SocketsManager';
 import Room from './Room';
@@ -34,9 +35,15 @@ export default class RoomsManager extends Manager<Room> {
     public addUserToRoom(userName: string, room: string) {
         const roomInstance = this.getRoomById(room);
         if (roomInstance) {
-            roomInstance.addUser(userName);
+            const isFull = roomInstance.addUser(userName);
+            this.update();
+            if (isFull) {
+                roomInstance.ready();
+                new GamesManager().createGame(roomInstance);
+                roomInstance.removeFromManager();
+                this.update();
+            }
         }
-        this.update();
     }
 
     public removeUserFromRoom(userName: string, room: string) {

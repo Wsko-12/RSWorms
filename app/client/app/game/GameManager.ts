@@ -50,10 +50,10 @@ export default class GameManager {
 
         const mainScene = this.world.getMainScene();
         this.interface.setMainSceneToRenderer(mainScene);
-        const width = options.worldSize * EProportions.mapWidthToHeight;
-        const height = options.worldSize;
+        const width = options.size * EProportions.mapWidthToHeight;
+        const height = options.size;
         this.interface.setCameraBorders(0, 0, width, height);
-        this.interface.setCameraMaxZoom(options.worldSize);
+        this.interface.setCameraMaxZoom(options.size);
 
         this.start();
     }

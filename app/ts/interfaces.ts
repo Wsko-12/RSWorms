@@ -4,22 +4,20 @@ import { ELang, EMapPacksNames, EWorldSizes } from './enums';
 import { TClassProperty, TAttrProperty, TDatasetProperty, TContentProperty } from './types';
 
 export interface IStartGameOptions {
-    mapTexturePackName: EMapPacksNames;
-    worldSize: EWorldSizes;
+    texture: EMapPacksNames;
+    size: EWorldSizes;
     seed: number;
     decor: {
         count: number;
         max: number;
         min: number;
     };
-    wormsCount: number;
+    worms: number;
     multiplayer: boolean;
     teams: ITeamOptions[] | number;
     hp: number;
     time: number;
     id: string;
-    // teamNames: string[];
-    // playerNames: string[];
 }
 
 export interface ITeamOptions {
@@ -95,4 +93,10 @@ export interface ICreateElementProps {
     attrs?: TAttrProperty;
     dataset?: TDatasetProperty;
     content?: TContentProperty;
+}
+
+export interface IServerGameOptions {
+    id: string;
+    players: string[];
+    worms: number;
 }
