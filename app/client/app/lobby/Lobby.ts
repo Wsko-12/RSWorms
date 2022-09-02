@@ -248,15 +248,15 @@ export default class Lobby {
         // const seed = 0.11259509204096174;
         console.log('Seed: ', seed);
         this.startGameCallback({
-            mapTexturePackName: EMapPacksNames.moon,
-            worldSize: EWorldSizes.medium,
+            texture: EMapPacksNames.moon,
+            size: EWorldSizes.medium,
             seed,
             decor: {
                 count: EMapPacksDecorItems[EMapPacksNames.moon],
                 max: 6,
                 min: 2,
             },
-            wormsCount: 6,
+            worms: 6,
             multiplayer: false,
             teams: [
                 {

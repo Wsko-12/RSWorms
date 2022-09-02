@@ -19,7 +19,7 @@ export default class GameCreator extends PageElement {
         teams: new NumberSwitcher('Teams', 2, 4, 1, 2),
         worms: new NumberSwitcher('Worms', 1, 6, 1, 3),
         hp: new NumberSwitcher('Start HP', 20, 300, 20, 100),
-        mapSize: new StringSwitcher(
+        size: new StringSwitcher(
             'Map size',
             Object.keys(EWorldSizes).filter((value) => isNaN(Number(value))),
             1
@@ -31,7 +31,7 @@ export default class GameCreator extends PageElement {
         worms: 4,
         wormsHealth: 100,
         time: 45,
-        mapSize: EWorldSizes.small,
+        size: EWorldSizes.small,
         texture: EMapPacksNames.moon,
     };
 
@@ -84,11 +84,11 @@ export default class GameCreator extends PageElement {
         this.counters.worms = this.elements.worms.getValue();
         this.counters.wormsHealth = this.elements.hp.getValue();
 
-        const size = this.elements.mapSize.getValue();
+        const size = this.elements.size.getValue();
 
         if (isWorldSizesKey(size)) {
             const mapSize = EWorldSizes[size];
-            this.counters.mapSize = mapSize;
+            this.counters.size = mapSize;
         }
 
         const texture = this.elements.texture.getValue();
@@ -122,16 +122,16 @@ export default class GameCreator extends PageElement {
 
             const options: IStartGameOptions = {
                 seed: Math.random(),
-                mapTexturePackName: this.counters.texture,
+                texture: this.counters.texture,
                 decor: {
                     count: EMapPacksDecorItems[this.counters.texture],
                     max: 6,
                     min: 2,
                 },
                 time: this.counters.time,
-                worldSize: this.counters.mapSize,
+                size: this.counters.size,
                 multiplayer: this.isOnline,
-                wormsCount: this.counters.worms,
+                worms: this.counters.worms,
                 hp: this.counters.wormsHealth,
                 teams: this.isOnline ? this.counters.teams : generateTeams(),
                 id: this.currentId,

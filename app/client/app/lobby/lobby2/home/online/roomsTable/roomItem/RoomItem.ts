@@ -70,7 +70,6 @@ export default class RoomItem extends PageElement {
     }
 
     public update(data: ISocketRoomsTableDataItem) {
-        console.log(User.inRoom === this.data.id, User.inRoom, this.data.id);
         this.element.style.order = User.inRoom === this.data.id ? '0' : '1';
 
         this.elements.players.updateList(data.players);

@@ -1,4 +1,4 @@
-import { ISocketRoomsTableDataItem } from '../../../../ts/socketInterfaces';
+import { ESocketLobbyMessages, ISocketRoomReady, ISocketRoomsTableDataItem } from '../../../../ts/socketInterfaces';
 import ManagerItem from '../ManagerItem';
 import User from '../userManager/User';
 import UserManager from '../userManager/UserManager';
@@ -32,6 +32,8 @@ export default class Room extends ManagerItem {
             userInstance.setRoom(this.data.id);
             this.data.players.push(userInstance.name);
         }
+
+        return this.data.players.length === this.data.teams;
     }
 
     public removeUser(user: string) {
@@ -45,6 +47,17 @@ export default class Room extends ManagerItem {
                 }
             }
         }
+    }
+
+    public ready() {
+        const users = this.data.players.map((name) => new UserManager().getUserByName(name));
+        users.forEach((user) => {
+            const data: ISocketRoomReady = {
+                id: this.id,
+            };
+
+            user?.emit(ESocketLobbyMessages.roomReady, data);
+        });
     }
 
     public removeFromManager() {

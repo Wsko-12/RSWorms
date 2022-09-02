@@ -1,9 +1,9 @@
 import { ELang, EMapPacksDecorItems, EMapPacksNames, EWorldSizes } from '../../../../../ts/enums';
 import { IStartGameOptions } from '../../../../../ts/interfaces';
-import { TStartGameCallback } from '../../../../../ts/types';
 import { getRandomMemberName, getRandomTeamName } from '../../../../utils/names';
 import PageBuilder from '../../../../utils/PageBuilder';
 import PageElement from '../../../../utils/PageElement';
+import App from '../../../App';
 import GameCreator from './gameCreator/GameCreator';
 import LobbyOnlinePopUp from './online/LobbyOnlinePopUp';
 import './style.scss';
@@ -14,24 +14,24 @@ export default class LobbyHomePage extends PageElement {
     private startCustomGame = (options: IStartGameOptions) => {
         console.log('Seed: ', options.seed);
         document.body.innerHTML = '';
-        this.startGameCallback(options);
+        App.startGame(options);
     };
 
     private gameCreator = new GameCreator(false, this.startCustomGame);
     private buttons: {
-        play: HTMLDivElement;
-        custom: HTMLDivElement;
-        online: HTMLDivElement;
+        play: HTMLButtonElement;
+        custom: HTMLButtonElement;
+        online: HTMLButtonElement;
     };
 
-    private startGameCallback: TStartGameCallback;
-    constructor(startGameCallback: TStartGameCallback) {
+    constructor(isSocketConnected: boolean) {
         super();
-        this.startGameCallback = startGameCallback;
         this.element = PageBuilder.createElement('section', {
-            classes: 'lobby__screen',
+            classes: 'lobby__screen home__overlay',
         });
         this.buttons = this.createButtons();
+
+        this.buttons.online.disabled = !isSocketConnected;
 
         const buttonsContainer = <HTMLDivElement>PageBuilder.createElement('div', {
             classes: 'home__buttons-container',
@@ -83,16 +83,16 @@ export default class LobbyHomePage extends PageElement {
         // const seed = 0.5464200270095712;
         // const seed = 0.11259509204096174;
         console.log('Seed: ', seed);
-        this.startGameCallback({
-            mapTexturePackName: EMapPacksNames.moon,
-            worldSize: EWorldSizes.medium,
+        App.startGame({
+            texture: EMapPacksNames.moon,
+            size: EWorldSizes.medium,
             seed,
             decor: {
                 count: EMapPacksDecorItems[EMapPacksNames.moon],
                 max: 6,
                 min: 2,
             },
-            wormsCount: 4,
+            worms: 4,
             multiplayer: false,
             teams: [
                 {
@@ -117,17 +117,17 @@ export default class LobbyHomePage extends PageElement {
     }
 
     private createButtons() {
-        const play = <HTMLDivElement>PageBuilder.createElement('div', {
+        const play = <HTMLButtonElement>PageBuilder.createElement('button', {
             classes: 'lobby__button home__button',
             content: 'play',
         });
 
-        const online = <HTMLDivElement>PageBuilder.createElement('div', {
+        const online = <HTMLButtonElement>PageBuilder.createElement('button', {
             classes: 'lobby__button home__button',
             content: 'online',
         });
 
-        const custom = <HTMLDivElement>PageBuilder.createElement('div', {
+        const custom = <HTMLButtonElement>PageBuilder.createElement('button', {
             classes: 'lobby__button home__button',
             content: 'custom',
         });

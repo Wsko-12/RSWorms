@@ -6,9 +6,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #a771e7;
     font-family: 'DynaPuff', cursive;
 }
+
 
 .lobby__button{
     -webkit-touch-callout: none; /* iOS Safari */
@@ -32,6 +32,19 @@
     text-align: center;
     transition-duration: 0.2s;
 
+    &_back{
+        font-family: 'DynaPuff', cursive;
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: black;
+        cursor: pointer !important;
+
+        &:hover{
+            text-decoration: underline;
+        }
+    }
+
     &:hover{
         transform: translate(2px, 2px);
         color: #ff0890;
@@ -42,7 +55,23 @@
         transform: translate(4px, 4px);
         color: #809bf3;
         box-shadow: 0px 0px 0px black;
+    }
 
+    &:disabled{
+        color: gray !important;
+        border: 2px solid gray;
+        box-shadow: 4px 4px 0px gray !important;
+        background-color: #f0ffff !important;
+
+        &:hover{
+            transform: none;
+            box-shadow: 4px 4px 0px gray !important;
+        }
+
+        &:active{
+            transform: none;
+            box-shadow: 4px 4px 0px gray !important;
+        }
     }
 }
 

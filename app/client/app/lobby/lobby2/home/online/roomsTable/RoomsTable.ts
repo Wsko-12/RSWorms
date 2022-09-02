@@ -1,12 +1,14 @@
 import DEV from '../../../../../../../server/DEV';
 import {
     ESocketLobbyMessages,
+    ISocketRoomReady,
     ISocketRoomsTableData,
     ISocketRoomsTableDataItem,
 } from '../../../../../../../ts/socketInterfaces';
 import PageBuilder from '../../../../../../utils/PageBuilder';
 import PageElement from '../../../../../../utils/PageElement';
 import ClientSocket from '../../../../../clientSocket/ClientSocket';
+import Multiplayer from '../../../../../multiplayer/Multiplayer';
 import User from '../../../../../User';
 import RoomItem from './roomItem/RoomItem';
 import './style.scss';
@@ -20,12 +22,30 @@ export default class RoomsTable extends PageElement {
         this.element = <HTMLDivElement>PageBuilder.createElement('div', {
             classes: 'rooms__table',
         });
-
-        this.applyListeners();
     }
 
     private applyListeners() {
-        return;
+        ClientSocket.on<ISocketRoomReady>(ESocketLobbyMessages.roomReady, (data) => {
+            if (DEV.showSocketResponseAndRequest) {
+                console.log(`Response: ${ESocketLobbyMessages.roomReady}`, data);
+            }
+
+            if (data) {
+                if (User.inRoom === data.id) {
+                    Multiplayer.showStartGameScreen(data.id);
+                }
+            }
+        });
+
+        ClientSocket.on<ISocketRoomsTableData>(ESocketLobbyMessages.roomsTableUpdate, (data) => {
+            if (DEV.showSocketResponseAndRequest) {
+                console.log(`Response: ${ESocketLobbyMessages.roomsTableUpdate}`, data);
+            }
+            if (data) {
+                this.update(data.rooms);
+            }
+        });
+        ClientSocket.emit(ESocketLobbyMessages.roomsTableReq);
     }
 
     private updatePlayerRoom(rooms: ISocketRoomsTableDataItem[]) {
@@ -77,14 +97,6 @@ export default class RoomsTable extends PageElement {
     }
 
     public init() {
-        ClientSocket.on<ISocketRoomsTableData>(ESocketLobbyMessages.roomsTableUpdate, (data) => {
-            if (DEV.showSocketResponseAndRequest) {
-                console.log(`Response: ${ESocketLobbyMessages.roomsTableUpdate}`, data);
-            }
-            if (data) {
-                this.update(data.rooms);
-            }
-        });
-        ClientSocket.emit(ESocketLobbyMessages.roomsTableReq);
+        this.applyListeners();
     }
 }

@@ -20,10 +20,10 @@ export default class AssetsManager {
     static async init(options: IStartGameOptions) {
         // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (res) => {
-            if (this.isMapTexturePackReady(options.mapTexturePackName)) {
+            if (this.isMapTexturePackReady(options.texture)) {
                 res(true);
             } else {
-                this.mapTexturePack = new MapTexturePack(options.mapTexturePackName);
+                this.mapTexturePack = new MapTexturePack(options.texture);
                 await this.mapTexturePack.load();
             }
 
