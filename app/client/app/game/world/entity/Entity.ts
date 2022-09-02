@@ -1,13 +1,16 @@
 import { Mesh, Object3D } from 'three';
+import { ESoundsWormAction } from '../../../../../ts/enums';
 import { IExplosionOptions, IPhysics } from '../../../../../ts/interfaces';
 import { TLoopCallback, TRemoveEntityCallback } from '../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../utils/geometry';
+import SoundManager from '../../../soundManager/SoundManager';
 import MapMatrix from '../worldMap/mapMatrix/MapMatrix';
 export default abstract class Entity {
     protected abstract object3D: Object3D | Mesh;
     public position: Point2;
     public radius: number;
     protected radiusUnitAngle: number;
+    public isDrown = false;
 
     protected removeFromEntityCallback: TRemoveEntityCallback | null = null;
 
@@ -118,6 +121,8 @@ export default abstract class Entity {
 
         if (!collision || this.position.y < waterLevel) {
             if (this.position.y < waterLevel) {
+                if (!this.isDrown) SoundManager.playWormAction(ESoundsWormAction.splash);
+                this.isDrown = true;
                 this.position.y -= this.physics.g * 10;
             } else {
                 this.position.x += vel.x;

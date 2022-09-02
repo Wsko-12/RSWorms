@@ -223,6 +223,7 @@ export default class Worm extends Entity {
     protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number, waterLevel: number) {
         const vel = this.physics.velocity.clone();
         if (this.position.y + this.radius < waterLevel) {
+            if (!this.moveStates.isDrown) SoundManager.playWormAction(ESoundsWormAction.splash);
             this.moveStates.isDrown = true;
         } else {
             vel.y -= this.physics.g;
@@ -476,7 +477,7 @@ export default class Worm extends Entity {
 
         if (this.position.y <= 0) {
             this.setHP(-this.getHP());
-            SoundManager.playWormAction(ESoundsWormAction.splash);
+            // SoundManager.playWormAction(ESoundsWormAction.splash);
             this.moveStates.isDead = true;
             if (this.endTurnCallback) {
                 this.endTurnCallback(5);

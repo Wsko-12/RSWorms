@@ -6,7 +6,7 @@ export default class Water {
     private object3D: Object3D;
     private width: number;
     private height: number;
-    private level = 0;
+    private level = 100;
 
     private uniforms = {
         time: {
