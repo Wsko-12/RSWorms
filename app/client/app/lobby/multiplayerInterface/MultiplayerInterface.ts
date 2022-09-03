@@ -1,8 +1,8 @@
-import PageBuilder from '../../utils/PageBuilder';
-import App from '../App';
-import User from '../User';
+import PageBuilder from '../../../utils/PageBuilder';
+import App from '../../App';
+import User from '../../User';
 import './style.scss';
-export default class Multiplayer {
+export default class MultiplayerInterface {
     private static startScreen = this.getStartScreen();
     private static waitingPlayersScreen = this.getWaitingPlayersScreen();
 

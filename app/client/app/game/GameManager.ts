@@ -14,7 +14,7 @@ import App from '../App';
 import ClientSocket from '../clientSocket/ClientSocket';
 import { ESocketGameMessages, ISocketDoneLoadingMultiplayerGame } from '../../../ts/socketInterfaces';
 import User from '../User';
-import Multiplayer from '../multiplayer/Multiplayer';
+import MultiplayerInterface from '../lobby/multiplayerInterface/MultiplayerInterface';
 const stats = Stats();
 export default class GameManager {
     private options: IStartGameOptions;
@@ -79,7 +79,7 @@ export default class GameManager {
         this.gameplayManager.init(this.options);
         this.loop();
         if (this.options.multiplayer) {
-            Multiplayer.showWaitingPlayersScreen(true);
+            MultiplayerInterface.showWaitingPlayersScreen(true);
             const data: ISocketDoneLoadingMultiplayerGame = {
                 game: this.options.id,
                 user: User.nickname,
