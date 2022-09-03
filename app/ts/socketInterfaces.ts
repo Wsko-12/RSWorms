@@ -109,6 +109,10 @@ export interface ISocketWormData extends ISocketEntityData {
     };
     moveStates: IWormMoveStates;
     weaponSelected: EWeapons | null;
+    aim: {
+        angle: number;
+        power: number;
+    } | null;
 }
 
 export interface ISocketEntityDataPack {

@@ -73,6 +73,10 @@ export default abstract class Weapon {
         }
     }
 
+    public setAim(angle: number, power: number) {
+        this.aim.setAim(angle, power);
+    }
+
     public update(wormDirection: 1 | -1) {
         this.updateShowView();
         this.aim.update(wormDirection);
@@ -82,6 +86,11 @@ export default abstract class Weapon {
     public getRawAngle() {
         return this.aim.getRawAngle();
     }
+
+    public getRawAimData() {
+        return this.aim.getRawData();
+    }
+
     private rotateMesh(wormDirection: 1 | -1) {
         this.texture.repeat.x = -wormDirection;
 

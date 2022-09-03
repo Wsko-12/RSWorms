@@ -574,6 +574,7 @@ export default class Worm extends Entity {
             moveStates: { ...this.moveStates },
             moveFlags: { left, right },
             weaponSelected: this.currentWeapon?.name || null,
+            aim: this.currentWeapon?.getRawAimData() || null,
         };
         return wormData;
     }
@@ -586,10 +587,17 @@ export default class Worm extends Entity {
         Object.assign(this.moveStates, states);
     }
 
+    public setAim(aim: { angle: number; power: number } | null) {
+        if (aim) {
+            this.currentWeapon?.setAim(aim.angle, aim.power);
+        }
+    }
+
     public setSocketData(data: ISocketWormData): void {
         this.setMoveFlags(data.moveFlags);
         this.setMoveStates(data.moveStates);
         this.selectWeapon(data.weaponSelected);
+        this.setAim(data.aim);
         super.setSocketData(data);
     }
 }
