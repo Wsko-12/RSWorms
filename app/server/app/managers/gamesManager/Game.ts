@@ -17,6 +17,8 @@ export default class Game extends ManagerItem {
     private started = false;
     constructor(options: ISocketRoomsTableDataItem) {
         super();
+        this.id = options.id;
+
         const userManager = new UserManager();
         options.players.forEach((name) => {
             this.playersLoadedGameStates[name] = false;
@@ -27,8 +29,6 @@ export default class Game extends ManagerItem {
                 this.users.push(user);
             }
         });
-
-        this.id = options.id;
 
         const loadingGameData = this.generateLoadingGameData(options);
 
@@ -66,7 +66,6 @@ export default class Game extends ManagerItem {
 
     public setPlayerLoadedState(name: string) {
         const user = this.findUserByName(name);
-        console.log(user);
         if (user) {
             this.playersLoadedGameStates[name] = true;
             this.checkPlayerLoadedStates();
