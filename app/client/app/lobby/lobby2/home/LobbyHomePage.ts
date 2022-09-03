@@ -13,7 +13,7 @@ export default class LobbyHomePage extends PageElement {
 
     private startCustomGame = (options: IStartGameOptions) => {
         console.log('Seed: ', options.seed);
-        document.body.innerHTML = '';
+        App.screen.innerHTML = '';
         App.startGame(options);
     };
 
@@ -67,7 +67,7 @@ export default class LobbyHomePage extends PageElement {
     }
 
     private startFastGame() {
-        document.body.innerHTML = '';
+        App.screen.innerHTML = '';
         const seed = Math.random();
         // const seed = 0.7135371756374531;
         // const seed = 0.7972989657842342;

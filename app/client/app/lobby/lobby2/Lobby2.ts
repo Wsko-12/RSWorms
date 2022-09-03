@@ -1,3 +1,4 @@
+import App from '../../App';
 import LobbyHomePage from './home/LobbyHomePage';
 import './style.scss';
 export default class Lobby {
@@ -7,7 +8,7 @@ export default class Lobby {
     }
 
     public start() {
-        document.body.innerHTML = '';
-        document.body.append(this.mainPage.getElement());
+        App.screen.innerHTML = '';
+        App.screen.append(this.mainPage.getElement());
     }
 }

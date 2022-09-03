@@ -1,3 +1,4 @@
+import App from '../../../App';
 import Inventory from './inventory/Inventory';
 import MobileInterface from './mobile/MobileInterface';
 import './style.scss';
@@ -49,12 +50,12 @@ export default class View {
         const inventory = this.inventory.getElement();
 
         const mobileInterface = this.mobileInterface.getElement();
-        document.body.append(mobileInterface);
+        App.screen.append(mobileInterface);
 
-        document.body.append(this.mainCanvas);
-        document.body.append(this.mainHandler);
-        document.body.append(this.guiContainer);
-        document.body.append(inventory);
+        App.screen.append(this.mainCanvas);
+        App.screen.append(this.mainHandler);
+        App.screen.append(this.guiContainer);
+        App.screen.append(inventory);
     }
 
     public showInventory(flag: boolean) {
