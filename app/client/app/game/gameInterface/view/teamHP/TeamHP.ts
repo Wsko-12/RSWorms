@@ -7,7 +7,6 @@ import './style.scss';
 export default class TeamsHP {
     private element: HTMLDivElement;
     private barScale = 0.5;
-    private colors = ['red', 'blue', 'green', 'yellow'];
     private teams: {
         [key: string]: HTMLDivElement;
     } = {};
@@ -44,14 +43,23 @@ export default class TeamsHP {
     }
 
     public update = (teams: Team[]) => {
-        teams.forEach((team) => {
-            const teamEl = this.teams[team.name + team.index];
-            const bar = teamEl.querySelector('.team-hp-bar') as HTMLElement;
+        teams.forEach((actualTeam) => {
+            const teamEl = this.teams[actualTeam.name + actualTeam.index];
+            const bar = <HTMLDivElement>teamEl.querySelector('.team-hp-bar');
             if (bar) {
-                bar.style.width = team.getHPLevel() * 100 + '%';
+                bar.style.width = actualTeam.getHPLevel() * 100 + '%';
                 setTimeout(() => {
-                    if (team.getHPLevel() <= 0) teamEl.innerHTML = '';
+                    if (actualTeam.getHPLevel() <= 0) teamEl.innerHTML = '';
                 }, 2000);
+            }
+        });
+
+        Object.keys(this.teams).forEach((availableTeam) => {
+            const teamExist = !!teams.find((actualTeam) => actualTeam.name + actualTeam.index === availableTeam);
+            if (!teamExist) {
+                const element = this.teams[availableTeam];
+                element.remove();
+                delete this.teams[availableTeam];
             }
         });
     };

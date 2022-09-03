@@ -60,6 +60,8 @@ export const enum ESocketGameMessages {
     startLoading = 'game-loading',
     loadingDone = 'game-loading-done',
     allPlayersLoaded = 'game-all-players-loaded',
+    preTurnData = 'game-pre-turn-data',
+    teamWin = 'game-team-win',
 }
 
 export interface ISocketLoadingMultiplayerGameData extends IStartGameOptions {
@@ -69,4 +71,22 @@ export interface ISocketLoadingMultiplayerGameData extends IStartGameOptions {
 export interface ISocketDoneLoadingMultiplayerGame {
     user: string;
     game: string;
+}
+
+export interface ISocketAllPlayersLoadedData {
+    game: string;
+}
+
+export interface ISocketTeamsAvailable {
+    game: string;
+    teams: string[];
+}
+
+export interface ISocketTeamWinData {
+    team: string;
+    game: string;
+}
+
+export interface ISocketPreTurnData extends ISocketTeamsAvailable {
+    temporary?: number;
 }

@@ -9,6 +9,7 @@ export default class Team {
     name: string;
     maxWorms = 0;
     lang: ELang;
+    isDeleted = false;
     constructor(index: number, name?: string, lang = ELang.rus) {
         this.name = name || 'developers' + index;
         this.index = index;
@@ -42,5 +43,12 @@ export default class Team {
 
     celebrate() {
         this.worms.forEach((worm) => worm.celebrate());
+    }
+
+    delete() {
+        this.isDeleted = true;
+        this.worms.forEach((worm) => {
+            worm.remove();
+        });
     }
 }
