@@ -11,6 +11,8 @@ export default class BBarrelExplosion extends BDynamite {
     private barrel: Barrel;
     private isExplodedState = false;
     public type: EBullets;
+    collisionSound = ESoundsBullet.girder;
+
     constructor(barrel: Barrel) {
         super({ angle: 1, parentRadius: 1, position: new Point2(0, 0), power: 0 });
         this.barrel = barrel;

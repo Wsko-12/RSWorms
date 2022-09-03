@@ -40,8 +40,6 @@ export default class IOManager {
             }
             const result = this.wormManager.handleEvent(e);
             if (result instanceof Bullet) {
-                const scene = this.world.getMainScene();
-                scene.add(result.getObject3D());
                 this.world.entityManager.addEntity(result);
             }
         });

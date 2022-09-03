@@ -1,5 +1,6 @@
-import { EConstants, EWeapons } from '../../../../../../../../../ts/enums';
+import { EConstants, ESoundsBullet, EWeapons } from '../../../../../../../../../ts/enums';
 import { IBulletOptions } from '../../../../../../../../../ts/interfaces';
+import SoundManager from '../../../../../../../soundManager/SoundManager';
 import MapMatrix from '../../../../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../../../../Entity';
 import Bullet from '../Bullet';
@@ -7,6 +8,7 @@ import Bullet from '../Bullet';
 export default abstract class ThrowableBullet extends Bullet {
     protected isActivated = false;
     protected timer = Date.now();
+    protected abstract collisionSound: ESoundsBullet;
     constructor(options: IBulletOptions, textureName: EWeapons) {
         super(options, textureName);
         this.physics.friction = 0.4;

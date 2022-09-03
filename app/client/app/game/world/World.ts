@@ -21,6 +21,10 @@ export default class World {
         this.water = new Water(options.size);
     }
 
+    public getWorldMap() {
+        return this.worldMap;
+    }
+
     public async init() {
         this.background.init(this.options.size);
         await this.worldMap.init(this.options);

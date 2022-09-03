@@ -21,6 +21,8 @@ import IOManager from '../IOManager/IOManager';
 import BBazooka from '../world/entity/worm/weapon/bullet/shottable/parabolic/bazooka/BBazooka';
 import BDynamite from '../world/entity/worm/weapon/bullet/throwable/Fallen/dynamite/BDynamite';
 import BMine from '../world/entity/worm/weapon/bullet/throwable/Fallen/mine/Bmine';
+import BBananaGrenade from '../world/entity/worm/weapon/bullet/throwable/Flight/bananagrenade/BBananaGrenade';
+import BBananasChild from '../world/entity/worm/weapon/bullet/throwable/Flight/bananagrenade/BBananaGrenadeChild';
 import BGrenade from '../world/entity/worm/weapon/bullet/throwable/Flight/grenade/BGrenade';
 import BHolyGrenade from '../world/entity/worm/weapon/bullet/throwable/Flight/holygrenade/BHolyGrenade';
 import Worm from '../world/entity/worm/Worm';
@@ -33,6 +35,8 @@ const bulletConstructors = {
     BHolyGrenade: BHolyGrenade,
     BMine: BMine,
     BDynamite: BDynamite,
+    BBananaGrenade: BBananaGrenade,
+    BBananasChild: BBananasChild,
 };
 
 export default class MultiplayerGameplayManager extends GameplayManager {
@@ -122,8 +126,6 @@ export default class MultiplayerGameplayManager extends GameplayManager {
                     const Constructor = bulletConstructors[data.type];
                     const bullet = new Constructor(data.options);
                     bullet.id = data.data.id;
-
-                    this.world.getMainScene().add(bullet.getObject3D());
                     this.entityManager.addEntity(bullet);
                 }
             }

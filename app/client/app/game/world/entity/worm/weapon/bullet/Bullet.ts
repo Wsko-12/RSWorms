@@ -17,6 +17,8 @@ export default abstract class Bullet extends Entity {
     protected isRemoved = false;
     public abstract type: EBullets;
 
+    public hasChilds = false;
+    child = Bullet;
     private explosionAnimation: {
         texture: Texture;
         canvas: HTMLCanvasElement;
@@ -204,5 +206,9 @@ export default abstract class Bullet extends Entity {
         const { x, y } = this.physics.velocity;
         const angle = Math.atan2(y, x);
         this.object3D.rotation.z = angle;
+    }
+
+    public getChilds(): void | Bullet[] {
+        return;
     }
 }

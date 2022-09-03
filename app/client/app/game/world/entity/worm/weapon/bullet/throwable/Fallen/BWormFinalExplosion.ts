@@ -11,6 +11,7 @@ export default class BWormFinalExplosion extends BDynamite {
     public type: EBullets;
     private worm: Worm;
     private isExplodedState = false;
+    collisionSound = ESoundsBullet.grenadeCollision;
     constructor(worm: Worm) {
         super({ angle: 1, parentRadius: 1, position: new Point2(0, 0), power: 0 });
         this.worm = worm;
