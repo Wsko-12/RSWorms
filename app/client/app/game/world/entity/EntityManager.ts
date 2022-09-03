@@ -115,6 +115,9 @@ export default class EntityManager {
     };
 
     public setSocketData(data: ISocketEntityData[]) {
+        if (User.nickname === MultiplayerGameplayManager.getCurrentTurnPlayerName()) {
+            return;
+        }
         data.forEach((data) => {
             const entity = this.entitiesMap.get(data.id);
             if (entity) {

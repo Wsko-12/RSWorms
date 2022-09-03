@@ -171,8 +171,15 @@ export default class Worm extends Entity {
     }
 
     public selectWeapon(weapon: EWeapons | null) {
+        if (weapon === this.currentWeapon) {
+            //null check
+            return;
+        }
         const before = this.currentWeapon;
         if (before) {
+            if (before.name === weapon) {
+                return;
+            }
             const object = before.getObject3D();
             before.show(false, 0);
             this.object3D.remove(object);
@@ -562,7 +569,12 @@ export default class Worm extends Entity {
         const entityData = super.getSocketData();
 
         const { left, right } = this.movesOptions.flags;
-        const wormData = Object.assign(entityData, { moveFlags: { left, right } });
+        const wormData: ISocketWormData = {
+            ...entityData,
+            moveStates: { ...this.moveStates },
+            moveFlags: { left, right },
+            weaponSelected: this.currentWeapon?.name || null,
+        };
         return wormData;
     }
 
@@ -570,8 +582,14 @@ export default class Worm extends Entity {
         Object.assign(this.movesOptions.flags, flags);
     }
 
+    public setMoveStates(states: IWormMoveStates) {
+        Object.assign(this.moveStates, states);
+    }
+
     public setSocketData(data: ISocketWormData): void {
         this.setMoveFlags(data.moveFlags);
+        this.setMoveStates(data.moveStates);
+        this.selectWeapon(data.weaponSelected);
         super.setSocketData(data);
     }
 }

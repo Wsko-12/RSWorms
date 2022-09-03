@@ -1,5 +1,5 @@
-import { EMapPacksNames, EWorldSizes } from './enums';
-import { IStartGameOptions } from './interfaces';
+import { EMapPacksNames, EWeapons, EWorldSizes } from './enums';
+import { IStartGameOptions, IWormMoveStates } from './interfaces';
 
 export const enum ESocketLobbyMessages {
     logUserReq = 'log-user-request',
@@ -107,6 +107,8 @@ export interface ISocketWormData extends ISocketEntityData {
         left: boolean;
         right: boolean;
     };
+    moveStates: IWormMoveStates;
+    weaponSelected: EWeapons | null;
 }
 
 export interface ISocketEntityDataPack {

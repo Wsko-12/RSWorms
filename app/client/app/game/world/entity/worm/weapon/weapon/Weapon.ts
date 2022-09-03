@@ -10,14 +10,13 @@ import {
 } from 'three';
 import { ELayersZ, ESoundsWeapon, ESoundsWormSpeech, EWeapons } from '../../../../../../../../ts/enums';
 import { IBulletOptions, IShootOptions } from '../../../../../../../../ts/interfaces';
-import { TRemoveEntityCallback } from '../../../../../../../../ts/types';
 import SoundManager from '../../../../../../soundManager/SoundManager';
 import AssetsManager from '../../../../../assetsManager/AssetsManager';
 import Bullet from '../bullet/Bullet';
 import Aim from './aim/Aim';
 
 export default abstract class Weapon {
-    protected abstract name: EWeapons;
+    public abstract name: EWeapons;
     protected abstract shootSound: ESoundsWeapon | ESoundsWormSpeech;
     protected bullet = Bullet;
     protected object3D: Object3D;
