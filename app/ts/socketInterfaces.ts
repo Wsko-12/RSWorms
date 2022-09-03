@@ -102,6 +102,13 @@ export interface ISocketEntityData {
     position: { x: number; y: number };
 }
 
+export interface ISocketWormData extends ISocketEntityData {
+    moveFlags: {
+        left: boolean;
+        right: boolean;
+    };
+}
+
 export interface ISocketEntityDataPack {
     game: string;
     entities: ISocketEntityData[];

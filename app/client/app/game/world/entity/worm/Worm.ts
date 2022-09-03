@@ -1,6 +1,7 @@
 import { Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from 'three';
 import { ELang, ELayersZ, ESizes, ESoundsWormAction, ESoundsWormSpeech, EWeapons } from '../../../../../../ts/enums';
 import { IExplosionOptions, IShootOptions, IWormMoveOptions, IWormMoveStates } from '../../../../../../ts/interfaces';
+import { ISocketEntityData, ISocketWormData } from '../../../../../../ts/socketInterfaces';
 import { TEndTurnCallback, TLoopCallback } from '../../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../../utils/geometry';
 import SoundManager from '../../../../soundManager/SoundManager';
@@ -121,10 +122,6 @@ export default class Worm extends Entity {
 
         this.movesOptions.flags.left = false;
         this.movesOptions.flags.right = false;
-    }
-
-    public setMoveFlags(flags: { left?: boolean; right?: boolean }) {
-        Object.assign(this.movesOptions.flags, flags);
     }
 
     public getHPLevel() {
@@ -559,5 +556,22 @@ export default class Worm extends Entity {
         this.setHP(-this.getHP());
         this.moveStates.isDead = true;
         super.remove();
+    }
+
+    public getSocketData(): ISocketWormData {
+        const entityData = super.getSocketData();
+
+        const { left, right } = this.movesOptions.flags;
+        const wormData = Object.assign(entityData, { moveFlags: { left, right } });
+        return wormData;
+    }
+
+    public setMoveFlags(flags: { left?: boolean; right?: boolean }) {
+        Object.assign(this.movesOptions.flags, flags);
+    }
+
+    public setSocketData(data: ISocketWormData): void {
+        this.setMoveFlags(data.moveFlags);
+        super.setSocketData(data);
     }
 }
