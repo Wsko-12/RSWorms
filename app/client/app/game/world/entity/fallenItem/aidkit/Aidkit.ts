@@ -10,7 +10,7 @@ export default class Aidkit extends FallenItem {
     private hpInc = 50;
 
     constructor(x: number, y: number) {
-        super(20, x, y);
+        super('aidkit', 20, x, y);
         const geometry = new PlaneBufferGeometry(100, 100);
         const texture = FallenItem.getSprite('aidkit').texture;
 

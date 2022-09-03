@@ -3,10 +3,10 @@ import { IStartGameOptions } from '../../../../ts/interfaces';
 import {
     ESocketGameMessages,
     ISocketAllPlayersLoadedData,
+    ISocketEntityDataPack,
     ISocketPreTurnData,
     ISocketTeamsAvailability,
     ISocketTeamWinData,
-    ISocketWormMove,
 } from '../../../../ts/socketInterfaces';
 import ClientSocket from '../../clientSocket/ClientSocket';
 import MultiplayerInterface from '../../lobby/multiplayerInterface/MultiplayerInterface';
@@ -20,10 +20,6 @@ export default class MultiplayerGameplayManager extends GameplayManager {
     public static instance: MultiplayerGameplayManager | null = null;
     public static isOnline = false;
 
-    public static onWormMove(moveFlags: { left: boolean; right: boolean }, position: { x: number; y: number }) {
-        this.instance?.onWormMove(moveFlags, position);
-    }
-
     public static getCurrentTurnPlayerName() {
         return this.instance?.currentTeamName || '';
     }
@@ -36,17 +32,6 @@ export default class MultiplayerGameplayManager extends GameplayManager {
         this.id = options.id;
         MultiplayerGameplayManager.instance = this;
         MultiplayerGameplayManager.isOnline = true;
-    }
-
-    private onWormMove(moveFlags: { left: boolean; right: boolean }, position: { x: number; y: number }) {
-        const data: ISocketWormMove = {
-            game: this.id,
-            flags: moveFlags,
-            position,
-            user: User.nickname,
-        };
-
-        ClientSocket.emit(ESocketGameMessages.wormMoveClient, data);
     }
 
     public init(options: IStartGameOptions) {
@@ -96,15 +81,13 @@ export default class MultiplayerGameplayManager extends GameplayManager {
             }
         });
 
-        ClientSocket.on<ISocketWormMove>(ESocketGameMessages.wormMoveServer, (data) => {
+        ClientSocket.on<ISocketEntityDataPack>(ESocketGameMessages.entityDataServer, (data) => {
             if (DEV.showSocketResponseAndRequest) {
-                console.log(`Response: ${ESocketGameMessages.wormMoveServer}`);
+                console.log(`Response: ${ESocketGameMessages.entityDataServer}`, data);
             }
             if (data && data.game === User.inGame) {
-                if (data.user != User.nickname) {
-                    console.log(data);
-                    this.ioManager.wormManager.hardSetFlags(data.flags);
-                    this.ioManager.wormManager.hardSetPosition(data.position.x, data.position.y);
+                if (MultiplayerGameplayManager.getCurrentTurnPlayerName() != User.inGame) {
+                    this.world.entityManager.setSocketData(data.entities);
                 }
             }
         });
@@ -135,5 +118,9 @@ export default class MultiplayerGameplayManager extends GameplayManager {
 
     public turnLoop() {
         return;
+    }
+
+    public socketLoop() {
+        this.entityManager.socketLoop();
     }
 }

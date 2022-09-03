@@ -92,7 +92,8 @@ export default class Worm extends Entity {
         y = 0,
         hp = 100
     ) {
-        super(ESizes.worm, x, y);
+        const id = teamName + wormName;
+        super(id, ESizes.worm, x, y);
         this.index = wormIndex;
         this.teamIndex = teamIndex;
         this.team = teamName;
@@ -541,7 +542,6 @@ export default class Worm extends Entity {
     }
 
     public spriteLoop: TLoopCallback = (/*time*/) => {
-        this.sendServerData();
         this.animation.spriteLoop(
             this.moveStates,
             this.movesOptions.direction,
@@ -554,16 +554,6 @@ export default class Worm extends Entity {
             this.gui.spriteLoop();
         }
     };
-
-    private sendServerData() {
-        if(this.isSelected){
-            if (MultiplayerGameplayManager.isOnline) {
-                if (MultiplayerGameplayManager.getCurrentTurnPlayerName() === User.nickname) {
-                    MultiplayerGameplayManager.onWormMove(this.movesOptions.flags, this.position);
-                }
-            }
-        };
-    }
 
     public remove(): void {
         this.setHP(-this.getHP());

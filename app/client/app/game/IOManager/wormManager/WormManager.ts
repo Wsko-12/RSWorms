@@ -125,14 +125,6 @@ export default class WormManager {
         }
     }
 
-    public hardSetPosition(x: number, y: number) {
-        this.controlledWorm?.hardSetPosition(x, y);
-    }
-
-    public hardSetFlags(flags: { left: boolean; right: boolean }) {
-        this.controlledWorm?.hardSetFlags(flags);
-    }
-
     public chooseWeapon: TChooseWeaponCallback = (weapon) => {
         if (!this.blockWeapon) {
             this.controlledWorm?.selectWeapon(weapon);

@@ -63,8 +63,8 @@ export const enum ESocketGameMessages {
     preTurnData = 'game-pre-turn-data',
     teamWin = 'game-team-win',
     teamsAvailability = 'game-teams-availability',
-    wormMoveClient = 'worm-move-client',
-    wormMoveServer = 'worm-move-server',
+    entityDataClient = 'entity-data-client',
+    entityDataServer = 'entity-data-server',
 }
 
 export interface ISocketLoadingMultiplayerGameData extends IStartGameOptions {
@@ -96,9 +96,13 @@ export interface ISocketPreTurnData extends ISocketTeamsAvailability {
     worm: string;
 }
 
-export interface ISocketWormMove {
-    game: string;
-    user: string;
-    flags: { left: boolean; right: boolean };
+export interface ISocketEntityData {
+    id: string;
+    physics: { x: number; y: number };
     position: { x: number; y: number };
+}
+
+export interface ISocketEntityDataPack {
+    game: string;
+    entities: ISocketEntityData[];
 }

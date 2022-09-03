@@ -1,6 +1,10 @@
 import { Scene } from 'three';
 import { EFallenObjects, ELang, ESizes } from '../../../../../ts/enums';
+import { ESocketGameMessages, ISocketEntityData, ISocketEntityDataPack } from '../../../../../ts/socketInterfaces';
 import { TLoopCallback } from '../../../../../ts/types';
+import ClientSocket from '../../../clientSocket/ClientSocket';
+import User from '../../../User';
+import MultiplayerGameplayManager from '../../gameplayManager/MultiplayerGameplayManager';
 import WorldMap from '../worldMap/WorldMap';
 import Entity from './Entity';
 import Aidkit from './fallenItem/aidkit/Aidkit';
@@ -11,6 +15,7 @@ export default class EntityManager {
     private readonly mainScene: Scene;
     private worldMap: WorldMap | null = null;
     private entities: Entity[] = [];
+    private entitiesMap: Map<string, Entity> = new Map();
     constructor(mainScene: Scene) {
         this.mainScene = mainScene;
     }
@@ -73,6 +78,7 @@ export default class EntityManager {
 
     public addEntity(entity: Entity) {
         entity.setRemoveFromEntityCallback(this.removeEntity);
+        this.entitiesMap.set(entity.id, entity);
         this.entities.push(entity);
     }
 
@@ -83,6 +89,8 @@ export default class EntityManager {
     public removeEntity = (entity: Entity) => {
         const object3D = entity.getObject3D();
         this.mainScene.remove(object3D);
+        this.entitiesMap.delete(entity.id);
+
         const index = this.entities.indexOf(entity);
         if (index != -1) {
             this.entities.splice(index, 1);
@@ -94,4 +102,24 @@ export default class EntityManager {
             entity.spriteLoop(time);
         });
     };
+
+    public socketLoop = () => {
+        if (MultiplayerGameplayManager.getCurrentTurnPlayerName() === User.nickname && User.inGame) {
+            const data: ISocketEntityDataPack = {
+                game: User.inGame,
+                entities: this.entities.map((entity) => entity.getSocketData()),
+            };
+
+            ClientSocket.emit(ESocketGameMessages.entityDataClient, data);
+        }
+    };
+
+    public setSocketData(data: ISocketEntityData[]) {
+        data.forEach((data) => {
+            const entity = this.entitiesMap.get(data.id);
+            if (entity) {
+                entity.setSocketData(data);
+            }
+        });
+    }
 }

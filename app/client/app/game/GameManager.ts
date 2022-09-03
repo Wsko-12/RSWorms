@@ -54,6 +54,12 @@ export default class GameManager {
                 turnLoop: new Loop(2, () => {
                     this.gameplayManager.turnLoop();
                 }),
+
+                socketLoop: new Loop(10, () => {
+                    if (this.gameplayManager instanceof MultiplayerGameplayManager) {
+                        this.gameplayManager.socketLoop();
+                    }
+                }),
             },
         };
 
