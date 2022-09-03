@@ -1,6 +1,5 @@
 import { IStartGameOptions } from '../../ts/interfaces';
 import PageBuilder from '../utils/PageBuilder';
-import ClientMultiplayerSocket from './clientSocket/ClientMultiplayerSocket';
 import ClientSocket from './clientSocket/ClientSocket';
 import GameManager from './game/GameManager';
 import Lobby from './lobby/lobby2/Lobby2';
@@ -24,7 +23,6 @@ export default class App {
         let isSocketConnected: boolean;
         ClientSocket.init()
             .then(() => {
-                ClientMultiplayerSocket.init();
                 isSocketConnected = true;
             })
             .catch(() => {

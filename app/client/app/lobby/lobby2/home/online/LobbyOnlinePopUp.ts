@@ -7,9 +7,12 @@ import {
     ISocketLogUserRes,
     ISocketRoomsTableDataItem,
     ISocketRoomToggleData,
+    ISocketLoadingMultiplayerGameData,
+    ESocketGameMessages,
 } from '../../../../../../ts/socketInterfaces';
 import PageBuilder from '../../../../../utils/PageBuilder';
 import PageElement from '../../../../../utils/PageElement';
+import App from '../../../../App';
 import ClientSocket from '../../../../clientSocket/ClientSocket';
 import User from '../../../../User';
 import GameCreator from '../gameCreator/GameCreator';
@@ -90,6 +93,7 @@ export default class LobbyOnlinePopUp extends PageElement {
 
         let oldName = '';
         let newName = '';
+
         ClientSocket.on<ISocketLogUserRes>(ESocketLobbyMessages.logUserRes, (data) => {
             if (DEV.showSocketResponseAndRequest) {
                 console.log(`Response: ${ESocketLobbyMessages.logUserRes}`, data);
@@ -114,6 +118,15 @@ export default class LobbyOnlinePopUp extends PageElement {
                 } else {
                     this.nick.value = '';
                 }
+            }
+        });
+
+        ClientSocket.on<ISocketLoadingMultiplayerGameData>(ESocketGameMessages.startLoading, (data) => {
+            if (DEV.showSocketResponseAndRequest) {
+                console.log(`Response: ${ESocketGameMessages.startLoading}`, data);
+            }
+            if (data) {
+                App.startGame(data);
             }
         });
 
