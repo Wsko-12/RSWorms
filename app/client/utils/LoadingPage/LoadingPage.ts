@@ -1,3 +1,4 @@
+import App from '../../app/App';
 import PageBuilder from '../PageBuilder';
 import './style.scss';
 
@@ -8,7 +9,7 @@ export default class LoadingPage {
             this.prev.done();
         }
         const elements = this.createElements(title);
-        document.body.append(elements.element);
+        App.screen.append(elements.element);
         elements.bar.style.width = '0%';
 
         const api = {

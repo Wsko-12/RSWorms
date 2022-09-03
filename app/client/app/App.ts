@@ -9,13 +9,18 @@ export default class App {
     private static game: GameManager | null = null;
     private static soundManager: SoundManager | null = null;
     private static lobby: Lobby | null = null;
+    public static screen = PageBuilder.createElement('section', {
+        classes: 'main-screen',
+        id: 'screen',
+    });
 
     public static start() {
         const element = PageBuilder.createElement('div', {
             classes: 'lobby__screen',
             content: 'Try to connect socket...',
         });
-        document.body.append(element);
+        document.body.append(App.screen);
+        App.screen.append(element);
         let isSocketConnected: boolean;
         ClientSocket.init()
             .then(() => {
@@ -27,7 +32,7 @@ export default class App {
                 console.log("%c Socket isn't connected", 'color: red');
             })
             .finally(() => {
-                document.body.innerHTML = '';
+                App.screen.innerHTML = '';
                 this.soundManager = new SoundManager();
 
                 this.lobby = new Lobby(isSocketConnected);
@@ -36,7 +41,7 @@ export default class App {
     }
 
     public static startGame(options: IStartGameOptions) {
-        document.body.innerHTML = '';
+        App.screen.innerHTML = '';
         this.game = new GameManager(options);
     }
 }
