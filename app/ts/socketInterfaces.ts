@@ -58,9 +58,15 @@ export interface ISocketRoomReady {
 
 export const enum ESocketGameMessages {
     startLoading = 'game-loading',
-    startGame = 'game-start',
+    loadingDone = 'game-loading-done',
+    allPlayersLoaded = 'game-all-players-loaded',
 }
 
-export interface ILoadingMultiplayerGameData extends IStartGameOptions {
+export interface ISocketLoadingMultiplayerGameData extends IStartGameOptions {
     multiplayer: true;
+}
+
+export interface ISocketDoneLoadingMultiplayerGame {
+    user: string;
+    game: string;
 }

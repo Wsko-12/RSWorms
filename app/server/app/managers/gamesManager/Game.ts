@@ -1,9 +1,9 @@
 import { getRandomMemberName } from '../../../../client/utils/names';
 import { ELang, EMapPacksDecorItems, EMapPacksNames } from '../../../../ts/enums';
-import { IServerGameOptions, ITeamOptions } from '../../../../ts/interfaces';
+import { ITeamOptions } from '../../../../ts/interfaces';
 import {
     ESocketGameMessages,
-    ILoadingMultiplayerGameData,
+    ISocketLoadingMultiplayerGameData,
     ISocketRoomsTableDataItem,
 } from '../../../../ts/socketInterfaces';
 import ManagerItem from '../ManagerItem';
@@ -35,7 +35,7 @@ export default class Game extends ManagerItem {
         this.sendAll(ESocketGameMessages.startLoading, loadingGameData);
     }
 
-    private generateLoadingGameData(options: ISocketRoomsTableDataItem): ILoadingMultiplayerGameData {
+    private generateLoadingGameData(options: ISocketRoomsTableDataItem): ISocketLoadingMultiplayerGameData {
         const teams: ITeamOptions[] = options.players.map((name) => ({
             lang: ELang.eng,
             worms: new Array(options.worms).fill(0).map(() => getRandomMemberName()),
@@ -59,25 +59,27 @@ export default class Game extends ManagerItem {
         if (!this.started) {
             const allPlayersLoadedGame = Object.values(this.playersLoadedGameStates).every((state) => state);
             if (allPlayersLoadedGame) {
-                this.start();
+                this.sendAll(ESocketGameMessages.allPlayersLoaded);
             }
         }
+    }
+
+    public setPlayerLoadedState(name: string) {
+        const user = this.findUserByName(name);
+        console.log(user);
+        if (user) {
+            this.playersLoadedGameStates[name] = true;
+            this.checkPlayerLoadedStates();
+        }
+    }
+
+    private findUserByName(name: string) {
+        return this.users.find((user) => user.name === name);
     }
 
     public sendAll<T>(msg: string, data?: T) {
         this.users.forEach((user) => {
             user.emit(msg, data);
-        });
-    }
-
-    private start() {
-        this.users.forEach((user) => {
-            const data = {
-                multiplayer: true,
-                id: this.id,
-            };
-
-            user.emit(ESocketGameMessages.startGame, data);
         });
     }
 

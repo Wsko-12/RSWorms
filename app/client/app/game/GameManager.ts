@@ -9,6 +9,12 @@ import GameplayManager from './gameplayManager/GameplayManager';
 import World from './world/World';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import FallenItem from './world/entity/fallenItem/FallenItem';
+import MultiplayerGameplayManager from './gameplayManager/MultiplayerGameplayManager';
+import App from '../App';
+import ClientSocket from '../clientSocket/ClientSocket';
+import { ESocketGameMessages, ISocketDoneLoadingMultiplayerGame } from '../../../ts/socketInterfaces';
+import User from '../User';
+import Multiplayer from '../multiplayer/Multiplayer';
 const stats = Stats();
 export default class GameManager {
     private options: IStartGameOptions;
@@ -22,7 +28,10 @@ export default class GameManager {
         this.world = new World(options);
         this.IOManager = new IOManager(this.interface, this.world);
 
-        this.gameplayManager = new GameplayManager(options, this.world, this.IOManager, this.interface);
+        this.gameplayManager = options.multiplayer
+            ? new MultiplayerGameplayManager(options, this.world, this.IOManager, this.interface)
+            : new GameplayManager(options, this.world, this.IOManager, this.interface);
+
         this.loops = {
             paused: false,
             timestamp: Date.now(),
@@ -62,13 +71,22 @@ export default class GameManager {
         await AssetsManager.init(this.options);
         await this.world.init();
         FallenItem.createTextures();
-        this.gameplayManager.init(this.options);
+
+        this.world.create();
         Object.values(this.loops.all).forEach((loop) => loop.switcher(true));
         this.interface.buildToDocument();
-        this.world.create();
         SoundManager.playBackground(ESoundsBG.outerspace);
+        this.gameplayManager.init(this.options);
         this.loop();
-        document.body.appendChild(stats.dom);
+        if (this.options.multiplayer) {
+            Multiplayer.showWaitingPlayersScreen(true);
+            const data: ISocketDoneLoadingMultiplayerGame = {
+                game: this.options.id,
+                user: User.nickname,
+            };
+            ClientSocket.emit(ESocketGameMessages.loadingDone, data);
+        }
+        App.screen.appendChild(stats.dom);
     }
 
     private loop = () => {
