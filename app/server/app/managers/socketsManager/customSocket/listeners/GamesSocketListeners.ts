@@ -1,6 +1,7 @@
 import {
     ESocketGameMessages,
     ISocketDoneLoadingMultiplayerGame,
+    ISocketWormMove,
     TSocketListenerTuple,
 } from '../../../../../../ts/socketInterfaces';
 import DEV from '../../../../../DEV';
@@ -25,7 +26,18 @@ export default class GamesSocketListeners {
         return [message, cb];
     }
 
+    private static getOnWormMoveListener(): TSocketListenerTuple {
+        const message = ESocketGameMessages.wormMoveClient;
+        const cb = (data: ISocketWormMove) => {
+            const game = new GamesManager().getGameById(data.game);
+            game?.sendAll(ESocketGameMessages.wormMoveServer, data);
+        };
+
+        return [message, cb];
+    }
+
     public static applyListeners(socket: CustomSocket) {
         socket.on(...this.getLoadingDoneListener(socket));
+        socket.on(...this.getOnWormMoveListener());
     }
 }

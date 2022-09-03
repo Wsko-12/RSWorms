@@ -23,14 +23,21 @@ export default class EntityManager {
         return this.worldMap?.getWormPlace(this.entities);
     }
 
-    public generateWorm(teamIndex: number, wormIndex: number, wormName: string, wormLang: ELang, hp: number) {
+    public generateWorm(
+        teamIndex: number,
+        teamName: string,
+        wormIndex: number,
+        wormName: string,
+        wormLang: ELang,
+        hp: number
+    ) {
         if (this.worldMap) {
             const place = this.findPlace();
             if (!place) {
                 throw new Error("[EntityManager generateWorm] can't find place");
             }
             place.y += ESizes.worm;
-            const worm = new Worm(wormIndex, teamIndex, wormName, wormLang, place.x, place.y, hp);
+            const worm = new Worm(wormIndex, teamIndex, teamName, wormName, wormLang, place.x, place.y, hp);
             this.addEntity(worm);
             this.mainScene.add(worm.getObject3D());
             return worm;

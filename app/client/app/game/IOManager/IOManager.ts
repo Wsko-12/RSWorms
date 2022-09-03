@@ -1,6 +1,8 @@
 import { ECustomEvents } from '../../../../ts/enums';
 import { TChooseWeaponCallback, TLoopCallback } from '../../../../ts/types';
+import User from '../../User';
 import GameInterface from '../gameInterface/GameInterface';
+import MultiplayerGameplayManager from '../gameplayManager/MultiplayerGameplayManager';
 import Bullet from '../world/entity/worm/weapon/bullet/Bullet';
 import World from '../world/World';
 import WormManager from './wormManager/WormManager';
@@ -18,7 +20,11 @@ export default class IOManager {
 
     private applyListeners() {
         document.addEventListener('keydown', (e) => {
-            // here will be check isPlayerTurn()
+            if (MultiplayerGameplayManager.isOnline) {
+                if (MultiplayerGameplayManager.getCurrentTurnPlayerName() != User.nickname) {
+                    return;
+                }
+            }
             this.wormManager.handleEvent(e);
 
             if (e.code === 'KeyI') {
@@ -27,7 +33,11 @@ export default class IOManager {
         });
 
         document.addEventListener('keyup', (e) => {
-            // here will be check isPlayerTurn()
+            if (MultiplayerGameplayManager.isOnline) {
+                if (MultiplayerGameplayManager.getCurrentTurnPlayerName() != User.nickname) {
+                    return;
+                }
+            }
             const result = this.wormManager.handleEvent(e);
             if (result instanceof Bullet) {
                 const scene = this.world.getMainScene();

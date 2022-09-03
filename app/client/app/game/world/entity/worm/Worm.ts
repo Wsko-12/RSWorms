@@ -4,6 +4,8 @@ import { IExplosionOptions, IShootOptions, IWormMoveOptions, IWormMoveStates } f
 import { TEndTurnCallback, TLoopCallback } from '../../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../../utils/geometry';
 import SoundManager from '../../../../soundManager/SoundManager';
+import User from '../../../../User';
+import MultiplayerGameplayManager from '../../../gameplayManager/MultiplayerGameplayManager';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
 import Aidkit from '../fallenItem/aidkit/Aidkit';
@@ -24,7 +26,8 @@ export default class Worm extends Entity {
     private animation = new WormAnimation();
     private gui: WormGui;
     private index: number;
-    private team: number;
+    public teamIndex: number;
+    public team: string;
     public name: string;
     public wormLang: ELang;
 
@@ -79,10 +82,20 @@ export default class Worm extends Entity {
     private hp: number;
     private maxHp: number;
 
-    constructor(wormIndex: number, teamIndex: number, wormName: string, wormLang: ELang, x = 0, y = 0, hp = 100) {
+    constructor(
+        wormIndex: number,
+        teamIndex: number,
+        teamName: string,
+        wormName: string,
+        wormLang: ELang,
+        x = 0,
+        y = 0,
+        hp = 100
+    ) {
         super(ESizes.worm, x, y);
         this.index = wormIndex;
-        this.team = teamIndex;
+        this.teamIndex = teamIndex;
+        this.team = teamName;
         this.wormLang = wormLang;
         this.name = wormName || 'worm_' + wormIndex;
         this.physics.friction = 0.1;
@@ -451,7 +464,17 @@ export default class Worm extends Entity {
         if ((stepAngle * 180) / Math.PI < maxAngle) {
             this.movesOptions.a = newVec;
         }
+
         v.scale(0);
+    }
+
+    public hardSetPosition(x: number, y: number) {
+        this.position.x = x;
+        this.position.y = y;
+    }
+
+    public hardSetFlags(flags: { left: boolean; right: boolean }) {
+        this.movesOptions.flags = flags;
     }
 
     public isStable() {
@@ -518,6 +541,7 @@ export default class Worm extends Entity {
     }
 
     public spriteLoop: TLoopCallback = (/*time*/) => {
+        this.sendServerData();
         this.animation.spriteLoop(
             this.moveStates,
             this.movesOptions.direction,
@@ -530,6 +554,16 @@ export default class Worm extends Entity {
             this.gui.spriteLoop();
         }
     };
+
+    private sendServerData() {
+        if(this.isSelected){
+            if (MultiplayerGameplayManager.isOnline) {
+                if (MultiplayerGameplayManager.getCurrentTurnPlayerName() === User.nickname) {
+                    MultiplayerGameplayManager.onWormMove(this.movesOptions.flags, this.position);
+                }
+            }
+        };
+    }
 
     public remove(): void {
         this.setHP(-this.getHP());

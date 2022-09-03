@@ -4,6 +4,7 @@ import GameInterface from '../gameInterface/GameInterface';
 import IOManager from '../IOManager/IOManager';
 import EntityManager from '../world/entity/EntityManager';
 import World from '../world/World';
+import MultiplayerGameplayManager from './MultiplayerGameplayManager';
 import Team from './team/Team';
 
 export default class GameplayManager {
@@ -24,6 +25,7 @@ export default class GameplayManager {
         this.ioManager = ioManager;
         this.gameInterface = gameInterface;
         this.turnTime = options.time;
+        MultiplayerGameplayManager.isOnline = false;
     }
 
     protected checkTeams(): boolean {
@@ -48,7 +50,14 @@ export default class GameplayManager {
             const team = new Team(i, teamOptions.name, teamOptions.lang);
             for (let j = 0; j < options.worms; j++) {
                 const wormName = teamOptions.worms[j];
-                const worm = this.entityManager.generateWorm(i, j, wormName, teamOptions.lang, options.hp);
+                const worm = this.entityManager.generateWorm(
+                    i,
+                    teamOptions.name,
+                    j,
+                    wormName,
+                    teamOptions.lang,
+                    options.hp
+                );
                 if (!worm) {
                     throw new Error(`[GameplayManager] can't create worm`);
                 }
