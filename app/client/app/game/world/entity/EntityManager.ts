@@ -5,6 +5,8 @@ import WorldMap from '../worldMap/WorldMap';
 import Entity from './Entity';
 import Aidkit from './fallenItem/aidkit/Aidkit';
 import Barrel from './fallenItem/barrel/Barrel';
+import Bullet from './worm/weapon/bullet/Bullet';
+import BBananaGrenade from './worm/weapon/bullet/throwable/Flight/bananagrenade/BBananaGrenade';
 import Worm from './worm/Worm';
 
 export default class EntityManager {
@@ -20,7 +22,7 @@ export default class EntityManager {
     }
 
     private findPlace() {
-        return this.worldMap?.getWormPlace(this.entities);
+        return this.worldMap?.getEntityPlace(this.entities, ESizes.worm);
     }
 
     public generateWorm(teamIndex: number, wormIndex: number, wormName: string, wormLang: ELang, hp: number) {
@@ -45,8 +47,8 @@ export default class EntityManager {
         const items = Object.values(EFallenObjects).filter((item) => Number.isNaN(Number(item)));
         const index = Math.floor(Math.random() * items.length);
 
-        const constructors = [Aidkit, Barrel];
-        const Item = constructors[index];
+        const constructors = [Aidkit];
+        const Item = constructors[0 /* to change to index later */];
 
         const x = this.worldMap.getMapMatrix().matrix[0].length * Math.random();
         const y = this.worldMap.getMapMatrix().matrix.length;
@@ -64,16 +66,21 @@ export default class EntityManager {
         }
     };
 
-    public addEntity(entity: Entity) {
+    public addEntity = (entity: Entity) => {
         entity.setRemoveFromEntityCallback(this.removeEntity);
+        this.mainScene.add(entity.getObject3D());
         this.entities.push(entity);
-    }
+    };
 
     public getEntities() {
         return this.entities;
     }
 
     public removeEntity = (entity: Entity) => {
+        if (entity instanceof Bullet && entity.hasChilds) {
+            const childs = (entity as BBananaGrenade).createChilds();
+            childs.forEach((child) => this.addEntity(child));
+        }
         const object3D = entity.getObject3D();
         this.mainScene.remove(object3D);
         const index = this.entities.indexOf(entity);

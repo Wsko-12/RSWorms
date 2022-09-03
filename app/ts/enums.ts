@@ -45,6 +45,7 @@ export enum EWeapons {
     dynamite = 'dynamite',
     mine = 'mine',
     holygrenade = 'holygrenade',
+    banana = 'banana',
 }
 
 export enum ETeamColors {
@@ -81,7 +82,8 @@ export const enum ESoundsBullet {
     shotgun = 'ShotGunFire',
     teleport = 'Teleport',
     axe = 'VikingAxeImpact',
-    dinamyte = 'FUSE'
+    dinamyte = 'FUSE',
+    banana = 'BananaImpact',
 }
 
 export const enum ESoundsFX {

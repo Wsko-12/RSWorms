@@ -4,7 +4,7 @@ import PowerableWeapon from '../Powerable';
 
 export default class WHolyGrenade extends PowerableWeapon {
     protected name = EWeapons.grenade;
-    protected shootSound = ESoundsWeapon.holyGrenade;
+    protected shootSound = ESoundsWeapon.throwRelease;
     protected bullet = BHolyGrenade;
     constructor() {
         super(EWeapons.holygrenade);

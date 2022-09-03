@@ -1,13 +1,17 @@
+import { createDiffieHellmanGroup } from 'crypto';
 import { Mesh, Object3D } from 'three';
+import { ESoundsBullet } from '../../../../../ts/enums';
 import { IExplosionOptions, IPhysics } from '../../../../../ts/interfaces';
 import { TLoopCallback, TRemoveEntityCallback } from '../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../utils/geometry';
+import SoundManager from '../../../soundManager/SoundManager';
 import MapMatrix from '../worldMap/mapMatrix/MapMatrix';
 export default abstract class Entity {
     protected abstract object3D: Object3D | Mesh;
     public position: Point2;
     public radius: number;
     protected radiusUnitAngle: number;
+    protected collisionSound: ESoundsBullet | null = null;
 
     protected removeFromEntityCallback: TRemoveEntityCallback | null = null;
 
@@ -124,12 +128,14 @@ export default abstract class Entity {
                 this.position.y += vel.y;
                 this.physics.velocity = vel;
             }
-
             return;
         }
 
         this.handleCollision(mapMatrix, entities, waterLevel);
-
+        if (this.collisionSound && this.physics.velocity.getLength() > 4) {
+            console.log(this.physics.velocity.getLength());
+            SoundManager.playBullet(this.collisionSound);
+        }
         //normal here isn't mean 'normalize'
         const normalSurface = collision.normalize().scale(1);
 

@@ -30,8 +30,6 @@ export default class IOManager {
             // here will be check isPlayerTurn()
             const result = this.wormManager.handleEvent(e);
             if (result instanceof Bullet) {
-                const scene = this.world.getMainScene();
-                scene.add(result.getObject3D());
                 this.world.entityManager.addEntity(result);
             }
         });

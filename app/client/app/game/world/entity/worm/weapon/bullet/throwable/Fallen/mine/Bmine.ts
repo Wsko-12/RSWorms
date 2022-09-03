@@ -11,6 +11,7 @@ export default class BMine extends FallenBullet {
     private actuationRadius = 100;
     private start: number;
     private isDetonated = false;
+    collisionSound = ESoundsBullet.mineCollision;
     constructor(options: IBulletOptions) {
         super(options, EWeapons.mine);
         this.start = Date.now();
