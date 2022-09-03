@@ -62,6 +62,7 @@ export const enum ESocketGameMessages {
     allPlayersLoaded = 'game-all-players-loaded',
     preTurnData = 'game-pre-turn-data',
     teamWin = 'game-team-win',
+    teamsAvailability = 'game-teams-availability',
 }
 
 export interface ISocketLoadingMultiplayerGameData extends IStartGameOptions {
@@ -77,7 +78,7 @@ export interface ISocketAllPlayersLoadedData {
     game: string;
 }
 
-export interface ISocketTeamsAvailable {
+export interface ISocketTeamsAvailability {
     game: string;
     teams: string[];
 }
@@ -87,6 +88,8 @@ export interface ISocketTeamWinData {
     game: string;
 }
 
-export interface ISocketPreTurnData extends ISocketTeamsAvailable {
-    temporary?: number;
+export interface ISocketPreTurnData extends ISocketTeamsAvailability {
+    wind: number;
+    team: string;
+    worm: string;
 }

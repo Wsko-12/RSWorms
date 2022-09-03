@@ -30,6 +30,10 @@ export default class Team {
         return this.worms.reduce((hp, worm) => (hp += worm.getHP()), 0);
     }
 
+    getWorm(name: string){
+        return this.worms.find((worm) => worm.name === name);
+    }
+
     checkWorms() {
         this.worms = this.worms.filter((worm) => !worm.isDead());
     }

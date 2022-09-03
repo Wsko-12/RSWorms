@@ -25,7 +25,7 @@ export default class Worm extends Entity {
     private gui: WormGui;
     private index: number;
     private team: number;
-    private name: string;
+    public name: string;
     public wormLang: ELang;
 
     private endTurnCallback: TEndTurnCallback | null = null;

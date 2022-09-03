@@ -7,20 +7,30 @@ import {
     ISocketLoadingMultiplayerGameData,
     ISocketPreTurnData,
     ISocketRoomsTableDataItem,
-    ISocketTeamsAvailable,
+    ISocketTeamsAvailability,
     ISocketTeamWinData,
 } from '../../../../ts/socketInterfaces';
 import ManagerItem from '../ManagerItem';
 import User from '../userManager/User';
 import UserManager from '../userManager/UserManager';
 
+interface IGameServerWorm {
+    name: string;
+    hp: number;
+}
+interface IGameServerTeam {
+    worms: IGameServerWorm[];
+    name: string;
+    lastTurn: number;
+}
 export default class Game extends ManagerItem {
     private users: User[] = [];
     private turns: {
-        teams: string[];
         counter: number;
         currentTeam: string;
     };
+
+    private teams: Record<string, IGameServerTeam> = {};
     public id: string;
     private playersLoadedGameStates: Record<string, boolean> = {};
     private started = false;
@@ -29,15 +39,15 @@ export default class Game extends ManagerItem {
         this.id = options.id;
 
         this.turns = {
-            teams: [],
             counter: -1,
             currentTeam: '',
         };
 
+        this.teams = this.generateTeams(options);
+
         const userManager = new UserManager();
         options.players.forEach((name) => {
             this.playersLoadedGameStates[name] = false;
-            this.turns.teams.push(name);
             const user = userManager.getUserByName(name);
             if (user) {
                 user.setGame(this.id);
@@ -50,17 +60,18 @@ export default class Game extends ManagerItem {
         this.sendAll(ESocketGameMessages.startLoading, loadingGameData);
     }
 
-    private sendTeamsAvailable() {
-        const data: ISocketTeamsAvailable = {
+    private sendTeamsAvailability() {
+        const teamNames = Object.keys(this.teams);
+        const data: ISocketTeamsAvailability = {
             game: this.id,
-            teams: [...this.turns.teams],
+            teams: [...teamNames],
         };
 
-        this.sendAll(ESocketGameMessages.preTurnData, data);
+        this.sendAll(ESocketGameMessages.teamsAvailability, data);
 
-        if (this.turns.teams.length <= 1) {
+        if (teamNames.length <= 1) {
             const data: ISocketTeamWinData = {
-                team: this.turns.teams[0],
+                team: teamNames[0],
                 game: this.id,
             };
 
@@ -73,27 +84,73 @@ export default class Game extends ManagerItem {
     }
 
     private sendPreTurnData() {
-        const isFinished = this.sendTeamsAvailable();
+        this.turns.counter++;
+        const isFinished = this.sendTeamsAvailability();
         if (isFinished) {
             return;
         }
         this.started = true;
+
+        const teamNames = Object.keys(this.teams);
+        const currentTeam = teamNames[this.turns.counter % teamNames.length];
+
         const data: ISocketPreTurnData = {
             game: this.id,
-            teams: [...this.turns.teams],
+            teams: [...teamNames],
+            wind: Math.random(),
+            team: currentTeam,
+            worm: this.getWormTurnName(this.teams[currentTeam]),
         };
 
         this.sendAll(ESocketGameMessages.preTurnData, data);
+        return teamNames.length <= 1;
+    }
 
-        return this.turns.teams.length <= 1;
+    private getWormTurnName(team: IGameServerTeam) {
+        team.lastTurn++;
+        if (team.lastTurn > team.worms.length) {
+            team.lastTurn = 0;
+        }
+
+        const worm = team.worms[team.lastTurn];
+        return worm.name;
+    }
+
+    private generateTeams(options: ISocketRoomsTableDataItem): Record<string, IGameServerTeam> {
+        const teams: Record<string, IGameServerTeam> = {};
+        options.players.forEach((name) => {
+            const team: IGameServerTeam = {
+                worms: [],
+                name,
+                lastTurn: -1,
+            };
+
+            for (let i = 0; i < options.worms; i++) {
+                const worm: IGameServerWorm = {
+                    name: getRandomMemberName() + i,
+                    hp: options.hp,
+                };
+
+                team.worms.push(worm);
+            }
+
+            teams[name] = team;
+        });
+
+        return teams;
     }
 
     private generateLoadingGameData(options: ISocketRoomsTableDataItem): ISocketLoadingMultiplayerGameData {
-        const teams: ITeamOptions[] = options.players.map((name) => ({
-            lang: ELang.eng,
-            worms: new Array(options.worms).fill(0).map(() => getRandomMemberName()),
-            name,
-        }));
+        const teams = Object.values(this.teams).map((team) => {
+            const worms = team.worms.map((worm) => worm.name);
+            const name = team.name;
+            const lang = ELang.eng;
+            return {
+                name,
+                worms,
+                lang,
+            };
+        });
 
         return {
             ...options,
@@ -141,14 +198,14 @@ export default class Game extends ManagerItem {
     }
 
     public removeUser(name: string) {
-        const index = this.turns.teams.indexOf(name);
+        const index = Object.keys(this.teams).indexOf(name);
         if (index != -1) {
             const user = this.users[index];
-            this.turns.teams.splice(index, 1);
+            delete this.teams[name];
             this.users.splice(index, 1);
             delete this.playersLoadedGameStates[name];
             this.checkPlayerLoadedStates();
-            this.sendTeamsAvailable();
+            this.sendTeamsAvailability();
         }
         if (this.users.length <= 0) {
             this.removeFromManager();

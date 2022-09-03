@@ -1,6 +1,12 @@
 import DEV from '../../../../server/DEV';
 import { IStartGameOptions } from '../../../../ts/interfaces';
-import { ESocketGameMessages, ISocketAllPlayersLoadedData, ISocketPreTurnData, ISocketTeamWinData } from '../../../../ts/socketInterfaces';
+import {
+    ESocketGameMessages,
+    ISocketAllPlayersLoadedData,
+    ISocketPreTurnData,
+    ISocketTeamsAvailability,
+    ISocketTeamWinData,
+} from '../../../../ts/socketInterfaces';
 import ClientSocket from '../../clientSocket/ClientSocket';
 import MultiplayerInterface from '../../lobby/multiplayerInterface/MultiplayerInterface';
 import User from '../../User';
@@ -33,13 +39,21 @@ export default class MultiplayerGameplayManager extends GameplayManager {
             }
         });
 
-        ClientSocket.on<ISocketPreTurnData>(ESocketGameMessages.preTurnData, (data) => {
+        ClientSocket.on<ISocketTeamsAvailability>(ESocketGameMessages.teamsAvailability, (data) => {
             if (DEV.showSocketResponseAndRequest) {
-                console.log(`Response: ${ESocketGameMessages.allPlayersLoaded}`);
+                console.log(`Response: ${ESocketGameMessages.teamsAvailability}`);
             }
             if (data && data.game === User.inGame) {
                 this.checkTeamsAvailable(data.teams);
-                this.gameInterface.teamsHPElement.update(this.teams);
+            }
+        });
+
+        ClientSocket.on<ISocketPreTurnData>(ESocketGameMessages.preTurnData, (data) => {
+            if (DEV.showSocketResponseAndRequest) {
+                console.log(`Response: ${ESocketGameMessages.preTurnData}`);
+            }
+            if (data && data.game === User.inGame) {
+                this.applyPreTurnData(data);
             }
         });
 
@@ -54,7 +68,26 @@ export default class MultiplayerGameplayManager extends GameplayManager {
         });
     }
 
+    private applyPreTurnData(data: ISocketPreTurnData) {
+        console.log('PreTurnData: ', data);
+        this.checkTeamsAvailable(data.teams);
+        this.gameInterface.teamsHPElement.update(this.teams);
+        const wind = this.world.changeWind(data.wind);
+        this.gameInterface.windElement.update(wind);
+
+        const currentTeam = this.teams.find((team) => team.name === data.team);
+        const currentWorm = currentTeam?.getWorm(data.worm);
+        console.log('Current worm: ', currentWorm);
+        if (currentWorm) {
+            this.ioManager.wormManager.setWorm(currentWorm);
+        }else{
+            console.log(data.worm);
+            console.log(currentTeam);
+        }
+    }
+
     private checkTeamsAvailable(teams: string[]) {
+        console.log('teams', teams);
         const toDelete = this.teams.filter((team) => !teams.includes(team.name));
         toDelete.forEach((team) => {
             team.delete();

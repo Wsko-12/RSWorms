@@ -58,8 +58,8 @@ export default class World {
         return this.mainScene;
     }
 
-    public changeWind() {
-        this.wind.change();
+    public changeWind(value?: number) {
+        this.wind.change(value);
         return this.wind.getCurrentValue();
     }
 
