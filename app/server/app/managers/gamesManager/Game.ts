@@ -4,6 +4,7 @@ import { ITeamOptions } from '../../../../ts/interfaces';
 import {
     ESocketGameMessages,
     ISocketAllPlayersLoadedData,
+    ISocketEndTurnData,
     ISocketLoadingMultiplayerGameData,
     ISocketPreTurnData,
     ISocketRoomsTableDataItem,
@@ -17,6 +18,7 @@ import UserManager from '../userManager/UserManager';
 interface IGameServerWorm {
     name: string;
     hp: number;
+    position: { x: number; y: number };
 }
 interface IGameServerTeam {
     worms: IGameServerWorm[];
@@ -61,6 +63,18 @@ export default class Game extends ManagerItem {
     }
 
     private sendTeamsAvailability() {
+        Object.keys(this.teams).forEach((name) => {
+            const team = this.teams[name];
+            team.worms = team.worms.filter((worm) => worm.hp > 0);
+        });
+
+        Object.keys(this.teams).forEach((name) => {
+            const team = this.teams[name];
+            if (team.worms.length === 0) {
+                delete this.teams[name];
+            }
+        });
+
         const teamNames = Object.keys(this.teams);
         const data: ISocketTeamsAvailability = {
             game: this.id,
@@ -100,6 +114,7 @@ export default class Game extends ManagerItem {
             wind: Math.random(),
             team: currentTeam,
             worm: this.getWormTurnName(this.teams[currentTeam]),
+            timestamp: Date.now(),
         };
 
         this.sendAll(ESocketGameMessages.preTurnData, data);
@@ -108,12 +123,30 @@ export default class Game extends ManagerItem {
 
     private getWormTurnName(team: IGameServerTeam) {
         team.lastTurn++;
-        if (team.lastTurn > team.worms.length) {
+        if (team.lastTurn >= team.worms.length) {
             team.lastTurn = 0;
         }
 
         const worm = team.worms[team.lastTurn];
         return worm.name;
+    }
+
+    public applyEndTurnData(data: ISocketEndTurnData) {
+        data.teams.forEach((team) => {
+            const thisTeam = this.teams[team.name];
+            if (thisTeam) {
+                team.worms.forEach((wormClient) => {
+                    const thisWorm = thisTeam.worms.find((worm) => wormClient.name === worm.name);
+                    if (thisWorm) {
+                        thisWorm.hp = wormClient.hp;
+                        thisWorm.position = wormClient.position;
+                    }
+                });
+            }
+        });
+
+        this.sendAll(ESocketGameMessages.endTurnDataServer, data);
+        this.sendPreTurnData();
     }
 
     private generateTeams(options: ISocketRoomsTableDataItem): Record<string, IGameServerTeam> {
@@ -129,6 +162,7 @@ export default class Game extends ManagerItem {
                 const worm: IGameServerWorm = {
                     name: getRandomMemberName() + i,
                     hp: options.hp,
+                    position: { x: 0, y: 0 },
                 };
 
                 team.worms.push(worm);

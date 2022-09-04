@@ -2,6 +2,8 @@ import {
     ESocketGameMessages,
     ISocketBulletData,
     ISocketDoneLoadingMultiplayerGame,
+    ISocketEndingTurnTimestamp,
+    ISocketEndTurnData,
     ISocketEntityDataPack,
     TSocketListenerTuple,
 } from '../../../../../../ts/socketInterfaces';
@@ -47,9 +49,32 @@ export default class GamesSocketListeners {
         return [message, cb];
     }
 
+    private static getEndingTurnTimestampListener(): TSocketListenerTuple {
+        const message = ESocketGameMessages.endingTurnTimestampClient;
+        const cb = (data: ISocketEndingTurnTimestamp) => {
+            const game = new GamesManager().getGameById(data.game);
+            game?.sendAll<ISocketEndingTurnTimestamp>(ESocketGameMessages.endingTurnTimestampServer, data);
+        };
+
+        return [message, cb];
+    }
+
+    private static getEndTurnDataListener(): TSocketListenerTuple {
+        const message = ESocketGameMessages.endTurnDataClient;
+
+        const cb = (data: ISocketEndTurnData) => {
+            const game = new GamesManager().getGameById(data.game);
+            game?.applyEndTurnData(data);
+        };
+
+        return [message, cb];
+    }
+
     public static applyListeners(socket: CustomSocket) {
         socket.on(...this.getLoadingDoneListener(socket));
         socket.on(...this.getEntitiesDataListener());
         socket.on(...this.getBulletCreatingListener());
+        socket.on(...this.getEndingTurnTimestampListener());
+        socket.on(...this.getEndTurnDataListener());
     }
 }

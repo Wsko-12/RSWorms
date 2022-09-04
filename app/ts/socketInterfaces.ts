@@ -67,6 +67,10 @@ export const enum ESocketGameMessages {
     entityDataServer = 'entity-data-server',
     bulletCreatingClient = 'bullet-creating-client',
     bulletCreatingServer = 'bullet-creating-server',
+    endingTurnTimestampClient = 'game-ending-turn-timestamp-client',
+    endingTurnTimestampServer = 'game-ending-turn-timestamp-server',
+    endTurnDataClient = 'game-end-turn-data-client',
+    endTurnDataServer = 'game-end-turn-data-server',
 }
 
 export interface ISocketLoadingMultiplayerGameData extends IStartGameOptions {
@@ -96,6 +100,7 @@ export interface ISocketPreTurnData extends ISocketTeamsAvailability {
     wind: number;
     team: string;
     worm: string;
+    timestamp: number;
 }
 
 export interface ISocketEntityData {
@@ -127,4 +132,24 @@ export interface ISocketBulletData {
     type: EBullets;
     data: ISocketEntityData;
     options: IBulletOptions;
+}
+
+export interface ISocketEndingTurnTimestamp {
+    game: string;
+    timestamp: number;
+}
+
+export interface ISocketEndTurnData {
+    game: string;
+    teams: Array<{
+        name: string;
+        worms: Array<{
+            name: string;
+            hp: number;
+            position: {
+                x: number;
+                y: number;
+            };
+        }>;
+    }>;
 }

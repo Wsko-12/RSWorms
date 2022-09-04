@@ -579,6 +579,10 @@ export default class Worm extends Entity {
         return wormData;
     }
 
+    public setHPLevel(hp: number) {
+        this.hp = hp;
+    }
+
     public setMoveFlags(flags: { left?: boolean; right?: boolean }) {
         Object.assign(this.movesOptions.flags, flags);
     }

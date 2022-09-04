@@ -30,7 +30,7 @@ export default class Team {
         return this.worms.reduce((hp, worm) => (hp += worm.getHP()), 0);
     }
 
-    getWorm(name: string){
+    getWorm(name: string) {
         return this.worms.find((worm) => worm.name === name);
     }
 
@@ -54,5 +54,24 @@ export default class Team {
         this.worms.forEach((worm) => {
             worm.remove();
         });
+    }
+
+    getSocketData() {
+        const worms = this.worms.map((worm) => {
+            const wormData = {
+                name: worm.name,
+                hp: worm.getHP(),
+                position: { x: worm.position.x, y: worm.position.y },
+            };
+
+            return wormData;
+        });
+
+        const socketData = {
+            name: this.name,
+            worms,
+        };
+
+        return socketData;
     }
 }

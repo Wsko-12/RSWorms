@@ -4,11 +4,14 @@ import {
     ESocketGameMessages,
     ISocketAllPlayersLoadedData,
     ISocketBulletData,
+    ISocketEndingTurnTimestamp,
+    ISocketEndTurnData,
     ISocketEntityDataPack,
     ISocketPreTurnData,
     ISocketTeamsAvailability,
     ISocketTeamWinData,
 } from '../../../../ts/socketInterfaces';
+import { TEndTurnCallback } from '../../../../ts/types';
 import ClientSocket from '../../clientSocket/ClientSocket';
 import MultiplayerInterface from '../../lobby/multiplayerInterface/MultiplayerInterface';
 import User from '../../User';
@@ -19,6 +22,7 @@ import BDynamite from '../world/entity/worm/weapon/bullet/throwable/Fallen/dynam
 import BMine from '../world/entity/worm/weapon/bullet/throwable/Fallen/mine/Bmine';
 import BGrenade from '../world/entity/worm/weapon/bullet/throwable/Flight/grenade/BGrenade';
 import BHolyGrenade from '../world/entity/worm/weapon/bullet/throwable/Flight/holygrenade/BHolyGrenade';
+import Worm from '../world/entity/worm/Worm';
 import World from '../world/World';
 import GameplayManager from './GameplayManager';
 
@@ -122,21 +126,126 @@ export default class MultiplayerGameplayManager extends GameplayManager {
                 }
             }
         });
+
+        ClientSocket.on<ISocketEndingTurnTimestamp>(ESocketGameMessages.endingTurnTimestampServer, (data) => {
+            if (DEV.showSocketResponseAndRequest) {
+                console.log(`Response: ${ESocketGameMessages.endingTurnTimestampServer}`, data);
+            }
+
+            if (data && data.game === User.inGame) {
+                this.isEnding = data.timestamp;
+            }
+        });
+
+        ClientSocket.on<ISocketEndTurnData>(ESocketGameMessages.endTurnDataServer, (data) => {
+            if (DEV.showSocketResponseAndRequest) {
+                console.log(`Response: ${ESocketGameMessages.endingTurnTimestampServer}`, data);
+            }
+
+            if (data && data.game === User.inGame) {
+                this.applyEndTurnData(data);
+            }
+        });
+    }
+
+    private applyEndTurnData(data: ISocketEndTurnData) {
+        this.teams.forEach((cTeam) => {
+            const serverTeam = data.teams.find((sTeam) => sTeam.name === cTeam.name);
+            if (serverTeam) {
+                serverTeam.worms.forEach((sWorm) => {
+                    const cWorm = cTeam.worms.find((cWorm) => cWorm.name === sWorm.name);
+                    if (cWorm) {
+                        cWorm.setHPLevel(sWorm.hp);
+                        cWorm.position.x = sWorm.position.x;
+                        cWorm.position.y = sWorm.position.y;
+                    }
+                });
+            }
+        });
     }
 
     private applyPreTurnData(data: ISocketPreTurnData) {
+        this.isBetweenTurns = false;
         this.checkTeamsAvailable(data.teams);
         this.gameInterface.teamsHPElement.update(this.teams);
         const wind = this.world.changeWind(data.wind);
         this.gameInterface.windElement.update(wind);
+
+        const prevWorm = this.ioManager.wormManager.getWorm();
+        if (prevWorm) {
+            prevWorm.endTurn();
+        }
 
         const currentTeam = this.teams.find((team) => team.name === data.team);
         this.currentTeamName = currentTeam?.name || '';
         const currentWorm = currentTeam?.getWorm(data.worm);
         if (currentWorm) {
             this.ioManager.wormManager.setWorm(currentWorm);
+            this.nextTurnMultiplayer(currentWorm);
         }
+
+        this.isEnding = 0;
+        this.turnTimestamp = data.timestamp;
+        this.gameInterface.timerElement.show(true);
     }
+
+    private nextTurnMultiplayer(worm: Worm) {
+        worm.startTurn(this.endTurn);
+    }
+
+    public nextTurn(): void {
+        return;
+    }
+
+    protected betweenTurns() {
+        this.gameInterface.timerElement.show(false);
+
+        const previousWorm = this.ioManager.wormManager.getWorm();
+        if (previousWorm) {
+            previousWorm.endTurn();
+        }
+        this.ioManager.wormManager.setWorm(null);
+
+        this.isBetweenTurns = true;
+        const entities = this.entityManager.getEntities();
+        const promises = entities.map((entity) => entity.betweenTurnsActions());
+        Promise.all(promises).then(() => {
+            setTimeout(() => {
+                const entities = this.entityManager.getEntities();
+                const allReady = entities.every((entity) => entity.readyToNextTurn());
+                this.gameInterface.teamsHPElement.update(this.teams);
+                if (allReady) {
+                    setTimeout(() => {
+                        if (MultiplayerGameplayManager.getCurrentTurnPlayerName() === User.nickname) {
+                            this.sendEndTurnData();
+                        }
+                    }, 2000);
+                } else {
+                    this.betweenTurns();
+                }
+            }, 1000);
+        });
+    }
+
+    private sendEndTurnData() {
+        const data: ISocketEndTurnData = {
+            game: this.id,
+            teams: this.teams.map((team) => team.getSocketData()),
+        };
+
+        ClientSocket.emit(ESocketGameMessages.endTurnDataClient, data);
+    }
+
+    public endTurn: TEndTurnCallback = (delaySec) => {
+        if (User.nickname === MultiplayerGameplayManager.getCurrentTurnPlayerName() && User.inGame) {
+            const data: ISocketEndingTurnTimestamp = {
+                timestamp: Date.now() + delaySec * 1000,
+                game: User.inGame,
+            };
+
+            ClientSocket.emit(ESocketGameMessages.endingTurnTimestampClient, data);
+        }
+    };
 
     private checkTeamsAvailable(teams: string[]) {
         const toDelete = this.teams.filter((team) => !teams.includes(team.name));
@@ -148,7 +257,24 @@ export default class MultiplayerGameplayManager extends GameplayManager {
     }
 
     public turnLoop() {
-        return;
+        if (this.isEnding) {
+            this.gameInterface.timerElement.update(this.isEnding - Date.now() + 1000);
+
+            if (Date.now() > this.isEnding && !this.isBetweenTurns) {
+                this.betweenTurns();
+            }
+        } else {
+            const ms = this.turnTime * 1000 - (Date.now() - this.turnTimestamp) + 1000;
+            this.gameInterface.timerElement.update(ms);
+
+            if (ms < 0) {
+                return;
+            }
+
+            if (Date.now() - this.turnTimestamp > ms) {
+                this.betweenTurns();
+            }
+        }
     }
 
     public socketLoop() {
