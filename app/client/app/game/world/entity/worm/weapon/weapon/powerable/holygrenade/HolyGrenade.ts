@@ -3,7 +3,7 @@ import BHolyGrenade from '../../../bullet/throwable/Flight/holygrenade/BHolyGren
 import PowerableWeapon from '../Powerable';
 
 export default class WHolyGrenade extends PowerableWeapon {
-    public name = EWeapons.grenade;
+    public name = EWeapons.holygrenade;
     protected shootSound = ESoundsWeapon.holyGrenade;
     protected bullet = BHolyGrenade;
     constructor() {
