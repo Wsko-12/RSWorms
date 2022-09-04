@@ -14,7 +14,7 @@ export default class BBananaGrenade extends FlightBullet {
     constructor(options: IBulletOptions, name: EWeapons) {
         super(options, name);
         this.options = options;
-        this.setExplosionOptions(200, 350, 40);
+        this.setExplosionOptions(80, 300, 20);
         this.physics.friction = 0.65;
     }
 

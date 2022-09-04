@@ -14,6 +14,7 @@ import WGrenade from './weapon/weapon/powerable/grenade/Grenade';
 import WHolyGrenade from './weapon/weapon/powerable/holygrenade/HolyGrenade';
 import WDynamite from './weapon/weapon/static/dynamite/Dynamite';
 import WMine from './weapon/weapon/static/mine/Mine';
+import WShotgun from './weapon/weapon/static/shotgun/Shotgun';
 import Weapon from './weapon/weapon/Weapon';
 import WormAnimation from './WormAnimation';
 import WormGui from './WormGui';
@@ -22,7 +23,7 @@ export default class Worm extends Entity {
     protected object3D: Group;
     private wormMesh: Mesh;
     private fallToJumpCoef = 1.2;
-    private animation = new WormAnimation();
+    private animation: WormAnimation;
     private gui: WormGui;
     private index: number;
     private team: number;
@@ -40,11 +41,12 @@ export default class Worm extends Entity {
         mine: new WMine(),
         holygrenade: new WHolyGrenade(),
         banana: new WBanana(),
+        shotgun: new WShotgun(),
     };
 
     public isSelected = false;
     private jumpVectors = {
-        usual: new Vector2(1, 1).normalize().scale(5),
+        usual: new Vector2(1.3, 1).normalize().scale(5),
         backflip: new Vector2(0.2, 1).normalize().scale(8),
     };
 
@@ -88,6 +90,7 @@ export default class Worm extends Entity {
         this.wormLang = wormLang;
         this.name = wormName || 'worm_' + wormIndex;
         this.physics.friction = 0.1;
+        this.animation = new WormAnimation(this.wormLang);
         const geometry = new PlaneBufferGeometry(this.radius * 5, this.radius * 5);
         const material = new MeshBasicMaterial({
             map: this.animation.getTexture(),
@@ -192,6 +195,7 @@ export default class Worm extends Entity {
     }
 
     public startTurn(nextTurnCallback: TEndTurnCallback) {
+        SoundManager.playWormSpeech(this.wormLang, ESoundsWormSpeech.startRound);
         this.endTurnCallback = nextTurnCallback;
     }
 
@@ -226,7 +230,6 @@ export default class Worm extends Entity {
         const vel = this.physics.velocity.clone();
         if (this.position.y + this.radius < waterLevel) {
             this.moveStates.isDrown = true;
-            SoundManager.playWormAction(ESoundsWormAction.splash);
         } else {
             vel.y -= this.physics.g;
         }
@@ -478,7 +481,7 @@ export default class Worm extends Entity {
         if (this.gui.isDead() && this.animation.dead.isReady && !this.moveStates.isDead) {
             this.moveStates.isDead = true;
             this.physics.friction = 0;
-            this.finalExplosion.explode(mapMatrix, entities);
+            this.finalExplosion.explode(mapMatrix, entities)
         }
 
         if (this.position.y <= 0) {
@@ -505,7 +508,7 @@ export default class Worm extends Entity {
         // here we can remove hp for fall damage
         const delta = this.physics.velocity.getLength() - this.jumpVectors.backflip.getLength() * this.fallToJumpCoef;
         if (delta > 0) {
-            const damage = delta ** 2;
+            const damage = delta * 2;
             this.setHP(damage * -1);
             if (this.endTurnCallback) {
                 this.endTurnCallback(0);

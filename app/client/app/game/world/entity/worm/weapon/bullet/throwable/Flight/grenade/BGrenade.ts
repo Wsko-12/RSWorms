@@ -6,6 +6,6 @@ export default class BGrenade extends FlightWeapon {
     protected collisionSound = ESoundsBullet.grenadeCollision;
     constructor(options: IBulletOptions) {
         super(options, EWeapons.grenade);
-        this.setExplosionOptions(70, 150, 15);
+        this.setExplosionOptions(50, 150, 15);
     }
 }

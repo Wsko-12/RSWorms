@@ -15,7 +15,7 @@ export default class BMine extends FallenBullet {
     constructor(options: IBulletOptions) {
         super(options, EWeapons.mine);
         this.start = Date.now();
-        this.setExplosionOptions(10, 100, 15);
+        this.setExplosionOptions(50, 200, 15);
     }
 
     private isWormClose(mapMatrix: MapMatrix, entities: Entity[]) {

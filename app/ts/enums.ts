@@ -46,6 +46,7 @@ export enum EWeapons {
     mine = 'mine',
     holygrenade = 'holygrenade',
     banana = 'banana',
+    shotgun = 'shotgun',
 }
 
 export enum ETeamColors {
@@ -103,6 +104,7 @@ export const enum ESoundsWeapon {
     scalesOfJustice = 'ScalesOfJustice',
     sheep = 'SHEEPBAA',
     shotgunReload = 'SHOTGUNRELOAD',
+    shotgunShoot = 'ShotGunFire',
     throwRelease = 'THROWRELEASE',
 }
 

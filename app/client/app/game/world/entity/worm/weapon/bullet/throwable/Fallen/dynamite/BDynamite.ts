@@ -6,6 +6,7 @@ export default class BDynamite extends FallenBullet {
     protected collisionSound = ESoundsBullet.dinamyte;
     constructor(options: IBulletOptions) {
         super(options, EWeapons.dynamite);
-        this.setExplosionOptions(50, 100, 15);
+        this.setExplosionOptions(70, 250, 15);
+        this.physics.friction = 0;
     }
 }

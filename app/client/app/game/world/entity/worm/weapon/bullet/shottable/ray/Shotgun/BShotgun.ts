@@ -1,13 +1,14 @@
 import { EWeapons } from '../../../../../../../../../../../ts/enums';
 import { IBulletOptions } from '../../../../../../../../../../../ts/interfaces';
-import ParabolicBullet from '../Parabolic';
+import RayBullet from '../Ray';
 
-export default class BBazooka extends ParabolicBullet {
-    constructor(options: IBulletOptions) {
-        options.power *= 1.3;
+export default class BShotgun extends RayBullet {
+    constructor(options: IBulletOptions, name: EWeapons) {
+        options.power = 100;
         super(options, EWeapons.bazooka);
-        this.setExplosionOptions(50, 200, 15);
-        this.windCoefficient = 0.7;
+        this.radius = 3;
+        this.physics.g = 0;
+        this.setExplosionOptions(40, 100, 12);
     }
 
     public betweenTurnsActions(): Promise<boolean> {

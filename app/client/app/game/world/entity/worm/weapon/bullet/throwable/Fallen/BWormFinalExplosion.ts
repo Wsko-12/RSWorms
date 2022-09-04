@@ -14,7 +14,7 @@ export default class BWormFinalExplosion extends BDynamite {
     constructor(worm: Worm) {
         super({ angle: 1, parentRadius: 1, position: new Point2(0, 0), power: 0 });
         this.worm = worm;
-        this.setExplosionOptions(95, 200, 15);
+        this.setExplosionOptions(25, 100, 10);
         this.bulletMesh.visible = false;
     }
 

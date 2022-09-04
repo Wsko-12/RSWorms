@@ -6,5 +6,6 @@ export default class BBananasChild extends ParabolicBullet {
     protected windCoefficient = 0;
     constructor(options: IBulletOptions, name: EWeapons) {
         super(options, EWeapons.banana);
+        this.setExplosionOptions(60, 250, 15);
     }
 }
