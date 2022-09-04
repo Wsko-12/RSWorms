@@ -565,8 +565,12 @@ export default class Worm extends Entity {
         super.remove();
     }
 
-    public getSocketData(): ISocketWormData {
-        const entityData = super.getSocketData();
+    public getSocketData(last: boolean): ISocketWormData {
+        const entityData = super.getSocketData(last);
+        if (last) {
+            this.movesOptions.flags.left = false;
+            this.movesOptions.flags.right = false;
+        }
 
         const { left, right } = this.movesOptions.flags;
         const wormData: ISocketWormData = {

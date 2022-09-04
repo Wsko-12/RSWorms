@@ -199,7 +199,7 @@ export default abstract class Entity {
         return;
     };
 
-    public getSocketData(): ISocketEntityData {
+    public getSocketData(last: boolean): ISocketEntityData {
         return {
             id: this.id,
             physics: { x: this.physics.velocity.x, y: this.physics.velocity.y },

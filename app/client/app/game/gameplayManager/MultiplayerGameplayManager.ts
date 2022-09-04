@@ -275,6 +275,7 @@ export default class MultiplayerGameplayManager extends GameplayManager {
 
             if (Date.now() > this.isEnding && !this.isBetweenTurns) {
                 this.betweenTurns();
+                this.entityManager.sendLastData();
             }
         } else {
             const ms = this.turnTime * 1000 - (Date.now() - this.turnTimestamp) + 1000;
@@ -285,6 +286,7 @@ export default class MultiplayerGameplayManager extends GameplayManager {
             }
 
             if (Date.now() - this.turnTimestamp > ms) {
+                this.entityManager.sendLastData();
                 this.betweenTurns();
             }
         }

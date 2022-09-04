@@ -94,7 +94,7 @@ export default class EntityManager {
                     const id = `Bullet_${generateId()}`;
                     entity.id = id;
                     const type = entity.constructor.name as EBullets;
-                    const data = entity.getSocketData();
+                    const data = entity.getSocketData(false);
 
                     const socketData: ISocketBulletData = {
                         game: User.inGame,
@@ -111,6 +111,17 @@ export default class EntityManager {
 
     public getEntities() {
         return this.entities;
+    }
+
+    public sendLastData() {
+        if (User.inGame) {
+            const data: ISocketEntityDataPack = {
+                game: User.inGame,
+                entities: this.entities.map((entity) => entity.getSocketData(true)),
+            };
+
+            ClientSocket.emit(ESocketGameMessages.entityDataClient, data);
+        }
     }
 
     public removeEntity = (entity: Entity) => {
@@ -132,10 +143,9 @@ export default class EntityManager {
 
     public socketLoop = () => {
         if (MultiplayerGameplayManager.getCurrentTurnPlayerName() === User.nickname && User.inGame) {
-            console.log('send');
             const data: ISocketEntityDataPack = {
                 game: User.inGame,
-                entities: this.entities.map((entity) => entity.getSocketData()),
+                entities: this.entities.map((entity) => entity.getSocketData(false)),
             };
 
             ClientSocket.emit(ESocketGameMessages.entityDataClient, data);
