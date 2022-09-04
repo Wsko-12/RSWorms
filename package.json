@@ -11,6 +11,9 @@
     "build": "webpack --mode production",
     "dev": "webpack --watch --mode production"
   },
+  "browser": {
+    "[module-name]": false   
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Wsko-12/RSWorms.git"
