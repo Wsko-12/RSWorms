@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "rsschool stage2 final task",
   "main": "index.js",
+  "engines": {
+    "node": "17.x"
+  },
   "scripts": {
     "start": "node app.js",
     "build": "webpack --mode production",
