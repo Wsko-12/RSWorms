@@ -181,6 +181,8 @@ export default class MultiplayerGameplayManager extends GameplayManager {
         const currentTeam = this.teams.find((team) => team.name === data.team);
         this.currentTeamName = currentTeam?.name || '';
         const currentWorm = currentTeam?.getWorm(data.worm);
+        this.world.raiseWaterLevel();
+
         if (currentWorm) {
             this.ioManager.wormManager.setWorm(currentWorm);
             this.nextTurnMultiplayer(currentWorm);
