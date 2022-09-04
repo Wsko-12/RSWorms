@@ -149,6 +149,7 @@ export default class Game extends ManagerItem {
     private isAllPlayersReadyForNextTurn() {
         return Object.values(this.playersReadyForNextTurn).every((value) => value);
     }
+
     private getWormTurnName(team: IGameServerTeam) {
         team.lastTurn++;
         if (team.lastTurn >= team.worms.length) {

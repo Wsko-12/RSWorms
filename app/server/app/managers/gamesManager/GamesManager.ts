@@ -1,4 +1,3 @@
-import { IServerGameOptions } from '../../../../ts/interfaces';
 import Manager from '../Manager';
 import Room from '../roomsManager/Room';
 import Game from './Game';

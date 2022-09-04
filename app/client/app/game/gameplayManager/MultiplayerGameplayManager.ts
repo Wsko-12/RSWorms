@@ -44,6 +44,7 @@ export default class MultiplayerGameplayManager extends GameplayManager {
     }
 
     public currentTeamName = '';
+    public previousTeamName = '';
     public id = '';
 
     constructor(options: IStartGameOptions, world: World, ioManager: IOManager, gameInterface: GameInterface) {
@@ -183,6 +184,11 @@ export default class MultiplayerGameplayManager extends GameplayManager {
         if (currentWorm) {
             this.ioManager.wormManager.setWorm(currentWorm);
             this.nextTurnMultiplayer(currentWorm);
+
+            const point = currentWorm.getPositionPoint();
+            point.x = Math.round(point.x);
+            point.y = Math.round(point.y);
+            this.gameInterface.getGameCamera().moveTo(point);
         }
 
         this.isEnding = 0;
@@ -199,7 +205,11 @@ export default class MultiplayerGameplayManager extends GameplayManager {
     }
 
     protected betweenTurns() {
+        if (this.currentTeamName != '') {
+            this.previousTeamName = this.currentTeamName;
+        }
         this.currentTeamName = '';
+
         this.gameInterface.timerElement.show(false);
 
         const previousWorm = this.ioManager.wormManager.getWorm();
@@ -218,7 +228,7 @@ export default class MultiplayerGameplayManager extends GameplayManager {
                 this.gameInterface.teamsHPElement.update(this.teams);
                 if (allReady) {
                     setTimeout(() => {
-                        if (MultiplayerGameplayManager.getCurrentTurnPlayerName() === User.nickname) {
+                        if (this.previousTeamName === User.nickname) {
                             this.sendEndTurnData();
                         }
                         this.sendReadyForNextTurn();
