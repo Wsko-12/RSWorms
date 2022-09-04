@@ -3,6 +3,7 @@ import { IStartGameOptions } from '../../../../ts/interfaces';
 import {
     ESocketGameMessages,
     ISocketAllPlayersLoadedData,
+    ISocketBulletData,
     ISocketEntityDataPack,
     ISocketPreTurnData,
     ISocketTeamsAvailability,
@@ -13,8 +14,21 @@ import MultiplayerInterface from '../../lobby/multiplayerInterface/MultiplayerIn
 import User from '../../User';
 import GameInterface from '../gameInterface/GameInterface';
 import IOManager from '../IOManager/IOManager';
+import BBazooka from '../world/entity/worm/weapon/bullet/shottable/parabolic/bazooka/BBazooka';
+import BDynamite from '../world/entity/worm/weapon/bullet/throwable/Fallen/dynamite/BDynamite';
+import BMine from '../world/entity/worm/weapon/bullet/throwable/Fallen/mine/Bmine';
+import BGrenade from '../world/entity/worm/weapon/bullet/throwable/Flight/grenade/BGrenade';
+import BHolyGrenade from '../world/entity/worm/weapon/bullet/throwable/Flight/holygrenade/BHolyGrenade';
 import World from '../world/World';
 import GameplayManager from './GameplayManager';
+
+const bulletConstructors = {
+    BBazooka: BBazooka,
+    BGrenade: BGrenade,
+    BHolyGrenade: BHolyGrenade,
+    BMine: BMine,
+    BDynamite: BDynamite,
+};
 
 export default class MultiplayerGameplayManager extends GameplayManager {
     public static instance: MultiplayerGameplayManager | null = null;
@@ -88,6 +102,23 @@ export default class MultiplayerGameplayManager extends GameplayManager {
             if (data && data.game === User.inGame) {
                 if (MultiplayerGameplayManager.getCurrentTurnPlayerName() != User.inGame) {
                     this.world.entityManager.setSocketData(data.entities);
+                }
+            }
+        });
+
+        ClientSocket.on<ISocketBulletData>(ESocketGameMessages.bulletCreatingServer, (data) => {
+            if (DEV.showSocketResponseAndRequest) {
+                console.log(`Response: ${ESocketGameMessages.bulletCreatingServer}`, data);
+            }
+
+            if (data && data.game === User.inGame) {
+                if (MultiplayerGameplayManager.getCurrentTurnPlayerName() != User.nickname) {
+                    const Constructor = bulletConstructors[data.type];
+                    const bullet = new Constructor(data.options);
+                    bullet.id = data.data.id;
+
+                    this.world.getMainScene().add(bullet.getObject3D());
+                    this.entityManager.addEntity(bullet);
                 }
             }
         });

@@ -1,7 +1,13 @@
 import { Scene } from 'three';
-import { EFallenObjects, ELang, ESizes } from '../../../../../ts/enums';
-import { ESocketGameMessages, ISocketEntityData, ISocketEntityDataPack } from '../../../../../ts/socketInterfaces';
+import { EBullets, EFallenObjects, ELang, ESizes } from '../../../../../ts/enums';
+import {
+    ESocketGameMessages,
+    ISocketBulletData,
+    ISocketEntityData,
+    ISocketEntityDataPack,
+} from '../../../../../ts/socketInterfaces';
 import { TLoopCallback } from '../../../../../ts/types';
+import { generateId } from '../../../../utils/names';
 import ClientSocket from '../../../clientSocket/ClientSocket';
 import User from '../../../User';
 import MultiplayerGameplayManager from '../../gameplayManager/MultiplayerGameplayManager';
@@ -9,6 +15,7 @@ import WorldMap from '../worldMap/WorldMap';
 import Entity from './Entity';
 import Aidkit from './fallenItem/aidkit/Aidkit';
 import Barrel from './fallenItem/barrel/Barrel';
+import Bullet from './worm/weapon/bullet/Bullet';
 import Worm from './worm/Worm';
 
 export default class EntityManager {
@@ -80,6 +87,26 @@ export default class EntityManager {
         entity.setRemoveFromEntityCallback(this.removeEntity);
         this.entitiesMap.set(entity.id, entity);
         this.entities.push(entity);
+
+        if (MultiplayerGameplayManager.isOnline && User.inGame) {
+            if (MultiplayerGameplayManager.getCurrentTurnPlayerName() === User.nickname) {
+                if (entity instanceof Bullet) {
+                    const id = `Bullet_${generateId()}`;
+                    entity.id = id;
+                    const type = entity.constructor.name as EBullets;
+                    const data = entity.getSocketData();
+
+                    const socketData: ISocketBulletData = {
+                        game: User.inGame,
+                        data,
+                        type,
+                        options: entity.getStartBulletOptions(),
+                    };
+
+                    ClientSocket.emit<ISocketBulletData>(ESocketGameMessages.bulletCreatingClient, socketData);
+                }
+            }
+        }
     }
 
     public getEntities() {

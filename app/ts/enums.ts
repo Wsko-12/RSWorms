@@ -47,6 +47,14 @@ export enum EWeapons {
     holygrenade = 'holygrenade',
 }
 
+export enum EBullets {
+    BBazooka = 'BBazooka',
+    BGrenade = 'BGrenade',
+    BHolyGrenade = 'BHolyGrenade',
+    BMine = 'BMine',
+    BDynamite = 'BDynamite',
+}
+
 export enum ETeamColors {
     '#eb3b3b',
     '#3b55eb',
@@ -81,7 +89,7 @@ export const enum ESoundsBullet {
     shotgun = 'ShotGunFire',
     teleport = 'Teleport',
     axe = 'VikingAxeImpact',
-    dinamyte = 'FUSE'
+    dinamyte = 'FUSE',
 }
 
 export const enum ESoundsFX {

@@ -1,5 +1,5 @@
-import { EMapPacksNames, EWeapons, EWorldSizes } from './enums';
-import { IStartGameOptions, IWormMoveStates } from './interfaces';
+import { EBullets, EMapPacksNames, EWeapons, EWorldSizes } from './enums';
+import { IBulletOptions, IStartGameOptions, IWormMoveStates } from './interfaces';
 
 export const enum ESocketLobbyMessages {
     logUserReq = 'log-user-request',
@@ -65,6 +65,8 @@ export const enum ESocketGameMessages {
     teamsAvailability = 'game-teams-availability',
     entityDataClient = 'entity-data-client',
     entityDataServer = 'entity-data-server',
+    bulletCreatingClient = 'bullet-creating-client',
+    bulletCreatingServer = 'bullet-creating-server',
 }
 
 export interface ISocketLoadingMultiplayerGameData extends IStartGameOptions {
@@ -118,4 +120,11 @@ export interface ISocketWormData extends ISocketEntityData {
 export interface ISocketEntityDataPack {
     game: string;
     entities: ISocketEntityData[];
+}
+
+export interface ISocketBulletData {
+    game: string;
+    type: EBullets;
+    data: ISocketEntityData;
+    options: IBulletOptions;
 }

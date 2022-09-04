@@ -1,5 +1,6 @@
 import {
     ESocketGameMessages,
+    ISocketBulletData,
     ISocketDoneLoadingMultiplayerGame,
     ISocketEntityDataPack,
     TSocketListenerTuple,
@@ -36,8 +37,19 @@ export default class GamesSocketListeners {
         return [message, cb];
     }
 
+    private static getBulletCreatingListener(): TSocketListenerTuple {
+        const message = ESocketGameMessages.bulletCreatingClient;
+        const cb = (data: ISocketBulletData) => {
+            const game = new GamesManager().getGameById(data.game);
+            game?.sendAll<ISocketBulletData>(ESocketGameMessages.bulletCreatingServer, data);
+        };
+
+        return [message, cb];
+    }
+
     public static applyListeners(socket: CustomSocket) {
         socket.on(...this.getLoadingDoneListener(socket));
         socket.on(...this.getEntitiesDataListener());
+        socket.on(...this.getBulletCreatingListener());
     }
 }
