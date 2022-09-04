@@ -1,9 +1,12 @@
 import { Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from 'three';
 import { ELang, ELayersZ, ESizes, ESoundsWormAction, ESoundsWormSpeech, EWeapons } from '../../../../../../ts/enums';
 import { IExplosionOptions, IShootOptions, IWormMoveOptions, IWormMoveStates } from '../../../../../../ts/interfaces';
+import { ISocketEntityData, ISocketWormData } from '../../../../../../ts/socketInterfaces';
 import { TEndTurnCallback, TLoopCallback } from '../../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../../utils/geometry';
 import SoundManager from '../../../../soundManager/SoundManager';
+import User from '../../../../User';
+import MultiplayerGameplayManager from '../../../gameplayManager/MultiplayerGameplayManager';
 import MapMatrix from '../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../Entity';
 import Aidkit from '../fallenItem/aidkit/Aidkit';
@@ -24,8 +27,9 @@ export default class Worm extends Entity {
     private animation = new WormAnimation();
     private gui: WormGui;
     private index: number;
-    private team: number;
-    private name: string;
+    public teamIndex: number;
+    public team: string;
+    public name: string;
     public wormLang: ELang;
 
     private endTurnCallback: TEndTurnCallback | null = null;
@@ -79,10 +83,21 @@ export default class Worm extends Entity {
     private hp: number;
     private maxHp: number;
 
-    constructor(wormIndex: number, teamIndex: number, wormName: string, wormLang: ELang, x = 0, y = 0, hp = 100) {
-        super(ESizes.worm, x, y);
+    constructor(
+        wormIndex: number,
+        teamIndex: number,
+        teamName: string,
+        wormName: string,
+        wormLang: ELang,
+        x = 0,
+        y = 0,
+        hp = 100
+    ) {
+        const id = teamName + wormName;
+        super(id, ESizes.worm, x, y);
         this.index = wormIndex;
-        this.team = teamIndex;
+        this.teamIndex = teamIndex;
+        this.team = teamName;
         this.wormLang = wormLang;
         this.name = wormName || 'worm_' + wormIndex;
         this.physics.friction = 0.1;
@@ -107,10 +122,6 @@ export default class Worm extends Entity {
 
         this.movesOptions.flags.left = false;
         this.movesOptions.flags.right = false;
-    }
-
-    public setMoveFlags(flags: { left?: boolean; right?: boolean }) {
-        Object.assign(this.movesOptions.flags, flags);
     }
 
     public getHPLevel() {
@@ -160,8 +171,15 @@ export default class Worm extends Entity {
     }
 
     public selectWeapon(weapon: EWeapons | null) {
+        if (weapon === this.currentWeapon) {
+            //null check
+            return;
+        }
         const before = this.currentWeapon;
         if (before) {
+            if (before.name === weapon) {
+                return;
+            }
             const object = before.getObject3D();
             before.show(false, 0);
             this.object3D.remove(object);
@@ -451,7 +469,17 @@ export default class Worm extends Entity {
         if ((stepAngle * 180) / Math.PI < maxAngle) {
             this.movesOptions.a = newVec;
         }
+
         v.scale(0);
+    }
+
+    public hardSetPosition(x: number, y: number) {
+        this.position.x = x;
+        this.position.y = y;
+    }
+
+    public hardSetFlags(flags: { left: boolean; right: boolean }) {
+        this.movesOptions.flags = flags;
     }
 
     public isStable() {
@@ -535,5 +563,49 @@ export default class Worm extends Entity {
         this.setHP(-this.getHP());
         this.moveStates.isDead = true;
         super.remove();
+    }
+
+    public getSocketData(last: boolean): ISocketWormData {
+        const entityData = super.getSocketData(last);
+        if (last) {
+            this.movesOptions.flags.left = false;
+            this.movesOptions.flags.right = false;
+        }
+
+        const { left, right } = this.movesOptions.flags;
+        const wormData: ISocketWormData = {
+            ...entityData,
+            moveStates: { ...this.moveStates },
+            moveFlags: { left, right },
+            weaponSelected: this.currentWeapon?.name || null,
+            aim: this.currentWeapon?.getRawAimData() || null,
+        };
+        return wormData;
+    }
+
+    public setHPLevel(hp: number) {
+        this.hp = hp;
+    }
+
+    public setMoveFlags(flags: { left?: boolean; right?: boolean }) {
+        Object.assign(this.movesOptions.flags, flags);
+    }
+
+    public setMoveStates(states: IWormMoveStates) {
+        Object.assign(this.moveStates, states);
+    }
+
+    public setAim(aim: { angle: number; power: number } | null) {
+        if (aim) {
+            this.currentWeapon?.setAim(aim.angle, aim.power);
+        }
+    }
+
+    public setSocketData(data: ISocketWormData): void {
+        this.setMoveFlags(data.moveFlags);
+        this.setMoveStates(data.moveStates);
+        this.selectWeapon(data.weaponSelected);
+        this.setAim(data.aim);
+        super.setSocketData(data);
     }
 }

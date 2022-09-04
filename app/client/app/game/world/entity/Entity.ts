@@ -1,5 +1,6 @@
 import { Mesh, Object3D } from 'three';
 import { IExplosionOptions, IPhysics } from '../../../../../ts/interfaces';
+import { ISocketEntityData } from '../../../../../ts/socketInterfaces';
 import { TLoopCallback, TRemoveEntityCallback } from '../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../utils/geometry';
 import MapMatrix from '../worldMap/mapMatrix/MapMatrix';
@@ -9,6 +10,8 @@ export default abstract class Entity {
     public radius: number;
     protected radiusUnitAngle: number;
 
+    public id: string;
+
     protected removeFromEntityCallback: TRemoveEntityCallback | null = null;
 
     protected physics: IPhysics = {
@@ -17,7 +20,8 @@ export default abstract class Entity {
         friction: 0.1,
     };
 
-    constructor(radius = 1, x = 0, y = 0) {
+    constructor(id: string, radius = 1, x = 0, y = 0) {
+        this.id = id;
         this.position = new Point2(x, y);
         this.radius = radius;
         this.radiusUnitAngle = Math.asin(0.5 / this.radius) * 2;
@@ -194,4 +198,17 @@ export default abstract class Entity {
     public spriteLoop: TLoopCallback = (/* time */) => {
         return;
     };
+
+    public getSocketData(last: boolean): ISocketEntityData {
+        return {
+            id: this.id,
+            physics: { x: this.physics.velocity.x, y: this.physics.velocity.y },
+            position: { x: this.position.x, y: this.position.y },
+        };
+    }
+
+    public setSocketData(data: ISocketEntityData) {
+        Object.assign(this.physics.velocity, data.physics);
+        Object.assign(this.position, data.position);
+    }
 }

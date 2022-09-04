@@ -11,7 +11,7 @@ export default class Barrel extends FallenItem {
     private isExploded = false;
 
     constructor(x: number, y: number) {
-        super(30, x, y);
+        super('barrel', 30, x, y);
         const geometry = new PlaneBufferGeometry(150, 150);
         const texture = FallenItem.getSprite('barrel').texture;
 

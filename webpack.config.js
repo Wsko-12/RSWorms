@@ -6,7 +6,9 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 const base = {
     mode:'development',
-    
+    optimization: {
+      minimize: false
+    },
     module: {
         rules: [
           {

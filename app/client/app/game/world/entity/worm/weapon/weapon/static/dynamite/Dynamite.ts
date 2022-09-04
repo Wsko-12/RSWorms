@@ -1,10 +1,16 @@
-import { ELang, ESoundsBullet, ESoundsWeapon, ESoundsWormSpeech, EWeapons } from '../../../../../../../../../../ts/enums';
+import {
+    ELang,
+    ESoundsBullet,
+    ESoundsWeapon,
+    ESoundsWormSpeech,
+    EWeapons,
+} from '../../../../../../../../../../ts/enums';
 import SoundManager from '../../../../../../../../soundManager/SoundManager';
 import BDynamite from '../../../bullet/throwable/Fallen/dynamite/BDynamite';
 import StaticWeapon from '../Static';
 
 export default class WDynamite extends StaticWeapon {
-    protected name = EWeapons.dynamite;
+    public name = EWeapons.dynamite;
     protected shootSound = ESoundsWormSpeech.dinamyteArm;
     protected bullet = BDynamite;
 

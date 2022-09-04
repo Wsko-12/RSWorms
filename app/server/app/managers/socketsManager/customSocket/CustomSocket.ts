@@ -2,6 +2,7 @@ import { Socket } from 'socket.io';
 import DEV from '../../../../DEV';
 import ManagerItem from '../../ManagerItem';
 import User from '../../userManager/User';
+import GamesSocketListeners from './listeners/GamesSocketListeners';
 import LoginSocketListeners from './listeners/LoginSocketListeners';
 import RoomsSocketListeners from './listeners/RoomsSocketListeners';
 
@@ -22,6 +23,7 @@ export default class CustomSocket extends ManagerItem {
 
         LoginSocketListeners.applyListeners(this);
         RoomsSocketListeners.applyListeners(this);
+        GamesSocketListeners.applyListeners(this);
     }
 
     public emit<T>(msg: string, ...data: T[]) {

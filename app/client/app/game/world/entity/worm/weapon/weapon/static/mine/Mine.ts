@@ -4,7 +4,7 @@ import BMine from '../../../bullet/throwable/Fallen/mine/Bmine';
 import StaticWeapon from '../Static';
 
 export default class WMine extends StaticWeapon {
-    protected name = EWeapons.mine;
+    public name = EWeapons.mine;
     protected shootSound = ESoundsWormSpeech.mineArm;
     protected bullet = BMine;
 

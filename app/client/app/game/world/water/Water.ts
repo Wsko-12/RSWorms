@@ -44,7 +44,6 @@ export default class Water {
         this.object3D = new Mesh(geometry, material);
         this.object3D.position.x = size;
         this.object3D.position.y = -this.height / 2 + this.level;
-        this.object3D.position.y = 0;
         this.object3D.position.z = ELayersZ.water;
     }
 

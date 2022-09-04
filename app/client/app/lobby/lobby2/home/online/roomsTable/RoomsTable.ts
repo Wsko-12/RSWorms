@@ -8,7 +8,7 @@ import {
 import PageBuilder from '../../../../../../utils/PageBuilder';
 import PageElement from '../../../../../../utils/PageElement';
 import ClientSocket from '../../../../../clientSocket/ClientSocket';
-import Multiplayer from '../../../../../multiplayer/Multiplayer';
+import MultiplayerInterface from '../../../../multiplayerInterface/MultiplayerInterface';
 import User from '../../../../../User';
 import RoomItem from './roomItem/RoomItem';
 import './style.scss';
@@ -32,7 +32,7 @@ export default class RoomsTable extends PageElement {
 
             if (data) {
                 if (User.inRoom === data.id) {
-                    Multiplayer.showStartGameScreen(data.id);
+                    MultiplayerInterface.showStartGameScreen(data.id);
                 }
             }
         });
