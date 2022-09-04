@@ -132,6 +132,7 @@ export default class EntityManager {
 
     public socketLoop = () => {
         if (MultiplayerGameplayManager.getCurrentTurnPlayerName() === User.nickname && User.inGame) {
+            console.log('send');
             const data: ISocketEntityDataPack = {
                 game: User.inGame,
                 entities: this.entities.map((entity) => entity.getSocketData()),

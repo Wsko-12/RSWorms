@@ -33,8 +33,11 @@ export default class Game extends ManagerItem {
     };
 
     private teams: Record<string, IGameServerTeam> = {};
+    private endTurnData: ISocketEndTurnData | null = null;
+
     public id: string;
     private playersLoadedGameStates: Record<string, boolean> = {};
+    private playersReadyForNextTurn: Record<string, boolean> = {};
     private started = false;
     constructor(options: ISocketRoomsTableDataItem) {
         super();
@@ -50,6 +53,7 @@ export default class Game extends ManagerItem {
         const userManager = new UserManager();
         options.players.forEach((name) => {
             this.playersLoadedGameStates[name] = false;
+            this.playersReadyForNextTurn[name] = false;
             const user = userManager.getUserByName(name);
             if (user) {
                 user.setGame(this.id);
@@ -98,6 +102,10 @@ export default class Game extends ManagerItem {
     }
 
     private sendPreTurnData() {
+        Object.keys(this.playersReadyForNextTurn).forEach((user) => {
+            this.playersReadyForNextTurn[user] = false;
+        });
+
         this.turns.counter++;
         const isFinished = this.sendTeamsAvailability();
         if (isFinished) {
@@ -121,6 +129,26 @@ export default class Game extends ManagerItem {
         return teamNames.length <= 1;
     }
 
+    public markUserReadyForNextTurn(user: string) {
+        if (this.playersReadyForNextTurn[user] !== undefined) {
+            this.playersReadyForNextTurn[user] = true;
+        }
+
+        if (this.isAllPlayersReadyForNextTurn()) {
+            if (this.endTurnData) {
+                this.sendAll(ESocketGameMessages.endTurnDataServer, this.endTurnData);
+                this.endTurnData = null;
+            }
+
+            setTimeout(() => {
+                this.sendPreTurnData();
+            }, 2000);
+        }
+    }
+
+    private isAllPlayersReadyForNextTurn() {
+        return Object.values(this.playersReadyForNextTurn).every((value) => value);
+    }
     private getWormTurnName(team: IGameServerTeam) {
         team.lastTurn++;
         if (team.lastTurn >= team.worms.length) {
@@ -145,8 +173,7 @@ export default class Game extends ManagerItem {
             }
         });
 
-        this.sendAll(ESocketGameMessages.endTurnDataServer, data);
-        this.sendPreTurnData();
+        this.endTurnData = data;
     }
 
     private generateTeams(options: ISocketRoomsTableDataItem): Record<string, IGameServerTeam> {

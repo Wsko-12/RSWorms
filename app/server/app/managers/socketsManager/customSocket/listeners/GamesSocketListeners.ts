@@ -5,6 +5,7 @@ import {
     ISocketEndingTurnTimestamp,
     ISocketEndTurnData,
     ISocketEntityDataPack,
+    ISocketReadyForNextTurn,
     TSocketListenerTuple,
 } from '../../../../../../ts/socketInterfaces';
 import DEV from '../../../../../DEV';
@@ -70,11 +71,23 @@ export default class GamesSocketListeners {
         return [message, cb];
     }
 
+    private static getUserForNextTurnListener(): TSocketListenerTuple {
+        const message = ESocketGameMessages.userReadyForNextTurn;
+
+        const cb = (data: ISocketReadyForNextTurn) => {
+            const game = new GamesManager().getGameById(data.game);
+            game?.markUserReadyForNextTurn(data.user);
+        };
+
+        return [message, cb];
+    }
+
     public static applyListeners(socket: CustomSocket) {
         socket.on(...this.getLoadingDoneListener(socket));
         socket.on(...this.getEntitiesDataListener());
         socket.on(...this.getBulletCreatingListener());
         socket.on(...this.getEndingTurnTimestampListener());
         socket.on(...this.getEndTurnDataListener());
+        socket.on(...this.getUserForNextTurnListener());
     }
 }

@@ -71,6 +71,7 @@ export const enum ESocketGameMessages {
     endingTurnTimestampServer = 'game-ending-turn-timestamp-server',
     endTurnDataClient = 'game-end-turn-data-client',
     endTurnDataServer = 'game-end-turn-data-server',
+    userReadyForNextTurn = 'game-user-ready-for-next-turn',
 }
 
 export interface ISocketLoadingMultiplayerGameData extends IStartGameOptions {
@@ -152,4 +153,9 @@ export interface ISocketEndTurnData {
             };
         }>;
     }>;
+}
+
+export interface ISocketReadyForNextTurn {
+    game: string;
+    user: string;
 }

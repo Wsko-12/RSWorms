@@ -8,6 +8,7 @@ import {
     ISocketEndTurnData,
     ISocketEntityDataPack,
     ISocketPreTurnData,
+    ISocketReadyForNextTurn,
     ISocketTeamsAvailability,
     ISocketTeamWinData,
 } from '../../../../ts/socketInterfaces';
@@ -198,6 +199,7 @@ export default class MultiplayerGameplayManager extends GameplayManager {
     }
 
     protected betweenTurns() {
+        this.currentTeamName = '';
         this.gameInterface.timerElement.show(false);
 
         const previousWorm = this.ioManager.wormManager.getWorm();
@@ -219,12 +221,23 @@ export default class MultiplayerGameplayManager extends GameplayManager {
                         if (MultiplayerGameplayManager.getCurrentTurnPlayerName() === User.nickname) {
                             this.sendEndTurnData();
                         }
+                        this.sendReadyForNextTurn();
                     }, 2000);
                 } else {
                     this.betweenTurns();
                 }
             }, 1000);
         });
+    }
+
+    private sendReadyForNextTurn() {
+        if (User.inGame) {
+            const data: ISocketReadyForNextTurn = {
+                game: User.inGame,
+                user: User.nickname,
+            };
+            ClientSocket.emit(ESocketGameMessages.userReadyForNextTurn, data);
+        }
     }
 
     private sendEndTurnData() {
