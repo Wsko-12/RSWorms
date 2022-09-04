@@ -1,4 +1,4 @@
-import { ESoundsBullet } from '../../../../../../../../ts/enums';
+import { EBullets, ESoundsBullet } from '../../../../../../../../ts/enums';
 import { Group, Mesh, MeshBasicMaterial, NearestFilter, Object3D, PlaneBufferGeometry, Texture } from 'three';
 import { ELayersZ, EWeapons } from '../../../../../../../../ts/enums';
 import { IBulletOptions, IExplosionOptions } from '../../../../../../../../ts/interfaces';
@@ -8,13 +8,14 @@ import SoundManager from '../../../../../../soundManager/SoundManager';
 import MapMatrix from '../../../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../../../Entity';
 
-export default class Bullet extends Entity {
+export default abstract class Bullet extends Entity {
     protected object3D: Object3D;
     protected bulletMesh: Mesh;
     private texture: Texture;
     protected windCoefficient = 1;
     public name: EWeapons;
     protected isRemoved = false;
+    public abstract type: EBullets;
 
     private explosionAnimation: {
         texture: Texture;

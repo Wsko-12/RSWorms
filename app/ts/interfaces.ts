@@ -1,4 +1,5 @@
 import Loop from '../client/app/game/loop/Loop';
+import Bullet from '../client/app/game/world/entity/worm/weapon/bullet/Bullet';
 import { Point2, Vector2 } from '../client/utils/geometry';
 import { ELang, EMapPacksNames, EWorldSizes } from './enums';
 import { TClassProperty, TAttrProperty, TDatasetProperty, TContentProperty } from './types';
@@ -99,4 +100,8 @@ export interface IServerGameOptions {
     id: string;
     players: string[];
     worms: number;
+}
+
+export interface IBulletConstructor {
+    new (options: IBulletOptions): Bullet;
 }

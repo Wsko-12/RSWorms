@@ -93,7 +93,7 @@ export default class EntityManager {
                 if (entity instanceof Bullet) {
                     const id = `Bullet_${generateId()}`;
                     entity.id = id;
-                    const type = entity.constructor.name as EBullets;
+                    const type = entity.type;
                     const data = entity.getSocketData(false);
 
                     const socketData: ISocketBulletData = {

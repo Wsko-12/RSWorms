@@ -1,4 +1,4 @@
-import { ESoundsBullet } from '../../../../../../../../../../ts/enums';
+import { EBullets, ESoundsBullet } from '../../../../../../../../../../ts/enums';
 import { IExplosionOptions } from '../../../../../../../../../../ts/interfaces';
 import { Point2 } from '../../../../../../../../../utils/geometry';
 import SoundManager from '../../../../../../../../soundManager/SoundManager';
@@ -8,6 +8,7 @@ import Worm from '../../../../Worm';
 import BDynamite from './dynamite/BDynamite';
 
 export default class BWormFinalExplosion extends BDynamite {
+    public type: EBullets;
     private worm: Worm;
     private isExplodedState = false;
     constructor(worm: Worm) {
@@ -15,6 +16,7 @@ export default class BWormFinalExplosion extends BDynamite {
         this.worm = worm;
         this.setExplosionOptions(95, 200, 15);
         this.bulletMesh.visible = false;
+        this.type = EBullets.BDynamite;
     }
 
     public explode(mapMatrix: MapMatrix, entities: Entity[]): void {

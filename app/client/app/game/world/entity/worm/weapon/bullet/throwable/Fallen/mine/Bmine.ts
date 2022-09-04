@@ -1,6 +1,5 @@
-import { ESoundsBullet, EWeapons } from '../../../../../../../../../../../ts/enums';
+import { EBullets, ESoundsBullet, EWeapons } from '../../../../../../../../../../../ts/enums';
 import { IBulletOptions } from '../../../../../../../../../../../ts/interfaces';
-import { TRemoveEntityCallback } from '../../../../../../../../../../../ts/types';
 import SoundManager from '../../../../../../../../../soundManager/SoundManager';
 import MapMatrix from '../../../../../../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../../../../../../Entity';
@@ -11,10 +10,12 @@ export default class BMine extends FallenBullet {
     private actuationRadius = 100;
     private start: number;
     private isDetonated = false;
+    public type: EBullets;
     constructor(options: IBulletOptions) {
         super(options, EWeapons.mine);
         this.start = Date.now();
         this.setExplosionOptions(10, 100, 15);
+        this.type = EBullets.BMine;
     }
 
     private isWormClose(mapMatrix: MapMatrix, entities: Entity[]) {

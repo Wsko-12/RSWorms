@@ -1,4 +1,4 @@
-import { ESoundsBullet } from '../../../../../../../../../../ts/enums';
+import { EBullets, ESoundsBullet } from '../../../../../../../../../../ts/enums';
 import { IExplosionOptions } from '../../../../../../../../../../ts/interfaces';
 import { Point2 } from '../../../../../../../../../utils/geometry';
 import SoundManager from '../../../../../../../../soundManager/SoundManager';
@@ -10,11 +10,13 @@ import BDynamite from './dynamite/BDynamite';
 export default class BBarrelExplosion extends BDynamite {
     private barrel: Barrel;
     private isExplodedState = false;
+    public type: EBullets;
     constructor(barrel: Barrel) {
         super({ angle: 1, parentRadius: 1, position: new Point2(0, 0), power: 0 });
         this.barrel = barrel;
         this.setExplosionOptions(95, 250, 25);
         this.bulletMesh.visible = false;
+        this.type = EBullets.BDynamite;
     }
 
     public explode(mapMatrix: MapMatrix, entities: Entity[]): void {
