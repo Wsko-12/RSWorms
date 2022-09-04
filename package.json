@@ -2,7 +2,7 @@
   "name": "rsworms",
   "version": "1.0.0",
   "description": "rsschool stage2 final task",
-  "main": "index.js",
+  "main": "app.js",
   "engines": {
     "node": "17.x"
   },
