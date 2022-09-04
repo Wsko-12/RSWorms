@@ -205,6 +205,8 @@ export default class MultiplayerGameplayManager extends GameplayManager {
     }
 
     protected betweenTurns() {
+        this.isBetweenTurns = true;
+
         if (this.currentTeamName != '') {
             this.previousTeamName = this.currentTeamName;
         }
@@ -218,7 +220,6 @@ export default class MultiplayerGameplayManager extends GameplayManager {
         }
         this.ioManager.wormManager.setWorm(null);
 
-        this.isBetweenTurns = true;
         const entities = this.entityManager.getEntities();
         const promises = entities.map((entity) => entity.betweenTurnsActions());
         Promise.all(promises).then(() => {
@@ -295,7 +296,7 @@ export default class MultiplayerGameplayManager extends GameplayManager {
                 return;
             }
 
-            if (Date.now() - this.turnTimestamp > ms) {
+            if (Date.now() - this.turnTimestamp > this.turnTime * 1000 && !this.isBetweenTurns) {
                 this.entityManager.sendLastData();
                 this.betweenTurns();
             }
