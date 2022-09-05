@@ -53,11 +53,15 @@ export default class WormManager {
         if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') {
             if (e.code === 'ArrowLeft') {
                 worm.setMoveFlags({ left: true });
-                SoundManager.playWormAction(ESoundsWormAction.walk);
+                if (worm.moveStates.isMove) {
+                    SoundManager.playWormAction(ESoundsWormAction.walk);
+                }
             }
             if (e.code === 'ArrowRight') {
                 worm.setMoveFlags({ right: true });
-                SoundManager.playWormAction(ESoundsWormAction.walk);
+                if (worm.moveStates.isMove) {
+                    SoundManager.playWormAction(ESoundsWormAction.walk);
+                }
             }
         }
 
@@ -103,7 +107,9 @@ export default class WormManager {
         const jumpTimeout = () => {
             const t = setTimeout(() => {
                 worm.jump();
-                SoundManager.playWormSpeech(this.controlledWorm?.wormLang || ELang.rus, ESoundsWormSpeech.jump1);
+                if (worm.moveStates.isJump) {
+                    SoundManager.playWormSpeech(this.controlledWorm?.wormLang || ELang.rus, ESoundsWormSpeech.jump1);
+                }
             }, this.jumpButtonDelayMS + 1);
             return Number(t);
         };
@@ -120,7 +126,9 @@ export default class WormManager {
             } else {
                 clearTimeout(this.timer);
                 worm.jump(true);
-                SoundManager.playWormAction(ESoundsWormAction.backflip);
+                if (worm.moveStates.isJump) {
+                    SoundManager.playWormAction(ESoundsWormAction.backflip);
+                }
             }
         }
     }
