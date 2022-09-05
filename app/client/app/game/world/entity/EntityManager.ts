@@ -1,5 +1,6 @@
 import { Scene } from 'three';
 import { EBullets, EFallenObjects, ELang, ESizes } from '../../../../../ts/enums';
+import { IFallenItemConstructor } from '../../../../../ts/interfaces';
 import {
     ESocketGameMessages,
     ISocketBulletData,
@@ -18,6 +19,10 @@ import Barrel from './fallenItem/barrel/Barrel';
 import Bullet from './worm/weapon/bullet/Bullet';
 import Worm from './worm/Worm';
 
+const fallenItemsConstructors: Record<EFallenObjects, IFallenItemConstructor> = {
+    Aidkit: Aidkit,
+};
+
 export default class EntityManager {
     private readonly mainScene: Scene;
     private worldMap: WorldMap | null = null;
@@ -32,7 +37,7 @@ export default class EntityManager {
     }
 
     private findPlace() {
-        return this.worldMap?.getWormPlace(this.entities);
+        return this.worldMap?.getEntityPlace(this.entities, ESizes.worm);
     }
 
     public generateWorm(
@@ -57,21 +62,22 @@ export default class EntityManager {
         return null;
     }
 
-    public generateFallenItem() {
+    public generateFallenItem(name?: EFallenObjects, xPos?: number) {
         if (!this.worldMap) {
             throw new Error(`[EntityManager generateFallenItem] can't find worldMap`);
         }
-        const items = Object.values(EFallenObjects).filter((item) => Number.isNaN(Number(item)));
-        const index = Math.floor(Math.random() * items.length);
+        if (!name && !xPos) {
+            const constructors = Object.values(fallenItemsConstructors);
+            const index = Math.floor(Math.random() * constructors.length);
 
-        const constructors = [Aidkit, Barrel];
-        const Item = constructors[index];
+            const Item = constructors[index];
 
-        const x = this.worldMap.getMapMatrix().matrix[0].length * Math.random();
-        const y = this.worldMap.getMapMatrix().matrix.length;
-        const item = new Item(x, y);
-        this.addEntity(item);
-        this.mainScene.add(item.getObject3D());
+            const x = this.worldMap.getMapMatrix().matrix[0].length * Math.random();
+            const y = this.worldMap.getMapMatrix().matrix.length;
+            const item = new Item(x, y);
+            this.addEntity(item);
+            this.mainScene.add(item.getObject3D());
+        }
     }
 
     public update = (time: number, wind: number, waterLevel: number) => {

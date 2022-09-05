@@ -1,4 +1,5 @@
 import Loop from '../client/app/game/loop/Loop';
+import FallenItem from '../client/app/game/world/entity/fallenItem/FallenItem';
 import Bullet from '../client/app/game/world/entity/worm/weapon/bullet/Bullet';
 import { Point2, Vector2 } from '../client/utils/geometry';
 import { ELang, EMapPacksNames, EWorldSizes } from './enums';
@@ -104,4 +105,8 @@ export interface IServerGameOptions {
 
 export interface IBulletConstructor {
     new (options: IBulletOptions): Bullet;
+}
+
+export interface IFallenItemConstructor {
+    new (x: number, y: number): FallenItem;
 }

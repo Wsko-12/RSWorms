@@ -1,5 +1,6 @@
 import DEV from '../../../../server/DEV';
-import { IStartGameOptions } from '../../../../ts/interfaces';
+import { EBullets } from '../../../../ts/enums';
+import { IBulletConstructor, IStartGameOptions } from '../../../../ts/interfaces';
 import {
     ESocketGameMessages,
     ISocketAllPlayersLoadedData,
@@ -27,7 +28,7 @@ import Worm from '../world/entity/worm/Worm';
 import World from '../world/World';
 import GameplayManager from './GameplayManager';
 
-const bulletConstructors = {
+const bulletConstructors: Record<EBullets, IBulletConstructor> = {
     BBazooka: BBazooka,
     BGrenade: BGrenade,
     BHolyGrenade: BHolyGrenade,
@@ -56,6 +57,7 @@ export default class MultiplayerGameplayManager extends GameplayManager {
 
     public init(options: IStartGameOptions) {
         this.applySocketListeners();
+        this.createBarrels();
         this.createTeams(options);
         this.gameInterface.teamsHPElement.build(this.teams);
         this.gameInterface.teamsHPElement.update(this.teams);

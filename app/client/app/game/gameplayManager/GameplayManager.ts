@@ -1,8 +1,10 @@
+import { ESizes } from '../../../../ts/enums';
 import { IStartGameOptions, ITeamOptions } from '../../../../ts/interfaces';
 import { TEndTurnCallback } from '../../../../ts/types';
 import GameInterface from '../gameInterface/GameInterface';
 import IOManager from '../IOManager/IOManager';
 import EntityManager from '../world/entity/EntityManager';
+import Barrel from '../world/entity/fallenItem/barrel/Barrel';
 import World from '../world/World';
 import MultiplayerGameplayManager from './MultiplayerGameplayManager';
 import Team from './team/Team';
@@ -68,11 +70,21 @@ export default class GameplayManager {
     }
 
     init(options: IStartGameOptions) {
+        this.createBarrels();
         this.createTeams(options);
         this.gameInterface.teamsHPElement.build(this.teams);
         this.gameInterface.teamsHPElement.update(this.teams);
 
         this.nextTurn();
+    }
+
+    createBarrels() {
+        for (let i = 0; i < 3 /* barrels quantity */; i++) {
+            const position = this.world.getWorldMap().getEntityPlace(this.entityManager.getEntities(), ESizes.worm);
+            const barrel = new Barrel(position.x, position.y);
+            this.entityManager.addEntity(barrel);
+            this.world.getMainScene().add(barrel.getObject3D());
+        }
     }
 
     nextTurn() {

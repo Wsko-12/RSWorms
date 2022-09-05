@@ -173,6 +173,10 @@ export const enum ECustomEvents {
 }
 
 export enum EFallenObjects {
+    Aidkit = 'Aidkit',
+}
+
+export enum EGameAdditionalObjects {
     aidkit,
     barrel,
 }
