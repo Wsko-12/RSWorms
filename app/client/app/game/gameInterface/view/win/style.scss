@@ -1,0 +1,13 @@
+.win-screen__overlay {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    pointer-events: none !important;
+}
+
+.win-screen__text{
+    font-size: 5rem;
+    font-weight: bold;
+    color: #ffd400;
+    text-shadow: 3px 3px 0px #444329, -1px -1px #ffffff;
+}

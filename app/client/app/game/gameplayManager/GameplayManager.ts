@@ -91,6 +91,11 @@ export default class GameplayManager {
     nextTurn() {
         const continueGame = this.checkTeams();
         if (!continueGame) {
+            let name = undefined;
+            if (this.teams[0]) {
+                name = this.teams[0].name;
+            }
+            this.gameInterface.showWinScreen(name);
             return;
         }
         this.isBetweenTurns = false;
