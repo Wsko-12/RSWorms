@@ -26,15 +26,15 @@ export default class WormGui {
         actual: number;
         prev: number;
     };
-    constructor(wormName: string, teamIndex: number) {
+    constructor(wormName: string, teamIndex: number, hp: number) {
         this.texture.needsUpdate = true;
         this.object3D = new Group();
 
         this.wormName = wormName;
         this.teamIndex = teamIndex;
         this.hp = {
-            actual: 100,
-            prev: 100,
+            actual: hp,
+            prev: hp,
         };
 
         const size = ESizes.worm * 3;

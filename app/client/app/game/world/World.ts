@@ -18,13 +18,13 @@ export default class World {
     public entityManager = new EntityManager(this.mainScene);
     constructor(options: IStartGameOptions) {
         this.options = options;
-        this.water = new Water(options.worldSize);
+        this.water = new Water(options.size);
     }
 
     public async init() {
-        this.background.init(this.options.worldSize);
+        this.background.init(this.options.size);
         await this.worldMap.init(this.options);
-        this.wind.init(this.options.worldSize);
+        this.wind.init(this.options.size);
         this.entityManager.setWorldMap(this.worldMap);
         return true;
     }
@@ -58,8 +58,8 @@ export default class World {
         return this.mainScene;
     }
 
-    public changeWind() {
-        this.wind.change();
+    public changeWind(value?: number) {
+        this.wind.change(value);
         return this.wind.getCurrentValue();
     }
 

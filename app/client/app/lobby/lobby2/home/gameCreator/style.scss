@@ -1,0 +1,21 @@
+.game-creator{
+    width: 300px;
+    box-shadow: 4px 4px 0px #000, 10px 10px 8px rgba(33, 69, 63, 0.5) !important;
+}
+
+.game-creator__id{
+    font-size: 2rem;
+    margin: 0;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.game-creator__overlay{
+    background-color: #71e7d3 !important;
+}
+
+.game-creator__start{
+    background-color: #ff6f6f !important;
+    color: white !important;
+    margin-top: 30px;
+}

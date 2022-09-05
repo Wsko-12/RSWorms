@@ -8,16 +8,17 @@ import {
     RepeatWrapping,
     Texture,
 } from 'three';
-import { ELayersZ, EWeapons } from '../../../../../../../../ts/enums';
-import { IBulletOptions, IShootOptions } from '../../../../../../../../ts/interfaces';
-import { TRemoveEntityCallback } from '../../../../../../../../ts/types';
+import { ELayersZ, ESoundsWeapon, ESoundsWormSpeech, EWeapons } from '../../../../../../../../ts/enums';
+import { IBulletConstructor, IBulletOptions, IShootOptions } from '../../../../../../../../ts/interfaces';
+import SoundManager from '../../../../../../soundManager/SoundManager';
 import AssetsManager from '../../../../../assetsManager/AssetsManager';
 import Bullet from '../bullet/Bullet';
 import Aim from './aim/Aim';
 
 export default abstract class Weapon {
-    protected abstract name: EWeapons;
-    protected bullet = Bullet;
+    public abstract name: EWeapons;
+    protected abstract shootSound: ESoundsWeapon | ESoundsWormSpeech;
+    protected abstract bullet: IBulletConstructor;
     protected object3D: Object3D;
     protected aim = new Aim();
     private weaponMesh: Mesh;
@@ -72,6 +73,10 @@ export default abstract class Weapon {
         }
     }
 
+    public setAim(angle: number, power: number) {
+        this.aim.setAim(angle, power);
+    }
+
     public update(wormDirection: 1 | -1) {
         this.updateShowView();
         this.aim.update(wormDirection);
@@ -81,6 +86,11 @@ export default abstract class Weapon {
     public getRawAngle() {
         return this.aim.getRawAngle();
     }
+
+    public getRawAimData() {
+        return this.aim.getRawData();
+    }
+
     private rotateMesh(wormDirection: 1 | -1) {
         this.texture.repeat.x = -wormDirection;
 
@@ -126,7 +136,12 @@ export default abstract class Weapon {
             position: options.position,
             parentRadius: options.parentRadius,
         };
-        const bullet = new this.bullet(bulletOptions, this.name);
+        const bullet = new this.bullet(bulletOptions);
+        this.playShoot();
         return bullet;
+    }
+
+    protected playShoot() {
+        SoundManager.playWeapon(this.shootSound);
     }
 }

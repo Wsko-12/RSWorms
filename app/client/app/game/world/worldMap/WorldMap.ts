@@ -45,11 +45,11 @@ export default class WorldMap {
         this.random = new Random(options.seed);
 
         const canvas = this.canvas.element;
-        const width = options.worldSize * EProportions.mapWidthToHeight;
-        const height = options.worldSize;
+        const width = options.size * EProportions.mapWidthToHeight;
+        const height = options.size;
 
         this.sizes = {
-            world: options.worldSize,
+            world: options.size,
             width,
             height,
         };
@@ -119,8 +119,8 @@ export default class WorldMap {
         // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (mapCreated) => {
             const { ctx, element } = this.canvas;
-            const width = options.worldSize * EProportions.mapWidthToHeight;
-            const height = options.worldSize;
+            const width = options.size * EProportions.mapWidthToHeight;
+            const height = options.size;
             this.clearCanvas();
             await this.drawBaseMaskMatrix(ctx, width, height);
 

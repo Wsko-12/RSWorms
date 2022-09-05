@@ -94,6 +94,11 @@ export default class WormManager {
                 this.controlledWorm.selectWeapon(EWeapons.mine);
             }
         }
+        if (e.code === 'KeyH') {
+            if (!this.blockWeapon) {
+                this.controlledWorm.selectWeapon(EWeapons.holygrenade);
+            }
+        }
 
         const jumpTimeout = () => {
             const t = setTimeout(() => {
@@ -150,7 +155,7 @@ export default class WormManager {
 
         if (e.code === 'Space') {
             this.shooting = false;
-            SoundManager.playWeapon(ESoundsWeapon.rocketRelease);
+            // SoundManager.playWeapon(ESoundsWeapon.rocketRelease);
 
             const bullet = worm.shoot();
             if (bullet) {

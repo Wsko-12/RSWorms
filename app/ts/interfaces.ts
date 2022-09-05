@@ -1,25 +1,27 @@
 import Loop from '../client/app/game/loop/Loop';
+import Bullet from '../client/app/game/world/entity/worm/weapon/bullet/Bullet';
 import { Point2, Vector2 } from '../client/utils/geometry';
 import { ELang, EMapPacksNames, EWorldSizes } from './enums';
 import { TClassProperty, TAttrProperty, TDatasetProperty, TContentProperty } from './types';
 
 export interface IStartGameOptions {
-    mapTexturePackName: EMapPacksNames;
-    worldSize: EWorldSizes;
+    texture: EMapPacksNames;
+    size: EWorldSizes;
     seed: number;
     decor: {
         count: number;
         max: number;
         min: number;
     };
-    wormsCount: number;
+    worms: number;
     multiplayer: boolean;
-    teams: ITeam[];
-    // teamNames: string[];
-    // playerNames: string[];
+    teams: ITeamOptions[] | number;
+    hp: number;
+    time: number;
+    id: string;
 }
 
-interface ITeam {
+export interface ITeamOptions {
     name: string;
     worms: string[];
     lang: ELang;
@@ -92,4 +94,14 @@ export interface ICreateElementProps {
     attrs?: TAttrProperty;
     dataset?: TDatasetProperty;
     content?: TContentProperty;
+}
+
+export interface IServerGameOptions {
+    id: string;
+    players: string[];
+    worms: number;
+}
+
+export interface IBulletConstructor {
+    new (options: IBulletOptions): Bullet;
 }

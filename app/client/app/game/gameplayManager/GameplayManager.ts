@@ -1,32 +1,34 @@
-import { IStartGameOptions } from '../../../../ts/interfaces';
+import { IStartGameOptions, ITeamOptions } from '../../../../ts/interfaces';
 import { TEndTurnCallback } from '../../../../ts/types';
 import GameInterface from '../gameInterface/GameInterface';
 import IOManager from '../IOManager/IOManager';
 import EntityManager from '../world/entity/EntityManager';
-import Bullet from '../world/entity/worm/weapon/bullet/Bullet';
 import World from '../world/World';
+import MultiplayerGameplayManager from './MultiplayerGameplayManager';
 import Team from './team/Team';
 
-export default class gameplayManager {
-    private entityManager: EntityManager;
-    private ioManager: IOManager;
-    private gameInterface: GameInterface;
-    private world: World;
-    private teams: Team[] = [];
-    private currentTurn = -1;
-    private turnTimestamp = 0;
-    private turnTime = 30;
-    private isEnding = 0;
-    private isBetweenTurns = false;
+export default class GameplayManager {
+    protected entityManager: EntityManager;
+    protected ioManager: IOManager;
+    protected gameInterface: GameInterface;
+    protected world: World;
+    protected teams: Team[] = [];
+    protected currentTurn = -1;
+    protected turnTimestamp = 0;
+    protected turnTime = 30;
+    protected isEnding = 0;
+    protected isBetweenTurns = false;
 
-    constructor(world: World, ioManager: IOManager, gameInterface: GameInterface) {
+    constructor(options: IStartGameOptions, world: World, ioManager: IOManager, gameInterface: GameInterface) {
         this.world = world;
         this.entityManager = world.entityManager;
         this.ioManager = ioManager;
         this.gameInterface = gameInterface;
+        this.turnTime = options.time;
+        MultiplayerGameplayManager.isOnline = false;
     }
 
-    private checkTeams(): boolean {
+    protected checkTeams(): boolean {
         this.teams.forEach((team) => {
             team.checkWorms();
         });
@@ -41,27 +43,31 @@ export default class gameplayManager {
         return false;
     }
 
-    private createTeams(options: IStartGameOptions) {
-        if (!options.multiplayer) {
-            const teamsCount = options.teams.length;
-            for (let i = 0; i < teamsCount; i++) {
-                const teamOptions = options.teams[i];
-                const team = new Team(i, teamOptions.name, teamOptions.lang);
-                for (let j = 0; j < options.wormsCount; j++) {
-                    const wormName = teamOptions.worms[j];
-                    const worm = this.entityManager.generateWorm(i, j, wormName, teamOptions.lang);
-                    if (!worm) {
-                        throw new Error(`[GameplayManager] can't create worm`);
-                    }
-                    team.pushWorm(worm);
+    protected createTeams(options: IStartGameOptions) {
+        const teamsCount = (options.teams as ITeamOptions[]).length;
+        for (let i = 0; i < teamsCount; i++) {
+            const teamOptions = (options.teams as ITeamOptions[])[i];
+            const team = new Team(i, teamOptions.name, teamOptions.lang);
+            for (let j = 0; j < options.worms; j++) {
+                const wormName = teamOptions.worms[j];
+                const worm = this.entityManager.generateWorm(
+                    i,
+                    teamOptions.name,
+                    j,
+                    wormName,
+                    teamOptions.lang,
+                    options.hp
+                );
+                if (!worm) {
+                    throw new Error(`[GameplayManager] can't create worm`);
                 }
-                this.teams.push(team);
+                team.pushWorm(worm);
             }
+            this.teams.push(team);
         }
     }
 
     init(options: IStartGameOptions) {
-        console.log(options);
         this.createTeams(options);
         this.gameInterface.teamsHPElement.build(this.teams);
         this.gameInterface.teamsHPElement.update(this.teams);
@@ -102,7 +108,7 @@ export default class gameplayManager {
         this.isEnding = Date.now() + delaySec * 1000;
     };
 
-    private betweenTurns() {
+    protected betweenTurns() {
         this.gameInterface.timerElement.show(false);
 
         const previousWorm = this.ioManager.wormManager.getWorm();

@@ -16,8 +16,8 @@ import './style.scss';
 import { Context } from 'vm';
 import createSettingsPage from './Settings/settings';
 import { getRandomMemberName, getRandomTeamName } from '../../utils/names';
-import createNetworkLobbyPage from './NetworkLobby/networkLobby';
 import SoundManager from '../soundManager/SoundManager';
+import NetworkLobby from './NetworkLobby/networkLobby';
 
 export default class Lobby {
     clouds: any[] = [];
@@ -50,8 +50,8 @@ export default class Lobby {
     }
 
     private createNetworkLobby() {
-        this.networkLobby = createNetworkLobbyPage(this.windowWidth, this.windowHeight);
-        this.lobbyWrapper.append(this.networkLobby);
+        this.networkLobby = new NetworkLobby(this.windowWidth, this.windowHeight);
+        this.lobbyWrapper.append(this.networkLobby.getElement());
     }
 
     private createSettings() {
@@ -188,8 +188,7 @@ export default class Lobby {
         const networkGameBtn = PageBuilder.createElement('div', { classes: 'main-screen-button' });
         networkGameBtn.style.backgroundImage = 'url(./assets/lobby/main-screen/wormsnetwork.jpeg)';
         networkGameBtn.addEventListener('click', () => {
-            console.log(this.networkLobby);
-            this.networkLobby.scrollIntoView({
+            this.networkLobby.getElement().scrollIntoView({
                 behavior: 'smooth',
                 block: 'start',
             });
@@ -249,15 +248,15 @@ export default class Lobby {
         // const seed = 0.11259509204096174;
         console.log('Seed: ', seed);
         this.startGameCallback({
-            mapTexturePackName: EMapPacksNames.moon,
-            worldSize: EWorldSizes.medium,
+            texture: EMapPacksNames.moon,
+            size: EWorldSizes.medium,
             seed,
             decor: {
                 count: EMapPacksDecorItems[EMapPacksNames.moon],
                 max: 6,
                 min: 2,
             },
-            wormsCount: 6,
+            worms: 6,
             multiplayer: false,
             teams: [
                 {
@@ -274,6 +273,9 @@ export default class Lobby {
                     lang: ELang.eng,
                 },
             ],
+            hp: 100,
+            time: 45,
+            id: '',
         });
     }
 

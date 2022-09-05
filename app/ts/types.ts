@@ -1,4 +1,8 @@
+import { type } from 'os';
 import Entity from '../client/app/game/world/entity/Entity';
+import Bullet from '../client/app/game/world/entity/worm/weapon/bullet/Bullet';
+import CustomSocket from '../server/app/managers/socketsManager/customSocket/CustomSocket';
+import User from '../server/app/managers/userManager/User';
 import { EWeapons } from './enums';
 import { IStartGameOptions } from './interfaces';
 

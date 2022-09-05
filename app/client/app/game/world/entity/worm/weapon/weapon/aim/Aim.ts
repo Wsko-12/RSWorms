@@ -138,6 +138,15 @@ export default class Aim {
         if (this.power > 100) this.power = 100;
     }
 
+    public setAim(angle: number, power: number) {
+        this.angle = angle;
+        this.power = power;
+    }
+
+    public getRawData() {
+        return { angle: this.angle, power: this.power };
+    }
+
     public getObject3D() {
         return this.object3D;
     }

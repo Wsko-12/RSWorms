@@ -1,0 +1,48 @@
+.rooms-table__button{
+    width: 100px !important;
+    font-size: 1.5rem !important;
+    padding: 5px 0px !important;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: white !important;
+    background-color: crimson !important;
+
+    &:disabled{
+        color: gray !important;
+        border: 2px solid gray;
+        box-shadow: 4px 4px 0px gray;
+        background-color: #f0ffff !important;
+
+        &:hover{
+            transform: none;
+            box-shadow: 4px 4px 0px gray;
+        }
+
+        &:active{
+            transform: none;
+            box-shadow: 4px 4px 0px gray;
+        }
+    }
+}
+.rooms__table {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: scroll;
+    padding: 5px;
+}
+
+*::-webkit-scrollbar {
+    width: 5px;               /* width of the entire scrollbar */
+  }
+  
+*::-webkit-scrollbar-track {
+background: transparent;        /* color of the tracking area */
+}
+  
+*::-webkit-scrollbar-thumb {
+background-color: black;    /* color of the scroll thumb */
+border-radius: 20px;       /* roundness of the scroll thumb */
+}

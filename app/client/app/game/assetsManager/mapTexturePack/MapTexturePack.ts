@@ -17,7 +17,9 @@ export default class MapTexturePack extends PackTextureLoader {
 
     public async load() {
         const loading = LoadingPage.start('Loading Map Pack', 4 + this.decorItems);
-        const mapTexturesFolder = './client/assets/mapPacks/';
+        const prePath = process.env.NODE_ENV === 'development' ? './client' : '.';
+
+        const mapTexturesFolder = prePath + '/assets/mapPacks/';
         const path = mapTexturesFolder + this.packName + '/';
 
         const textures = ['bg', 'ground', 'grass', 'particle'];

@@ -45,8 +45,8 @@ export default class Wind {
         this.object3D.position.set(worldWidth / 2, 0, 0);
     }
 
-    public change() {
-        this.direction = (Math.random() - 0.5) * 2;
+    public change(value?: number) {
+        this.direction = value ? (value - 0.5) * 2 : (Math.random() - 0.5) * 2;
     }
     public getCurrentValue() {
         return this.direction;

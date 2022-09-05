@@ -3,7 +3,9 @@ import PackTextureLoader from '../PackTextureLoader';
 
 export default class EffectTextures extends PackTextureLoader {
     public async load() {
-        const mapTexturesFolder = './client/assets/effects/';
+        const prePath = process.env.NODE_ENV === 'development' ? './client' : '.';
+
+        const mapTexturesFolder = prePath + '/assets/effects/';
         const path = mapTexturesFolder;
 
         const textures = ['explosion', 'barrel', 'aidkit'];

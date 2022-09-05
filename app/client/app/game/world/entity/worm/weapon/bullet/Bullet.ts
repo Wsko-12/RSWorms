@@ -1,21 +1,21 @@
-import { ESoundsBullet } from '../../../../../../../../ts/enums';
+import { EBullets, ESoundsBullet } from '../../../../../../../../ts/enums';
 import { Group, Mesh, MeshBasicMaterial, NearestFilter, Object3D, PlaneBufferGeometry, Texture } from 'three';
 import { ELayersZ, EWeapons } from '../../../../../../../../ts/enums';
 import { IBulletOptions, IExplosionOptions } from '../../../../../../../../ts/interfaces';
-import { TRemoveEntityCallback } from '../../../../../../../../ts/types';
 import { Vector2 } from '../../../../../../../utils/geometry';
 import AssetsManager from '../../../../../assetsManager/AssetsManager';
 import SoundManager from '../../../../../../soundManager/SoundManager';
 import MapMatrix from '../../../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../../../Entity';
 
-export default class Bullet extends Entity {
+export default abstract class Bullet extends Entity {
     protected object3D: Object3D;
     protected bulletMesh: Mesh;
     private texture: Texture;
     protected windCoefficient = 1;
     public name: EWeapons;
     protected isRemoved = false;
+    public abstract type: EBullets;
 
     private explosionAnimation: {
         texture: Texture;
@@ -27,6 +27,8 @@ export default class Bullet extends Entity {
         maxSteps: number;
     };
 
+    private startOptions: IBulletOptions;
+
     protected explosion = {
         damage: 150,
         radius: 150,
@@ -37,7 +39,8 @@ export default class Bullet extends Entity {
         let { angle } = options;
         const { power, position } = options;
         angle = (angle / 180) * Math.PI;
-        super(10, position.x, position.y);
+        super('bullet', 10, position.x, position.y);
+        this.startOptions = options;
 
         this.position.x += Math.cos(angle) * (options.parentRadius + this.radius + 1);
         this.position.y += Math.sin(angle) * (options.parentRadius + this.radius + 1);
@@ -74,6 +77,10 @@ export default class Bullet extends Entity {
         const shootVector = new Vector2();
         Vector2.rotate(shootVector, angle);
         this.push(shootVector.normalize().scale(power / 5));
+    }
+
+    public getStartBulletOptions() {
+        return this.startOptions;
     }
 
     private createExplosionMesh() {
