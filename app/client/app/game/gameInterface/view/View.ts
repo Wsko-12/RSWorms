@@ -4,6 +4,7 @@ import MobileInterface from './mobile/MobileInterface';
 import './style.scss';
 import TeamsHP from './teamHP/TeamHP';
 import TimerInterface from './timer/Timer';
+import WinScreen from './win/WinScreen';
 import WindInterface from './wind/Wind';
 export default class View {
     private mainCanvas = document.createElement('canvas');
@@ -13,6 +14,7 @@ export default class View {
     private wind = new WindInterface();
     private teamsHP = new TeamsHP();
     private inventory = new Inventory();
+    private winScreen = new WinScreen();
     private mobileInterface = new MobileInterface(this.mainHandler);
 
     public timerElement = {
@@ -50,6 +52,8 @@ export default class View {
         const inventory = this.inventory.getElement();
 
         const mobileInterface = this.mobileInterface.getElement();
+        this.guiContainer.append(this.winScreen.getElement());
+
         App.screen.append(mobileInterface);
 
         App.screen.append(this.mainCanvas);
@@ -64,6 +68,10 @@ export default class View {
 
     public getMainCanvas() {
         return this.mainCanvas;
+    }
+
+    public showWinScreen(teamName?: string) {
+        this.winScreen.show(teamName);
     }
 
     public getMainHandler() {

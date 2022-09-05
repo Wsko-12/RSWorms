@@ -100,6 +100,11 @@ export default class MultiplayerGameplayManager extends GameplayManager {
             if (data && data.game === User.inGame) {
                 const team = this.teams.find((team) => team.name === data.team);
                 team?.celebrate();
+                if (team) {
+                    this.gameInterface.showWinScreen(team.name);
+                } else {
+                    this.gameInterface.showWinScreen();
+                }
             }
         });
 
