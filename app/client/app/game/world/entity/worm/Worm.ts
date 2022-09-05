@@ -208,6 +208,7 @@ export default class Worm extends Entity {
     }
 
     public startTurn(nextTurnCallback: TEndTurnCallback) {
+        SoundManager.playWormSpeech(this.wormLang, ESoundsWormSpeech.startRound);
         this.endTurnCallback = nextTurnCallback;
     }
 
