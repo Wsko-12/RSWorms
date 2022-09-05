@@ -224,4 +224,8 @@ export default abstract class Entity {
         Object.assign(this.physics.velocity, data.physics);
         Object.assign(this.position, data.position);
     }
+
+    public soundLoop() {
+        return;
+    }
 }

@@ -1,5 +1,6 @@
 import { Group, Mesh, MeshBasicMaterial, Object3D, PlaneBufferGeometry, Texture } from 'three';
 import { ELayersZ, ESizes, ETeamColors } from '../../../../../../ts/enums';
+import MultiplayerGameplayManager from '../../../gameplayManager/MultiplayerGameplayManager';
 
 export default class WormGui {
     private object3D: Object3D;
@@ -188,9 +189,13 @@ export default class WormGui {
         }
         ctx.fillStyle = ETeamColors[this.teamIndex];
 
-        ctx.strokeText(this.wormName, this.canvasSize / 2, this.canvasSize / 2, this.canvasSize);
+        const text = MultiplayerGameplayManager.isOnline
+            ? this.wormName.substring(0, this.wormName.length - 1)
+            : this.wormName;
 
-        ctx.fillText(this.wormName, this.canvasSize / 2, this.canvasSize / 2, this.canvasSize);
+        ctx.strokeText(text, this.canvasSize / 2, this.canvasSize / 2, this.canvasSize);
+
+        ctx.fillText(text, this.canvasSize / 2, this.canvasSize / 2, this.canvasSize);
     }
 
     public getObject3D() {

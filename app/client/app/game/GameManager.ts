@@ -60,6 +60,10 @@ export default class GameManager {
                         this.gameplayManager.socketLoop();
                     }
                 }),
+
+                soundLoop: new Loop(3, () => {
+                    this.world.soundLoop();
+                }),
             },
         };
 

@@ -32,6 +32,10 @@ export default class Worm extends Entity {
     public name: string;
     public wormLang: ELang;
 
+    private soundDelays = {
+        isJump: false,
+    };
+
     private endTurnCallback: TEndTurnCallback | null = null;
 
     private currentWeapon: null | Weapon = null;
@@ -168,6 +172,7 @@ export default class Worm extends Entity {
     }
 
     public celebrate() {
+        SoundManager.playWormSpeech(this.wormLang, ESoundsWormSpeech.victory);
         this.moveStates.isCelebrated = true;
     }
 
@@ -243,6 +248,7 @@ export default class Worm extends Entity {
     protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number, waterLevel: number) {
         const vel = this.physics.velocity.clone();
         if (this.position.y + this.radius < waterLevel) {
+            SoundManager.playWormAction(ESoundsWormAction.splash);
             this.moveStates.isDrown = true;
         } else {
             vel.y -= this.physics.g;
@@ -404,6 +410,7 @@ export default class Worm extends Entity {
     }
 
     public applyAidKit(aidkit: Aidkit) {
+        SoundManager.playWormSpeech(this.wormLang, ESoundsWormSpeech.collect);
         this.setHP(aidkit.acceptHelp());
         this.gui.setActualHp(this.getHP());
     }
@@ -536,6 +543,24 @@ export default class Worm extends Entity {
                 this.endTurnCallback(0);
             }
         }
+        return;
+    }
+
+    public soundLoop() {
+        if (this.moveStates.isMove) {
+            SoundManager.playWormAction(ESoundsWormAction.walk);
+        }
+
+        if (this.moveStates.isJump) {
+            if (!this.soundDelays.isJump) {
+                if (this.moveStates.isDoubleJump) {
+                    SoundManager.playWormAction(ESoundsWormAction.backflip);
+                } else {
+                    SoundManager.playWormSpeech(this.wormLang || ELang.rus, ESoundsWormSpeech.jump1);
+                }
+            }
+        }
+        this.soundDelays.isJump = this.moveStates.isJump;
         return;
     }
 
