@@ -1,8 +1,8 @@
 import { EBullets, ESoundsBullet, EWeapons } from '../../../../../../../../../../../ts/enums';
 import { IBulletOptions } from '../../../../../../../../../../../ts/interfaces';
-import FlightWeapon from '../Flight';
+import FlightBullet from '../Flight';
 
-export default class BGrenade extends FlightWeapon {
+export default class BGrenade extends FlightBullet {
     public type: EBullets;
     protected collisionSound = ESoundsBullet.grenadeCollision;
     constructor(options: IBulletOptions) {

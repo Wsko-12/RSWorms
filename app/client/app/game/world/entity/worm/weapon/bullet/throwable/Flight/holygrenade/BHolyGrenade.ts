@@ -3,9 +3,9 @@ import { IBulletOptions } from '../../../../../../../../../../../ts/interfaces';
 import SoundManager from '../../../../../../../../../soundManager/SoundManager';
 import MapMatrix from '../../../../../../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../../../../../../Entity';
-import FlightWeapon from '../Flight';
+import FlightBullet from '../Flight';
 
-export default class BHolyGrenade extends FlightWeapon {
+export default class BHolyGrenade extends FlightBullet {
     public type: EBullets;
     protected collisionSound = ESoundsBullet.holyGrenadeCollision;
     constructor(options: IBulletOptions) {
