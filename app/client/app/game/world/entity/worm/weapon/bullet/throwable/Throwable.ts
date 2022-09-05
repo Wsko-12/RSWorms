@@ -1,4 +1,4 @@
-import { EConstants, EWeapons } from '../../../../../../../../../ts/enums';
+import { EWeapons } from '../../../../../../../../../ts/enums';
 import { IBulletOptions } from '../../../../../../../../../ts/interfaces';
 import MapMatrix from '../../../../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../../../../Entity';

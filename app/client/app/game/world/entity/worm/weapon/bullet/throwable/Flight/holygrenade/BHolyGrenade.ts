@@ -15,11 +15,13 @@ export default class BHolyGrenade extends FlightBullet {
     public type: EBullets;
     isSounded = false;
     throwableExplosionDelay = 7200;
+    protected shootSound = ESoundsWeapon.throwRelease;
     protected collisionSound = ESoundsBullet.holyGrenadeCollision;
     constructor(options: IBulletOptions) {
         super(options, EWeapons.holygrenade);
         this.type = EBullets.BHolyGrenade;
         this.setExplosionOptions(90, 400, 30);
+        this.playShoot();
     }
 
     public update(mapMatrix: MapMatrix, entities: Entity[], wind: number, waterLevel: number): void {
