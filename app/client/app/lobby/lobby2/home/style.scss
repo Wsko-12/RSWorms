@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
 .home__buttons-container{
     display: flex;
     flex-direction: column;
@@ -45,10 +47,10 @@
 .footer__logo{
     display: block;
     background-image: url(../../../../assets/interface/rs_school_js.svg);
-    width: 150px;
+    width: 165px;
     height: 56px;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: contain;
 
     @include media-mobile{
         width: 75px;
@@ -60,6 +62,7 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
+    width: 165px;
 
     @include media-mobile{
         align-items: center
@@ -68,8 +71,8 @@
 
 .footer__text{
     color: black;
-    font-family: Arial, sans-serif;
-    font-size: 1.5rem;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 1.8rem;
 
     @include media-mobile{
         font-size: 1rem;

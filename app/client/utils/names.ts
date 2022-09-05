@@ -5,6 +5,9 @@ const randomTeamNames = [
     'Bad Guys',
     'Seniors',
     'Brotherhood',
+    'Underdogs',
+    'Transworms',
+    'Fish Food',
     'Noobs',
     'Boomers',
     'Cowboys',
@@ -35,7 +38,7 @@ const randomMemberNames = [
     'Spider-worm',
     'Mr. Popov',
     'Big Daddy',
-    'Cat',
+    'Black Cat',
     'Student 1',
     'Hannibal',
     'Dr. Stupid',
@@ -51,6 +54,7 @@ const randomMemberNames = [
     'Obama',
     'Bilbo',
     'Frodo',
+    'Legless',
 ];
 
 export function getRandomMemberName() {

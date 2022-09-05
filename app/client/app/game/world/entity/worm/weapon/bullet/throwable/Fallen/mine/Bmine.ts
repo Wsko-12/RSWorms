@@ -1,4 +1,4 @@
-import { EBullets, ESoundsBullet, EWeapons } from '../../../../../../../../../../../ts/enums';
+import { EBullets, ELang, ESoundsBullet, ESoundsWormSpeech, EWeapons } from '../../../../../../../../../../../ts/enums';
 import { IBulletOptions } from '../../../../../../../../../../../ts/interfaces';
 import SoundManager from '../../../../../../../../../soundManager/SoundManager';
 import MapMatrix from '../../../../../../../worldMap/mapMatrix/MapMatrix';
@@ -11,11 +11,14 @@ export default class BMine extends FallenBullet {
     private start: number;
     private isDetonated = false;
     public type: EBullets;
+    protected shootSound = ESoundsWormSpeech.mineArm;
+    collisionSound = ESoundsBullet.mineCollision;
     constructor(options: IBulletOptions) {
         super(options, EWeapons.mine);
         this.start = Date.now();
-        this.setExplosionOptions(10, 100, 15);
+        this.setExplosionOptions(50, 200, 15);
         this.type = EBullets.BMine;
+        this.playShoot();
     }
 
     private isWormClose(mapMatrix: MapMatrix, entities: Entity[]) {
@@ -56,4 +59,8 @@ export default class BMine extends FallenBullet {
         const angle = Math.atan2(y, x);
         this.object3D.rotation.z = angle;
     }
+
+    protected playShoot = () => {
+        SoundManager.playWormSpeech(ELang.rus, this.shootSound);
+    };
 }

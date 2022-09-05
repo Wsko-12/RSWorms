@@ -96,6 +96,10 @@ export default class EntityManager {
         }
     };
 
+    public soundLoop = () => {
+        this.entities.forEach((entity) => entity.soundLoop());
+    };
+
     public addEntity(entity: Entity) {
         entity.setRemoveFromEntityCallback(this.removeEntity);
         this.entitiesMap.set(entity.id, entity);

@@ -8,16 +8,13 @@ import {
     RepeatWrapping,
     Texture,
 } from 'three';
-import { ELayersZ, ESoundsWeapon, ESoundsWormSpeech, EWeapons } from '../../../../../../../../ts/enums';
+import { ELayersZ, EWeapons } from '../../../../../../../../ts/enums';
 import { IBulletConstructor, IBulletOptions, IShootOptions } from '../../../../../../../../ts/interfaces';
-import SoundManager from '../../../../../../soundManager/SoundManager';
 import AssetsManager from '../../../../../assetsManager/AssetsManager';
-import Bullet from '../bullet/Bullet';
 import Aim from './aim/Aim';
 
 export default abstract class Weapon {
     public abstract name: EWeapons;
-    protected abstract shootSound: ESoundsWeapon | ESoundsWormSpeech;
     protected abstract bullet: IBulletConstructor;
     protected object3D: Object3D;
     protected aim = new Aim();
@@ -137,11 +134,6 @@ export default abstract class Weapon {
             parentRadius: options.parentRadius,
         };
         const bullet = new this.bullet(bulletOptions);
-        this.playShoot();
         return bullet;
-    }
-
-    protected playShoot() {
-        SoundManager.playWeapon(this.shootSound);
     }
 }

@@ -37,6 +37,10 @@ export default class World {
         return this.worldMap;
     }
 
+    public soundLoop() {
+        this.entityManager.soundLoop();
+    }
+
     public create() {
         const backgroundPlane = this.background.getObject3D();
         if (backgroundPlane) {

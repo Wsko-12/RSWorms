@@ -1,8 +1,10 @@
 import { Mesh, Object3D } from 'three';
+import { ESoundsBullet, ESoundsWormAction } from '../../../../../ts/enums';
 import { IExplosionOptions, IPhysics } from '../../../../../ts/interfaces';
 import { ISocketEntityData } from '../../../../../ts/socketInterfaces';
 import { TLoopCallback, TRemoveEntityCallback } from '../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../utils/geometry';
+import SoundManager from '../../../soundManager/SoundManager';
 import MapMatrix from '../worldMap/mapMatrix/MapMatrix';
 export default abstract class Entity {
     protected abstract object3D: Object3D | Mesh;
@@ -19,6 +21,8 @@ export default abstract class Entity {
         g: 0.25,
         friction: 0.1,
     };
+
+    protected collisionSound: ESoundsBullet | null = null;
 
     constructor(id: string, radius = 1, x = 0, y = 0) {
         this.id = id;
@@ -124,6 +128,7 @@ export default abstract class Entity {
 
         if (!collision || this.position.y < waterLevel) {
             if (this.position.y < waterLevel) {
+                SoundManager.playWormAction(ESoundsWormAction.splash);
                 this.position.y -= this.physics.g * 10;
             } else {
                 this.position.x += vel.x;
@@ -136,6 +141,9 @@ export default abstract class Entity {
 
         this.handleCollision(mapMatrix, entities, waterLevel);
 
+        if (this.collisionSound && this.physics.velocity.getLength() > 4) {
+            SoundManager.playBullet(this.collisionSound);
+        }
         //normal here isn't mean 'normalize'
         const normalSurface = collision.normalize().scale(1);
 
@@ -215,5 +223,9 @@ export default abstract class Entity {
     public setSocketData(data: ISocketEntityData) {
         Object.assign(this.physics.velocity, data.physics);
         Object.assign(this.position, data.position);
+    }
+
+    public soundLoop() {
+        return;
     }
 }

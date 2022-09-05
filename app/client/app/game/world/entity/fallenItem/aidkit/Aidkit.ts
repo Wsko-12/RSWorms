@@ -33,7 +33,7 @@ export default class Aidkit extends FallenItem {
 
     protected handleEntityCollision(entity: Entity): void {
         if (entity instanceof Worm) {
-            if (!this.isApplied) {
+            if (!this.isApplied && !entity.moveStates.isDead) {
                 this.remove();
                 this.isApplied = true;
                 entity.applyAidKit(this);

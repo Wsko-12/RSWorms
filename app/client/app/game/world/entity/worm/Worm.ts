@@ -24,13 +24,17 @@ export default class Worm extends Entity {
     protected object3D: Group;
     private wormMesh: Mesh;
     private fallToJumpCoef = 1.2;
-    private animation = new WormAnimation();
+    private animation: WormAnimation;
     private gui: WormGui;
     private index: number;
     public teamIndex: number;
     public team: string;
     public name: string;
     public wormLang: ELang;
+
+    private soundDelays = {
+        isJump: false,
+    };
 
     private endTurnCallback: TEndTurnCallback | null = null;
 
@@ -46,7 +50,7 @@ export default class Worm extends Entity {
 
     public isSelected = false;
     private jumpVectors = {
-        usual: new Vector2(1, 1).normalize().scale(5),
+        usual: new Vector2(1.3, 1).normalize().scale(5),
         backflip: new Vector2(0.2, 1).normalize().scale(8),
     };
 
@@ -101,6 +105,7 @@ export default class Worm extends Entity {
         this.wormLang = wormLang;
         this.name = wormName || 'worm_' + wormIndex;
         this.physics.friction = 0.1;
+        this.animation = new WormAnimation(this.wormLang);
         const geometry = new PlaneBufferGeometry(this.radius * 5, this.radius * 5);
         const material = new MeshBasicMaterial({
             map: this.animation.getTexture(),
@@ -167,6 +172,7 @@ export default class Worm extends Entity {
     }
 
     public celebrate() {
+        SoundManager.playWormSpeech(this.wormLang, ESoundsWormSpeech.victory);
         this.moveStates.isCelebrated = true;
     }
 
@@ -208,6 +214,7 @@ export default class Worm extends Entity {
     }
 
     public startTurn(nextTurnCallback: TEndTurnCallback) {
+        SoundManager.playWormSpeech(this.wormLang, ESoundsWormSpeech.startRound);
         this.endTurnCallback = nextTurnCallback;
     }
 
@@ -241,6 +248,7 @@ export default class Worm extends Entity {
     protected gravity(mapMatrix: MapMatrix, entities: Entity[], wind: number, waterLevel: number) {
         const vel = this.physics.velocity.clone();
         if (this.position.y + this.radius < waterLevel) {
+            SoundManager.playWormAction(ESoundsWormAction.splash);
             this.moveStates.isDrown = true;
         } else {
             vel.y -= this.physics.g;
@@ -282,7 +290,11 @@ export default class Worm extends Entity {
         const slideAngle = Math.PI / 2 - Math.acos(normalSurface.dotProduct(velClone));
         const fallSpeed = vel.getLength();
         const isSlide = slideAngle > Math.PI / 8 && this.moveStates.isFall;
-        if (isSlide) SoundManager.playWormSpeech(this.wormLang, ESoundsWormSpeech.oof1);
+        if (isSlide) {
+            if (!this.moveStates.isDead) {
+                SoundManager.playWormSpeech(this.wormLang, ESoundsWormSpeech.oof1);
+            }
+        }
         const fallSpeedWithFriction = fallSpeed * this.physics.friction;
 
         const { flags } = this.movesOptions;
@@ -398,6 +410,7 @@ export default class Worm extends Entity {
     }
 
     public applyAidKit(aidkit: Aidkit) {
+        SoundManager.playWormSpeech(this.wormLang, ESoundsWormSpeech.collect);
         this.setHP(aidkit.acceptHelp());
         this.gui.setActualHp(this.getHP());
     }
@@ -496,13 +509,12 @@ export default class Worm extends Entity {
 
         if (this.gui.isDead() && this.animation.dead.isReady && !this.moveStates.isDead) {
             this.moveStates.isDead = true;
-            this.physics.friction = 0.4;
+            this.physics.friction = 0;
             this.finalExplosion.explode(mapMatrix, entities);
         }
 
         if (this.position.y <= 0) {
             this.setHP(-this.getHP());
-            SoundManager.playWormAction(ESoundsWormAction.splash);
             this.moveStates.isDead = true;
             if (this.endTurnCallback) {
                 this.endTurnCallback(5);
@@ -525,12 +537,30 @@ export default class Worm extends Entity {
         // here we can remove hp for fall damage
         const delta = this.physics.velocity.getLength() - this.jumpVectors.backflip.getLength() * this.fallToJumpCoef;
         if (delta > 0) {
-            const damage = delta ** 2;
+            const damage = delta * 2;
             this.setHP(damage * -1);
             if (this.endTurnCallback) {
                 this.endTurnCallback(0);
             }
         }
+        return;
+    }
+
+    public soundLoop() {
+        if (this.moveStates.isMove) {
+            SoundManager.playWormAction(ESoundsWormAction.walk);
+        }
+
+        if (this.moveStates.isJump) {
+            if (!this.soundDelays.isJump) {
+                if (this.moveStates.isDoubleJump) {
+                    SoundManager.playWormAction(ESoundsWormAction.backflip);
+                } else {
+                    SoundManager.playWormSpeech(this.wormLang || ELang.rus, ESoundsWormSpeech.jump1);
+                }
+            }
+        }
+        this.soundDelays.isJump = this.moveStates.isJump;
         return;
     }
 

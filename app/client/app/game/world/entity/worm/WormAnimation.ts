@@ -1,5 +1,7 @@
 import { NearestFilter, RepeatWrapping, Texture } from 'three';
+import { ELang, ESoundsWormSpeech } from '../../../../../../ts/enums';
 import { IWormMoveStates } from '../../../../../../ts/interfaces';
+import SoundManager from '../../../../soundManager/SoundManager';
 import AssetsManager from '../../../assetsManager/AssetsManager';
 
 export default class WormAnimation {
@@ -12,13 +14,17 @@ export default class WormAnimation {
     private animationDirection = 1;
     private lastAnimation = '';
 
+    private lang: ELang;
+    private goodbye = false;
+
     public dead = {
         plays: false,
         step: -1,
         isReady: false,
     };
 
-    constructor() {
+    constructor(lang: ELang) {
+        this.lang = lang;
         this.texture.wrapS = RepeatWrapping;
         this.texture.magFilter = NearestFilter;
     }
@@ -32,6 +38,10 @@ export default class WormAnimation {
     }
 
     private deadAnimation() {
+        if (!this.goodbye) {
+            this.goodbye = true;
+            SoundManager.playWormSpeech(this.lang, ESoundsWormSpeech.bye);
+        }
         const image = AssetsManager.getWormTexture('die');
         if (!image) {
             throw new Error("[WormAnimation deadAnimation] can't load die texture");

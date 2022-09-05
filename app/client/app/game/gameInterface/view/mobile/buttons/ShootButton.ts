@@ -7,7 +7,8 @@ export default class ShootButton extends Button {
     }
 
     private applyEvents() {
-        this.element.addEventListener('touchstart', () => {
+        this.element.addEventListener('touchstart', (e) => {
+            e.preventDefault();
             const event = new KeyboardEvent('keydown', {
                 code: 'Space',
             });
@@ -15,7 +16,9 @@ export default class ShootButton extends Button {
             document.dispatchEvent(event);
         });
 
-        this.element.addEventListener('touchend', () => {
+        this.element.addEventListener('touchend', (e) => {
+            e.preventDefault();
+
             const event = new KeyboardEvent('keyup', {
                 code: 'Space',
             });
