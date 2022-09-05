@@ -49,7 +49,63 @@ export default class LobbyHomePage extends PageElement {
         const gameCreatorEl = this.gameCreator.getElement();
         this.element.append(gameCreatorEl);
 
+        const footer = this.createFooter();
+        this.element.append(footer);
+
         this.applyEvents();
+    }
+
+    private createFooter() {
+        const element = <HTMLDivElement>PageBuilder.createElement('div', {
+            classes: 'lobby__footer',
+        });
+
+        const logo = <HTMLLinkElement>PageBuilder.createElement('a', {
+            classes: 'footer__logo',
+            attrs: {
+                target: '_blank',
+                href: 'https://rs.school/js/',
+            },
+        });
+
+        const year = <HTMLParagraphElement>PageBuilder.createElement('p', {
+            classes: 'footer__text',
+            content: '2022',
+        });
+
+        const developers = <HTMLDivElement>PageBuilder.createElement('div', {
+            classes: 'footer__links',
+            content: [<HTMLLinkElement>PageBuilder.createElement('a', {
+                    classes: 'footer__text footer__developer',
+                    attrs: {
+                        target: '_blank',
+                        href: 'https://github.com/Wsko-12',
+                    },
+                    content: 'Vlad Vasko',
+                }), <HTMLLinkElement>PageBuilder.createElement('a', {
+                    classes: 'footer__text footer__developer',
+                    attrs: {
+                        target: '_blank',
+                        href: 'https://github.com/aleg3000',
+                    },
+                    content: 'Oleg Ganin',
+                }), <HTMLLinkElement>PageBuilder.createElement('a', {
+                    classes: 'footer__text footer__developer',
+                    attrs: {
+                        target: '_blank',
+                        href: 'https://github.com/ivan-urban',
+                    },
+                    content: 'Ivan Urbanovich',
+                })],
+        });
+
+        const container = <HTMLDivElement>PageBuilder.createElement('a', {
+            classes: 'footer__container',
+            content: [logo, year, developers],
+        });
+
+        element.append(container);
+        return element;
     }
 
     private applyEvents() {
