@@ -1,4 +1,10 @@
-import { EBullets, ESoundsBullet, ESoundsWeapon, EWeapons } from '../../../../../../../../../../../ts/enums';
+import {
+    EBullets,
+    EConstants,
+    ESoundsBullet,
+    ESoundsWeapon,
+    EWeapons,
+} from '../../../../../../../../../../../ts/enums';
 import { IBulletOptions } from '../../../../../../../../../../../ts/interfaces';
 import SoundManager from '../../../../../../../../../soundManager/SoundManager';
 import MapMatrix from '../../../../../../../worldMap/mapMatrix/MapMatrix';
@@ -7,6 +13,8 @@ import FlightBullet from '../Flight';
 
 export default class BHolyGrenade extends FlightBullet {
     public type: EBullets;
+    isSounded = false;
+    throwableExplosionDelay = 7200;
     protected collisionSound = ESoundsBullet.holyGrenadeCollision;
     constructor(options: IBulletOptions) {
         super(options, EWeapons.holygrenade);
@@ -14,8 +22,11 @@ export default class BHolyGrenade extends FlightBullet {
         this.setExplosionOptions(90, 400, 30);
     }
 
-    public explode(mapMatrix: MapMatrix, entities: Entity[], waterLevel: number): void {
-        SoundManager.playWeapon(ESoundsWeapon.holyGrenade);
-        setTimeout(() => super.explode(mapMatrix, entities, waterLevel), 2300);
+    public update(mapMatrix: MapMatrix, entities: Entity[], wind: number, waterLevel: number): void {
+        if (Date.now() - this.timer > this.throwableExplosionDelay - 2200 && !this.isActivated && !this.isSounded) {
+            this.isSounded = true;
+            SoundManager.playWeapon(ESoundsWeapon.holyGrenade);
+        }
+        super.update(mapMatrix, entities, wind, waterLevel);
     }
 }
