@@ -9,6 +9,7 @@ export default class JumpButton extends Button {
     private applyEvents() {
         this.element.addEventListener('touchstart', (e) => {
             e.stopPropagation();
+            e.preventDefault();
             const event = new KeyboardEvent('keydown', {
                 code: 'Enter',
             });
@@ -18,6 +19,7 @@ export default class JumpButton extends Button {
 
         this.element.addEventListener('touchend', (e) => {
             e.stopPropagation();
+            e.preventDefault();
             const event = new KeyboardEvent('keyup', {
                 code: 'Enter',
             });

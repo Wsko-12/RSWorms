@@ -84,6 +84,7 @@ export default class Joystick {
         };
 
         function calcPosition(e: TouchEvent) {
+            e.preventDefault();
             const rect = field.getBoundingClientRect();
 
             const touch = e.touches[0];
