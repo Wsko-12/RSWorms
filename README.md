@@ -1,7 +1,13 @@
 # RSWorms
 ### RSSchool stage2 final task project (RSClone).
 
-To run the app:
+#### Deploy:
+ - Multiplayer and Singleplayer: http://rssworms.herokuapp.com/
+ - Only Singleplayer: https://wsko-12.github.io/RSWorms/client/
+
+![image](https://user-images.githubusercontent.com/63554864/188439720-ba9ea0d7-f528-471f-a1f9-717e5409e391.png)
+
+### To run the app:
   1. Clone repository `git clone https://github.com/Wsko-12/RSWorms.git`.
   2. Move to folder using `cd RSWorms`.
   3. Check `develop` branch using `git checkout develop`.
