@@ -20,6 +20,7 @@ const randomTeamNames = [
     'Terrorists',
     'Vandals',
     'Bandits',
+    'Reptilians',
 ];
 const randomMemberNames = [
     'Aleg3000',
