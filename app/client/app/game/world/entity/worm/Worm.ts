@@ -282,7 +282,11 @@ export default class Worm extends Entity {
         const slideAngle = Math.PI / 2 - Math.acos(normalSurface.dotProduct(velClone));
         const fallSpeed = vel.getLength();
         const isSlide = slideAngle > Math.PI / 8 && this.moveStates.isFall;
-        if (isSlide) SoundManager.playWormSpeech(this.wormLang, ESoundsWormSpeech.oof1);
+        if (isSlide) {
+            if (!this.moveStates.isDead) {
+                SoundManager.playWormSpeech(this.wormLang, ESoundsWormSpeech.oof1);
+            }
+        }
         const fallSpeedWithFriction = fallSpeed * this.physics.friction;
 
         const { flags } = this.movesOptions;
@@ -502,7 +506,6 @@ export default class Worm extends Entity {
 
         if (this.position.y <= 0) {
             this.setHP(-this.getHP());
-            SoundManager.playWormAction(ESoundsWormAction.splash);
             this.moveStates.isDead = true;
             if (this.endTurnCallback) {
                 this.endTurnCallback(5);

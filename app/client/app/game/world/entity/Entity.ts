@@ -1,5 +1,5 @@
 import { Mesh, Object3D } from 'three';
-import { ESoundsBullet } from '../../../../../ts/enums';
+import { ESoundsBullet, ESoundsWormAction } from '../../../../../ts/enums';
 import { IExplosionOptions, IPhysics } from '../../../../../ts/interfaces';
 import { ISocketEntityData } from '../../../../../ts/socketInterfaces';
 import { TLoopCallback, TRemoveEntityCallback } from '../../../../../ts/types';
@@ -128,6 +128,7 @@ export default abstract class Entity {
 
         if (!collision || this.position.y < waterLevel) {
             if (this.position.y < waterLevel) {
+                SoundManager.playWormAction(ESoundsWormAction.splash);
                 this.position.y -= this.physics.g * 10;
             } else {
                 this.position.x += vel.x;
