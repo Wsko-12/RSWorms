@@ -11,7 +11,7 @@ export default class BHolyGrenade extends FlightBullet {
     constructor(options: IBulletOptions) {
         super(options, EWeapons.holygrenade);
         this.type = EBullets.BHolyGrenade;
-        this.setExplosionOptions(300, 500, 50);
+        this.setExplosionOptions(90, 400, 30);
     }
 
     public explode(mapMatrix: MapMatrix, entities: Entity[], waterLevel: number): void {

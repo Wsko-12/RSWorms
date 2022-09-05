@@ -8,6 +8,6 @@ export default class BGrenade extends FlightBullet {
     constructor(options: IBulletOptions) {
         super(options, EWeapons.grenade);
         this.type = EBullets.BGrenade;
-        this.setExplosionOptions(70, 150, 15);
+        this.setExplosionOptions(50, 150, 15);
     }
 }

@@ -5,8 +5,10 @@ import ParabolicBullet from '../Parabolic';
 export default class BBazooka extends ParabolicBullet {
     public type: EBullets;
     constructor(options: IBulletOptions) {
+        options.power *= 1.3;
         super(options, EWeapons.bazooka);
-        this.setExplosionOptions(70, 100, 10);
+        this.setExplosionOptions(50, 200, 15);
+        this.windCoefficient = 0.7;
         this.type = EBullets.BBazooka;
     }
 

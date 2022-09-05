@@ -14,7 +14,7 @@ export default class BBarrelExplosion extends BDynamite {
     constructor(barrel: Barrel) {
         super({ angle: 1, parentRadius: 1, position: new Point2(0, 0), power: 0 });
         this.barrel = barrel;
-        this.setExplosionOptions(95, 250, 25);
+        this.setExplosionOptions(50, 250, 20);
         this.bulletMesh.visible = false;
         this.type = EBullets.BDynamite;
     }
