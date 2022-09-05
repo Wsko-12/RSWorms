@@ -105,7 +105,6 @@ export default class Game extends ManagerItem {
     }
 
     private sendPreTurnData() {
-        console.log('Send pre turn data');
         Object.keys(this.playersReadyForNextTurn).forEach((user) => {
             this.playersReadyForNextTurn[user] = false;
         });
@@ -121,7 +120,6 @@ export default class Game extends ManagerItem {
         const currentTeam = teamNames[this.turns.counter % teamNames.length];
 
         const fallObject = this.generateFallObject(this.turns.counter);
-        console.log(fallObject);
 
         const data: ISocketPreTurnData = {
             game: this.id,
@@ -139,6 +137,10 @@ export default class Game extends ManagerItem {
 
     private generateFallObject(turn: number): ISocketFallObjectData | null {
         if (turn === 0) {
+            return null;
+        }
+
+        if (turn % 3 != 0) {
             return null;
         }
         const x = this.options.size * EProportions.mapWidthToHeight * Math.random();
