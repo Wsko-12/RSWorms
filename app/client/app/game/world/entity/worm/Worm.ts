@@ -397,11 +397,9 @@ export default class Worm extends Entity {
         return collision ? new Vector2(responseX, responseY) : null;
     }
 
-    private handleEntityCollision(entity: Entity) {
-        if (entity instanceof Aidkit) {
-            this.setHP(entity.acceptHelp());
-            this.gui.setActualHp(this.getHP());
-        }
+    public applyAidKit(aidkit: Aidkit) {
+        this.setHP(aidkit.acceptHelp());
+        this.gui.setActualHp(this.getHP());
     }
 
     public acceptExplosion(mapMatrix: MapMatrix, entities: Entity[], options: IExplosionOptions) {

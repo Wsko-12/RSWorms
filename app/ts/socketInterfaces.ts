@@ -1,4 +1,4 @@
-import { EBullets, EMapPacksNames, EWeapons, EWorldSizes } from './enums';
+import { EBullets, EFallenObjects, EMapPacksNames, EWeapons, EWorldSizes } from './enums';
 import { IBulletOptions, IStartGameOptions, IWormMoveStates } from './interfaces';
 
 export const enum ESocketLobbyMessages {
@@ -97,11 +97,18 @@ export interface ISocketTeamWinData {
     game: string;
 }
 
+export interface ISocketFallObjectData {
+    name: EFallenObjects;
+    x: number;
+    id: string;
+}
+
 export interface ISocketPreTurnData extends ISocketTeamsAvailability {
     wind: number;
     team: string;
     worm: string;
     timestamp: number;
+    fallObject: null | ISocketFallObjectData;
 }
 
 export interface ISocketEntityData {

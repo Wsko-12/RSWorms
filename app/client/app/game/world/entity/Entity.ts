@@ -79,7 +79,9 @@ export default abstract class Entity {
             entities.forEach((entity) => {
                 if (entity != this) {
                     const dist = point.getDistanceToPoint(entity.position);
-                    if (dist <= entity.radius) {
+
+                    if (dist - this.radius <= entity.radius) {
+                        this.handleEntityCollision(entity);
                         collision = true;
                         responseX += x - this.position.x;
                         responseY += y - this.position.y;
@@ -153,6 +155,9 @@ export default abstract class Entity {
 
     protected abstract handleCollision(mapMatrix: MapMatrix, entities: Entity[], waterLevel: number): void;
 
+    protected handleEntityCollision(entity: Entity) {
+        return;
+    }
     public setRemoveFromEntityCallback(cb: TRemoveEntityCallback) {
         this.removeFromEntityCallback = cb;
     }

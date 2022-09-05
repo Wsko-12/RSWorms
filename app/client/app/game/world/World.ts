@@ -33,6 +33,10 @@ export default class World {
         this.water.raiseLevel();
     }
 
+    public getWorldMap() {
+        return this.worldMap;
+    }
+
     public create() {
         const backgroundPlane = this.background.getObject3D();
         if (backgroundPlane) {

@@ -1,10 +1,11 @@
-import { getRandomMemberName } from '../../../../client/utils/names';
-import { ELang, EMapPacksDecorItems, EMapPacksNames } from '../../../../ts/enums';
-import { ITeamOptions } from '../../../../ts/interfaces';
+import { generateId, getRandomMemberName } from '../../../../client/utils/names';
+import { EFallenObjects, ELang, EMapPacksDecorItems, EProportions } from '../../../../ts/enums';
+
 import {
     ESocketGameMessages,
     ISocketAllPlayersLoadedData,
     ISocketEndTurnData,
+    ISocketFallObjectData,
     ISocketLoadingMultiplayerGameData,
     ISocketPreTurnData,
     ISocketRoomsTableDataItem,
@@ -39,8 +40,10 @@ export default class Game extends ManagerItem {
     private playersLoadedGameStates: Record<string, boolean> = {};
     private playersReadyForNextTurn: Record<string, boolean> = {};
     private started = false;
+    private options: ISocketRoomsTableDataItem;
     constructor(options: ISocketRoomsTableDataItem) {
         super();
+        this.options = options;
         this.id = options.id;
 
         this.turns = {
@@ -116,6 +119,8 @@ export default class Game extends ManagerItem {
         const teamNames = Object.keys(this.teams);
         const currentTeam = teamNames[this.turns.counter % teamNames.length];
 
+        const fallObject = this.generateFallObject(this.turns.counter);
+
         const data: ISocketPreTurnData = {
             game: this.id,
             teams: [...teamNames],
@@ -123,10 +128,27 @@ export default class Game extends ManagerItem {
             team: currentTeam,
             worm: this.getWormTurnName(this.teams[currentTeam]),
             timestamp: Date.now(),
+            fallObject,
         };
 
         this.sendAll(ESocketGameMessages.preTurnData, data);
         return teamNames.length <= 1;
+    }
+
+    private generateFallObject(turn: number): ISocketFallObjectData | null {
+        if (turn === 0) {
+            return null;
+        }
+
+        if (turn % 3 != 0) {
+            return null;
+        }
+        const x = this.options.size * EProportions.mapWidthToHeight * Math.random();
+        const objects = Object.values(EFallenObjects);
+        const index = Math.floor(objects.length * Math.random());
+        const name = objects[index];
+        const id = `Item_${generateId()}`;
+        return { name, x, id };
     }
 
     public markUserReadyForNextTurn(user: string) {

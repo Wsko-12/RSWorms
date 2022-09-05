@@ -124,7 +124,7 @@ export default class LobbyHomePage extends PageElement {
 
     private startFastGame() {
         App.screen.innerHTML = '';
-        const seed = Math.random();
+        // const seed = Math.random();
         // const seed = 0.7135371756374531;
         // const seed = 0.7972989657842342;
         // const seed = 0.7190317696597344;
@@ -138,6 +138,7 @@ export default class LobbyHomePage extends PageElement {
         // const seed = 0.2921779319246529;
         // const seed = 0.5464200270095712;
         // const seed = 0.11259509204096174;
+        const seed = 0.5964694338381447;
         console.log('Seed: ', seed);
         App.startGame({
             texture: EMapPacksNames.moon,

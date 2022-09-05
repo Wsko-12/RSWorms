@@ -426,11 +426,11 @@ export default class WorldMap {
         return this.getObjectPlace(matrix, width, height, attempt - 1);
     };
 
-    public getWormPlace = (entities: Entity[], attempt = 5): { x: number; y: number } => {
+    public getEntityPlace = (entities: Entity[], radius: number, attempt = 5): { x: number; y: number } => {
         const { matrix } = this.mapMatrix;
         const { width, height } = this.sizes;
         const { random } = this;
-        const r = ESizes.worm;
+        const r = radius;
 
         const spawnZone = width / 1.5;
         const xRandom = Math.round(random.get() * spawnZone + (width - spawnZone) / 2);
@@ -481,7 +481,7 @@ export default class WorldMap {
         }
 
         if (attempt > 0) {
-            return this.getWormPlace(entities, attempt - 1);
+            return this.getEntityPlace(entities, radius, attempt - 1);
         }
         return { x: xRandom, y: height };
     };

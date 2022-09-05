@@ -2,12 +2,14 @@ import { Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry } from 'three';
 import { IExplosionOptions } from '../../../../../../../ts/interfaces';
 import MapMatrix from '../../../worldMap/mapMatrix/MapMatrix';
 import Entity from '../../Entity';
+import Worm from '../../worm/Worm';
 import FallenItem from '../FallenItem';
 
 export default class Aidkit extends FallenItem {
     protected object3D: Group;
     private isExploded = false;
     private hpInc = 50;
+    private isApplied = false;
 
     constructor(x: number, y: number) {
         super('aidkit', 20, x, y);
@@ -29,6 +31,16 @@ export default class Aidkit extends FallenItem {
         return;
     }
 
+    protected handleEntityCollision(entity: Entity): void {
+        if (entity instanceof Worm) {
+            if (!this.isApplied) {
+                this.remove();
+                this.isApplied = true;
+                entity.applyAidKit(this);
+            }
+        }
+    }
+
     public acceptExplosion(mapMatrix: MapMatrix, entities: Entity[], options: IExplosionOptions): number {
         if (this.isExploded) {
             return 0;
@@ -39,7 +51,6 @@ export default class Aidkit extends FallenItem {
     }
 
     public acceptHelp() {
-        this.remove();
         return this.hpInc;
     }
 }

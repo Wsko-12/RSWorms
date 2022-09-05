@@ -1,5 +1,5 @@
 import { NearestFilter, Texture } from 'three';
-import { EFallenObjects } from '../../../../../../ts/enums';
+import { EGameAdditionalObjects } from '../../../../../../ts/enums';
 import AssetsManager from '../../../assetsManager/AssetsManager';
 import Entity from '../Entity';
 
@@ -7,7 +7,7 @@ export default abstract class FallenItem extends Entity {
     private static texturesPack = ['barrel'];
     private static sprites: Record<string, { update: () => void; texture: Texture }> = {};
     public static createTextures() {
-        const textures = Object.values(EFallenObjects).filter((item) => Number.isNaN(Number(item)));
+        const textures = Object.values(EGameAdditionalObjects).filter((item) => Number.isNaN(Number(item)));
         textures.forEach((name) => {
             const image = AssetsManager.getEffectTexture(name as string);
             if (!image) {
