@@ -47,7 +47,7 @@
 .footer__logo{
     display: block;
     background-image: url(../../../../assets/interface/rs_school_js.svg);
-    width: 165px;
+    width: 180px;
     height: 56px;
     background-repeat: no-repeat;
     background-size: contain;
@@ -62,7 +62,7 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
-    width: 165px;
+    width: 180px;
 
     @include media-mobile{
         align-items: center
