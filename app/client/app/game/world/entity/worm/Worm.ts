@@ -529,7 +529,7 @@ export default class Worm extends Entity {
         // here we can remove hp for fall damage
         const delta = this.physics.velocity.getLength() - this.jumpVectors.backflip.getLength() * this.fallToJumpCoef;
         if (delta > 0) {
-            const damage = delta ** 2;
+            const damage = delta * 2;
             this.setHP(damage * -1);
             if (this.endTurnCallback) {
                 this.endTurnCallback(0);
