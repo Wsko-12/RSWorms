@@ -20,3 +20,66 @@
         box-shadow: 0px 0px 0px #000, 2px 2px 1px rgba(57, 36, 82, 0.5) !important
     };
 }
+
+.lobby__footer{
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    z-index: 1;
+}
+
+.footer__container{
+    max-width: 1920px;
+    width: 100%;
+    margin: auto;
+    display: flex;
+    padding: 0px 20px;
+    align-items: center;
+    justify-content: space-between;
+
+    @include media-mobile{
+        flex-direction: column;
+    };
+}
+
+.footer__logo{
+    display: block;
+    background-image: url(../../../../assets/interface/rs_school_js.svg);
+    width: 150px;
+    height: 56px;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    @include media-mobile{
+        width: 75px;
+        height: 28px;
+    };
+}
+
+.footer__links{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    @include media-mobile{
+        align-items: center
+    };
+}
+
+.footer__text{
+    color: black;
+    font-family: Arial, sans-serif;
+    font-size: 1.5rem;
+
+    @include media-mobile{
+        font-size: 1rem;
+    };
+}
+
+.footer__developer{
+    font-weight: bold;
+    text-decoration: none;
+    &:hover{
+        color: #15ff9e;
+    }
+}
