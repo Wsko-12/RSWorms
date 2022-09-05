@@ -24,7 +24,7 @@ export default class Worm extends Entity {
     protected object3D: Group;
     private wormMesh: Mesh;
     private fallToJumpCoef = 1.2;
-    private animation = new WormAnimation();
+    private animation: WormAnimation;
     private gui: WormGui;
     private index: number;
     public teamIndex: number;
@@ -101,6 +101,7 @@ export default class Worm extends Entity {
         this.wormLang = wormLang;
         this.name = wormName || 'worm_' + wormIndex;
         this.physics.friction = 0.1;
+        this.animation = new WormAnimation(this.wormLang);
         const geometry = new PlaneBufferGeometry(this.radius * 5, this.radius * 5);
         const material = new MeshBasicMaterial({
             map: this.animation.getTexture(),
