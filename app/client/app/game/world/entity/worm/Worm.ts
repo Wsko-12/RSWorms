@@ -46,7 +46,7 @@ export default class Worm extends Entity {
 
     public isSelected = false;
     private jumpVectors = {
-        usual: new Vector2(1, 1).normalize().scale(5),
+        usual: new Vector2(1.3, 1).normalize().scale(5),
         backflip: new Vector2(0.2, 1).normalize().scale(8),
     };
 
