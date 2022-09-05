@@ -1,8 +1,10 @@
 import { Mesh, Object3D } from 'three';
+import { ESoundsBullet } from '../../../../../ts/enums';
 import { IExplosionOptions, IPhysics } from '../../../../../ts/interfaces';
 import { ISocketEntityData } from '../../../../../ts/socketInterfaces';
 import { TLoopCallback, TRemoveEntityCallback } from '../../../../../ts/types';
 import { Point2, Vector2 } from '../../../../utils/geometry';
+import SoundManager from '../../../soundManager/SoundManager';
 import MapMatrix from '../worldMap/mapMatrix/MapMatrix';
 export default abstract class Entity {
     protected abstract object3D: Object3D | Mesh;
@@ -19,6 +21,8 @@ export default abstract class Entity {
         g: 0.25,
         friction: 0.1,
     };
+
+    protected collisionSound: ESoundsBullet | null = null;
 
     constructor(id: string, radius = 1, x = 0, y = 0) {
         this.id = id;
@@ -136,6 +140,9 @@ export default abstract class Entity {
 
         this.handleCollision(mapMatrix, entities, waterLevel);
 
+        if (this.collisionSound && this.physics.velocity.getLength() > 4) {
+            SoundManager.playBullet(this.collisionSound);
+        }
         //normal here isn't mean 'normalize'
         const normalSurface = collision.normalize().scale(1);
 
