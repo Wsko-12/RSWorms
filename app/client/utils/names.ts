@@ -1,4 +1,27 @@
-const randomTeamNames = ['Developers', 'ProjectCrashers', 'Loosers', 'Bad Guys', 'Seniors', 'Brotherhood'];
+const randomTeamNames = [
+    'Developers',
+    'ProjectCrashers',
+    'Loosers',
+    'Bad Guys',
+    'Seniors',
+    'Brotherhood',
+    'Noobs',
+    'Boomers',
+    'Cowboys',
+    'Inglourious Basterds',
+    'Gentlemens',
+    'Bitcoins',
+    'Masons',
+    'Nerds',
+    'Rock Stars',
+    'Siths',
+    'Jedi',
+    'Anonymous',
+    'Terrorists',
+    'Vandals',
+    'Bandits',
+    'Reptilians',
+];
 const randomMemberNames = [
     'Aleg3000',
     'Wsko',
