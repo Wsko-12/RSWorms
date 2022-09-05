@@ -40,7 +40,7 @@ export default class MultiplayerInterface {
 
         const title = PageBuilder.createElement('p', {
             classes: 'multiplayer__title',
-            content: `Waiting other players...`,
+            content: `Waiting for other players...`,
         });
 
         element.append(title);
