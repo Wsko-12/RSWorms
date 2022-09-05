@@ -57,8 +57,8 @@ export default class MultiplayerGameplayManager extends GameplayManager {
 
     public init(options: IStartGameOptions) {
         this.applySocketListeners();
-        this.createBarrels();
         this.createTeams(options);
+        this.createBarrels();
         this.gameInterface.teamsHPElement.build(this.teams);
         this.gameInterface.teamsHPElement.update(this.teams);
 
@@ -178,6 +178,9 @@ export default class MultiplayerGameplayManager extends GameplayManager {
         const prevWorm = this.ioManager.wormManager.getWorm();
         if (prevWorm) {
             prevWorm.endTurn();
+        }
+        if (data.fallObject) {
+            this.entityManager.generateFallenItem(data.fallObject);
         }
 
         const currentTeam = this.teams.find((team) => team.name === data.team);

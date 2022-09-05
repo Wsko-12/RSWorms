@@ -6,6 +6,7 @@ import {
     ISocketBulletData,
     ISocketEntityData,
     ISocketEntityDataPack,
+    ISocketFallObjectData,
 } from '../../../../../ts/socketInterfaces';
 import { TLoopCallback } from '../../../../../ts/types';
 import { generateId } from '../../../../utils/names';
@@ -62,22 +63,28 @@ export default class EntityManager {
         return null;
     }
 
-    public generateFallenItem(name?: EFallenObjects, xPos?: number) {
+    public generateFallenItem(data?: ISocketFallObjectData) {
         if (!this.worldMap) {
             throw new Error(`[EntityManager generateFallenItem] can't find worldMap`);
         }
-        if (!name && !xPos) {
+        let item;
+        const y = this.worldMap.getMapMatrix().matrix.length;
+        if (data) {
+            const Item = fallenItemsConstructors[data.name];
+            item = new Item(data.x, y);
+            item.id = data.id;
+        } else {
             const constructors = Object.values(fallenItemsConstructors);
             const index = Math.floor(Math.random() * constructors.length);
 
             const Item = constructors[index];
 
             const x = this.worldMap.getMapMatrix().matrix[0].length * Math.random();
-            const y = this.worldMap.getMapMatrix().matrix.length;
-            const item = new Item(x, y);
-            this.addEntity(item);
-            this.mainScene.add(item.getObject3D());
+            item = new Item(x, y);
         }
+
+        this.addEntity(item);
+        this.mainScene.add(item.getObject3D());
     }
 
     public update = (time: number, wind: number, waterLevel: number) => {
