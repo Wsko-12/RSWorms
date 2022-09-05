@@ -1,5 +1,6 @@
 import App from '../../../App';
 import Inventory from './inventory/Inventory';
+import GameMenu from './menu/GameMenu';
 import MobileInterface from './mobile/MobileInterface';
 import './style.scss';
 import TeamsHP from './teamHP/TeamHP';
@@ -12,6 +13,7 @@ export default class View {
     private timer = new TimerInterface();
     private wind = new WindInterface();
     private teamsHP = new TeamsHP();
+    private menu = new GameMenu();
     private inventory = new Inventory();
     private mobileInterface = new MobileInterface(this.mainHandler);
 
@@ -46,6 +48,8 @@ export default class View {
 
         const teamsHPElement = this.teamsHP.getElement();
         this.guiContainer.append(teamsHPElement);
+
+        this.guiContainer.append(this.menu.getElement());
 
         const inventory = this.inventory.getElement();
 
