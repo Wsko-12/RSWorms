@@ -481,7 +481,7 @@ export default class WorldMap {
         }
 
         if (attempt > 0) {
-            return this.getEntityPlace(entities, attempt - 1);
+            return this.getEntityPlace(entities, radius, attempt - 1);
         }
         return { x: xRandom, y: height };
     };

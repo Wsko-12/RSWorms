@@ -70,8 +70,9 @@ export default class GameplayManager {
     }
 
     init(options: IStartGameOptions) {
-        this.createBarrels();
         this.createTeams(options);
+        this.createBarrels();
+
         this.gameInterface.teamsHPElement.build(this.teams);
         this.gameInterface.teamsHPElement.update(this.teams);
 
