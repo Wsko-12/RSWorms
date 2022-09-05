@@ -496,7 +496,7 @@ export default class Worm extends Entity {
 
         if (this.gui.isDead() && this.animation.dead.isReady && !this.moveStates.isDead) {
             this.moveStates.isDead = true;
-            this.physics.friction = 0.4;
+            this.physics.friction = 0;
             this.finalExplosion.explode(mapMatrix, entities);
         }
 
