@@ -5,12 +5,15 @@ import './style.scss';
 export default class GameMenu extends PageElement {
     protected element: HTMLElement;
     private openBtn: HTMLDivElement;
-    private exit: HTMLDivElement;
     private fullscreen: HTMLDivElement;
+    private volume: HTMLDivElement;
+    private exit: HTMLDivElement;
 
     private overlay: HTMLDivElement;
 
     private isOpened = false;
+    private isSound = true;
+
     constructor() {
         super();
         this.element = PageBuilder.createElement('section', {
@@ -43,7 +46,12 @@ export default class GameMenu extends PageElement {
             content: 'Exit',
         });
 
-        menuContainer.append(this.fullscreen, this.exit);
+        this.volume = <HTMLDivElement>PageBuilder.createElement('div', {
+            classes: 'lobby__button game-menu__btn',
+            content: 'Sound: on',
+        });
+
+        menuContainer.append(this.fullscreen, this.volume, this.exit);
 
         this.overlay.append(menuContainer);
         this.applyEvents();
@@ -62,6 +70,20 @@ export default class GameMenu extends PageElement {
 
         this.fullscreen.addEventListener('click', () => {
             this.toggleFullScreen();
+        });
+
+        this.volume.addEventListener('click', () => {
+            if (this.isSound) {
+                // Выключить звук
+
+                this.volume.innerHTML = 'Sound: off';
+                this.isSound = false;
+            } else {
+                // Включить звук
+
+                this.volume.innerHTML = 'Sound: on';
+                this.isSound = true;
+            }
         });
 
         this.exit.addEventListener('click', () => {
