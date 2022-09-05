@@ -40,6 +40,17 @@ export default class SoundManager {
             SoundManager.wormSpeech
         );
     }
+
+    static setVolume(volume: number) {
+        this.background.volume = volume;
+        this.timer.volume = volume;
+        this.worm.volume = volume;
+        this.wormSpeech.volume = volume;
+        this.weapon.volume = volume;
+        this.bullet.volume = volume;
+        this.sfx.volume = volume;
+    }
+
     static playBackground(bg: ESoundsBG) {
         this.background.src = this.pathToAudio + this.paths.background + bg + this.extention;
         this.background.loop = true;

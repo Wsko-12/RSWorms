@@ -1,5 +1,6 @@
 import PageBuilder from '../../../../../utils/PageBuilder';
 import PageElement from '../../../../../utils/PageElement';
+import SoundManager from '../../../../soundManager/SoundManager';
 import './style.scss';
 
 export default class GameMenu extends PageElement {
@@ -74,13 +75,11 @@ export default class GameMenu extends PageElement {
 
         this.volume.addEventListener('click', () => {
             if (this.isSound) {
-                // Выключить звук
-
+                SoundManager.setVolume(0);
                 this.volume.innerHTML = 'Sound: off';
                 this.isSound = false;
             } else {
-                // Включить звук
-
+                SoundManager.setVolume(1);
                 this.volume.innerHTML = 'Sound: on';
                 this.isSound = true;
             }
