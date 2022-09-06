@@ -69,7 +69,8 @@ export default class LoadingPage {
             classes: 'tutor__container',
         });
 
-        const arrows = this.createTutorialLine('▴▾▸◂', '- Move worm');
+        const arrows = this.createTutorialLine('◂▸', '- Move worm');
+        const aim = this.createTutorialLine('▴▾', '- Aiming');
         const jump = this.createTutorialLine('enter', '- Jump (x2 for backflip)');
         const shoot = this.createTutorialLine('space', '- Shoot (long press for shoot power)');
         const inventory = this.createTutorialLine('i or click', '- Inventory');
@@ -79,7 +80,7 @@ export default class LoadingPage {
         const dynamite = this.createTutorialLine('d', '- Dynamite');
         const holyGrenade = this.createTutorialLine('h', '- Holy grenade');
 
-        element.append(arrows, jump, shoot, inventory, grenade, bazooka, mine, dynamite, holyGrenade);
+        element.append(arrows, aim, jump, shoot, inventory, grenade, bazooka, mine, dynamite, holyGrenade);
         return element;
     }
 
