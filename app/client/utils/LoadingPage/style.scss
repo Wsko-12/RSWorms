@@ -4,6 +4,7 @@
     background-color: #e79671;
 
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 10000;
@@ -37,4 +38,35 @@
 .loading__progress{
     height: 100%;
     background-color: rgba($color: #ffffff, $alpha: 1.0);
+}
+
+.tutor__container{
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    max-width: 310px;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    gap: 5px;
+}
+
+.tutor__line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #303030;
+}
+
+.tutor__button{
+    font-weight: bold;
+    border-radius: 4px;
+    padding: 2px 5px;
+    text-transform: uppercase;
+    background-color: white;
+    border: 1px solid gray;
+}
+
+.tutor__text {
+    font-family: "Roboto Mono",monospace;
 }
