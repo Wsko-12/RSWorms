@@ -1,0 +1,46 @@
+.teams-hp-container {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    bottom: 10px;
+    width: 40%;
+    left: 30%;
+}
+
+.hp-row-container {
+    width: 100%;
+    display: flex;
+    margin: 0 auto;
+    justify-content: center;
+    gap: 5px;
+    align-items: center;
+}
+
+.team-name-container{
+    width: 50%;
+}
+
+.team-name {
+    float: right;
+    font-size: 18px;
+    padding: 3px 6px;
+    text-align: right;
+    font-family: 'DynaPuff', cursive;
+    font-size: 2rem;
+    font-weight: 900;
+    text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black, -2px 2px 0px black;
+}
+
+.team-hp-container {
+    float: left;
+    width: 50%;
+}
+
+.team-hp-bar {
+    transition-duration: 1s;
+    height: 25px;
+    border-radius: 10px;
+    border: 2px solid black;
+    box-shadow: -2px 2px 0px black;
+}

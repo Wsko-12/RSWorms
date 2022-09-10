@@ -1,0 +1,16 @@
+.multiplayer__overlay{
+    background-color: #e77171;
+}
+
+.multiplayer__title{
+    font-size: 2rem;
+    color: white;
+    font-weight: bold;
+    text-shadow: 0px 0px 2px black;
+}
+
+.waiting-players__overlay{
+    background-color: rgb(0, 0, 0, 0.2);
+    z-index: 999999;
+    position: fixed;
+}

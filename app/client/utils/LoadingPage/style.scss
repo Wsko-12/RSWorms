@@ -1,0 +1,72 @@
+.loading__overlay{
+    width: 100vw;
+    height: 100vh;
+    background-color: #e79671;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.loading__container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.loading__title{
+    font-size: 2rem;
+    font-family: 'DynaPuff', cursive;
+    color: white;
+    margin: 0;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-shadow: 0px 0px 2px black;
+}
+
+.loading__progress-container{
+    overflow: hidden;
+    border: 3px solid black;
+    border-radius: 20px;
+    height: 20px;
+    width: 200px;
+    background-color: rgba($color: #000000, $alpha: 0.7);
+}
+
+.loading__progress{
+    height: 100%;
+    background-color: rgba($color: #ffffff, $alpha: 1.0);
+}
+
+.tutor__container{
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    max-width: 310px;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    gap: 5px;
+}
+
+.tutor__line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #303030;
+}
+
+.tutor__button{
+    font-weight: bold;
+    border-radius: 4px;
+    padding: 2px 5px;
+    text-transform: uppercase;
+    background-color: white;
+    border: 1px solid gray;
+}
+
+.tutor__text {
+    font-family: "Roboto Mono",monospace;
+}
