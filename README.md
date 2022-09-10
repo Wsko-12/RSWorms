@@ -15,3 +15,9 @@
   5. Open terminal and run `npm run dev` to build files to `dist` folder.
   6. Open second terminal and start server `npx nodemon dist/app`.
   7. Open browser on `localhost:3000`.
+
+
+### Libs used:
+ - three.js
+ - socket.io
+ - p5.js (Perlin noise)
